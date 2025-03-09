@@ -8,19 +8,18 @@ import React, {
 } from "react";
 import * as Notifications from "expo-notifications";
 import { registerForPushNotificationsAsync } from "@/utils/registerForPushNotificationAsync";
-import { EventSubscription } from "expo-notifications";
 interface NotificationContextType {
   expoPushToken: string | null;
   notification: Notifications.Notification | null;
   error: Error | null;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(
+const StateContext = createContext<NotificationContextType | undefined>(
   undefined
 );
 
-export const useNotification = () => {
-  const context = useContext(NotificationContext);
+export const useStateContext = () => {
+  const context = useContext(StateContext);
   if (context === undefined) {
     throw new Error(
       "useNotification must be used within a NotificationProvider"
@@ -29,13 +28,11 @@ export const useNotification = () => {
   return context;
 };
 
-interface NotificationProviderProps {
+interface StateProviderProps {
   children: ReactNode;
 }
 
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({
-  children,
-}) => {
+export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [notification, setNotification] =
     useState<Notifications.Notification | null>(null);
@@ -78,10 +75,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   }, []);
 
   return (
-    <NotificationContext.Provider
-      value={{ expoPushToken, notification, error }}
-    >
+    <StateContext.Provider value={{ expoPushToken, notification, error }}>
       {children}
-    </NotificationContext.Provider>
+    </StateContext.Provider>
   );
 };
