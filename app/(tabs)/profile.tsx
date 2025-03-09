@@ -1,12 +1,15 @@
-import { View } from "react-native";
 import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
 
-export default function HomeScreen() {
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useStateContext } from "@/context/StateContext";
+
+export default function ProfileScreen() {
   return (
     <SafeAreaView style={{ padding: 50 }}>
-      <Text style={{ color: "red", fontSize: 20, fontWeight: "bold" }}>
-        Nếu màu này đổi, Tailwind đang bị ghi đè!
-      </Text>
+      <Text>Profile</Text>
     </SafeAreaView>
   );
 }
