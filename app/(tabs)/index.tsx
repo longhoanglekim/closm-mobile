@@ -4,28 +4,12 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useNotification } from "@/context/NotificationContext";
+import { useStateContext } from "@/context/StateContext";
 
 export default function HomeScreen() {
-  const { expoPushToken, notification, error } = useNotification();
-  if (error) {
-    return (
-      <>
-        <Text>Error : {error.message}</Text>
-      </>
-    );
-  }
   return (
     <SafeAreaView style={{ padding: 50 }}>
-      <Text style={{ fontSize: 20 }}>
-        Hello, expoPushToken la {expoPushToken}
-      </Text>
-      <ThemedText>
-        CO THONG BAO SAU : {notification?.request.content.title}
-      </ThemedText>
-      <ThemedText>
-        {JSON.stringify(notification?.request.content.data, null, 2)}
-      </ThemedText>
+      <Text>Hello world workerr</Text>
     </SafeAreaView>
   );
 }

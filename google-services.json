@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1018115783977",
+    "project_id": "closmmanagement",
+    "storage_bucket": "closmmanagement.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018115783977:android:ec3d279761afb4a71ecb38",
+        "android_client_info": {
+          "package_name": "com.longhoanglekim.Closm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0Uuvnj_Y_Bk5yy9_l7kJlcMh-g8ZV06w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
