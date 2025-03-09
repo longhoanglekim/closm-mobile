@@ -9,7 +9,7 @@ import { useStateContext } from "@/context/StateContext";
 export default function HomeScreen() {
   return (
     <SafeAreaView style={{ padding: 50 }}>
-      <Text>Hello world workerr</Text>
+      <Text>Hello world workerr Iam Long</Text>
     </SafeAreaView>
   );
 }
