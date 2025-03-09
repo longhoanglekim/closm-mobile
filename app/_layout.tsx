@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { NotificationProvider } from "@/context/NotificationContext";
+import { StateProvider } from "@/context/StateContext";
 import * as Notification from "expo-notifications";
 
 Notification.setNotificationHandler({
@@ -42,7 +42,7 @@ export default function RootLayout() {
   }
 
   return (
-    <NotificationProvider>
+    <StateProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -50,6 +50,6 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
-    </NotificationProvider>
+    </StateProvider>
   );
 }

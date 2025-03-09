@@ -1,38 +1,49 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useStateContext } from "@/context/StateContext";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Text } from 'react-native';
-export default function TabTwoScreen() {
+export default function NotificationScreen() {
+  const { expoPushToken, notification, error } = useStateContext();
+  if (error) {
+    return (
+      <>
+        <Text>Error : {error.message}</Text>
+      </>
+    );
+  }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-    <Text>dung</Text>  
-    </ParallaxScrollView>
+    <SafeAreaView style={{ padding: 50 }}>
+      <Text style={{ fontSize: 20 }}>
+        Hello, expoPushToken la {expoPushToken}
+      </Text>
+      <ThemedText>
+        CO THONG BAO SAU : {notification?.request.content.title}
+      </ThemedText>
+      <ThemedText>
+        {JSON.stringify(notification?.request.content.data, null, 2)}
+      </ThemedText>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
   titleContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
+  },
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
+  },
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: "absolute",
   },
 });
