@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, ViewStyle } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
@@ -17,9 +17,11 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: "absolute",
           },
+          android: {
+            backgroundColor: "lightblue",
+          } as ViewStyle,
           default: {},
         }),
       }}

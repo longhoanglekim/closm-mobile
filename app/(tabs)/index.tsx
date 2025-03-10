@@ -1,12 +1,16 @@
+import HomeTaskbar from "@/components/HomeTaskbar/HomeTaskbar";
+import ListImage from "@/components/ListImage/ListImage";
+import ListProductType from "@/components/ListProductType/ListProductType";
+import React from "react";
 import { View } from "react-native";
 import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={{ padding: 50 }}>
-      <Text style={{ color: "red", fontSize: 20, fontWeight: "bold" }}>
-        Nếu màu này đổi, Tailwind đang bị ghi đè!
-      </Text>
+    <SafeAreaView className="pt-10 px-5 gap-4">
+      <HomeTaskbar />
+      <ListImage />
+      <ListProductType />
     </SafeAreaView>
   );
 }
