@@ -10,9 +10,9 @@ export const User = createSlice({
     name : 'user',
     initialState : initialState,
     reducers : {
-        // state : current data, message : sent data
-        updateFirstname : (state, message) => {
-            state.firstname = message.payload.firstname;
+        // state : current data, action : sent data
+        updateFirstname : (state, action) => {
+            state.firstname = action.payload.firstname;
         }
     }
 })

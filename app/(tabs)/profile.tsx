@@ -18,7 +18,7 @@ export default function ProfileScreen() {
       <Text>Profile cua {user.firstname}</Text>
       <Button
         title="Click Me"
-        onPress={() => dispatch(updateFirstname({ firstname: "Hoang" }))}
+        onPress={() => dispatch(updateFirstname({ firstname: "Dung" }))}
       />
     </SafeAreaView>
   );
