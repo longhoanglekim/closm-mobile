@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faBars,
@@ -8,6 +14,7 @@ import {
   faBell,
   faCartShopping,
 } from "@fortawesome/free-solid-svg-icons";
+import globalStyle from "@/assets/styles/globalStyle";
 const HomeTaskbar = () => {
   const [text, setText] = useState("");
   return (
@@ -20,7 +27,7 @@ const HomeTaskbar = () => {
       }}
     >
       <FontAwesomeIcon icon={faBars} />
-      <FontAwesomeIcon icon={faSearch} style={{ marginLeft: 20 }} />
+      <FontAwesomeIcon icon={faSearch} style={{ marginHorizontal: 10 }} />
       <TextInput
         style={{
           height: 40,
@@ -29,14 +36,21 @@ const HomeTaskbar = () => {
           paddingHorizontal: 10,
           borderRadius: 5,
           width: 200,
+          marginRight: 10,
         }}
         placeholder="Nhập văn bản..."
         value={text}
         onChangeText={(newText) => setText(newText)}
       />
-      <FontAwesomeIcon icon={faMessage} style={{ marginLeft: 20 }} />
-      <FontAwesomeIcon icon={faBell} style={{ marginLeft: 20 }} />
-      <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: 20 }} />
+      <TouchableOpacity style={globalStyle.messageIcon}>
+        <FontAwesomeIcon icon={faMessage} style={{ position: "relative" }} />
+        <View style={globalStyle.messageNumberContainer}>
+          <Text style={globalStyle.messageNumber}>2</Text>
+        </View>
+      </TouchableOpacity>
+
+      <FontAwesomeIcon icon={faBell} style={{ marginLeft: 15 }} />
+      <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: 15 }} />
     </View>
   );
 };

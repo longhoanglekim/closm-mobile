@@ -1,15 +1,25 @@
-import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { useStateContext } from "@/context/StateContext";
+import { updateFirstname } from "@/redux/reducers/User";
+import {
+  Image,
+  StyleSheet,
+  Platform,
+  SafeAreaView,
+  Text,
+  Button,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ProfileScreen() {
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  const dispatch = useDispatch();
   return (
     <SafeAreaView style={{ padding: 50 }}>
-      <Text>Profile</Text>
+      <Text>Profile cua {user.firstname}</Text>
+      <Button
+        title="Click Me"
+        onPress={() => dispatch(updateFirstname({ firstname: "Hoang" }))}
+      />
     </SafeAreaView>
   );
 }

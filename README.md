@@ -48,3 +48,8 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+1. Setting nativewind
+   - https://www.youtube.com/watch?v=FyCaPXpvyNM
+2. Setting Redux Toolkits
+   - https://redux.js.org/introduction/installation
