@@ -4,6 +4,8 @@ import ListProductType from "@/components/ListProductType/ListProductType";
 import React from "react";
 import { View } from "react-native";
 import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
+//screens
+import SettingScreen from "../screens/setting";
 
 export default function HomeScreen() {
   return (
