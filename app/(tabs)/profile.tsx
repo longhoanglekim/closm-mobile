@@ -15,7 +15,9 @@ export default function ProfileScreen() {
   const dispatch = useDispatch();
   return (
     <SafeAreaView style={{ padding: 50 }}>
-      <Text>Profile cua {user.firstname}</Text>
+      <Text>
+        Profile cua {user.firstname} : {user.testAction}
+      </Text>
       <Button
         title="Click Me"
         onPress={() => dispatch(updateFirstname({ firstname: "Dung" }))}

@@ -11,7 +11,7 @@ const configuration = {
 const rootReducer = combineReducers({
     user : User.reducer,
 })
-const persistedReducer = persistReducer(configuration, rootReducer)
+const persistedReducer = persistReducer(configuration, rootReducer) // boc rootReducer de redux luu state vao asyncstorage
 
 const store = configureStore({
     reducer : persistedReducer,
@@ -25,4 +25,4 @@ const store = configureStore({
 
 })
 export default store;
-export const persitor = persistStore(store);
+export const persistor = persistStore(store); // kích hoạt việc lưu trữ state và tải lại khi khởi động
