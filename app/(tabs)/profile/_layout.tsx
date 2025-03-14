@@ -7,7 +7,10 @@ const StackLayout = () => {
         name="index"
         options={{ headerShown: false }}
       ></Stack.Screen>
-      <Stack.Screen name="login" options={{}}></Stack.Screen>
+      <Stack.Screen
+        name="login"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
     </Stack>
   );
 };
