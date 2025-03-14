@@ -1,15 +1,17 @@
-import HomeTaskbar from "@/components/HomeTaskbar/HomeTaskbar";
+import Category from "@/components/homeComponent/category/Category";
+import HomeTaskbar from "@/components/homeComponent/HomeTaskbar/HomeTaskbar";
 import ListImage from "@/components/ListImage/ListImage";
 import ListProductType from "@/components/ListProductType/ListProductType";
 import React from "react";
 import { View } from "react-native";
 import { Image, StyleSheet, Platform, SafeAreaView, Text } from "react-native";
-
+import TopProduct from "@/components/homeComponent/topProduct/topProduct";
 export default function HomeScreen() {
   return (
     <SafeAreaView className="pt-10 px-5 gap-4">
       <HomeTaskbar />
-      <ListImage />
+      <Category />
+      <TopProduct />
       <ListProductType />
     </SafeAreaView>
   );

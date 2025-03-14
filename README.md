@@ -53,3 +53,5 @@ Join our community of developers creating universal apps.
    - https://www.youtube.com/watch?v=FyCaPXpvyNM
 2. Setting Redux Toolkits
    - https://redux.js.org/introduction/installation
+3. Project architecture
+   - https://medium.com/@jwbrendan/an-implementation-of-expo-router-with-typescript-tab-navigators-and-stack-navigators-in-a-react-f0655d12d86b

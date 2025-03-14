@@ -1,4 +1,6 @@
+import ProtectedRoute from "@/route/ProtectedRoute";
 import { updateFirstname } from "@/redux/reducers/User";
+import { Redirect, useRouter } from "expo-router";
 import {
   Image,
   StyleSheet,
@@ -11,16 +13,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
+  const router = useRouter();
   console.log(user);
   const dispatch = useDispatch();
   return (
-    <SafeAreaView style={{ padding: 50 }}>
-      <Text>Profile cua {user.firstname}</Text>
-      <Button
-        title="Click Me"
-        onPress={() => dispatch(updateFirstname({ firstname: "Dung" }))}
-      />
-    </SafeAreaView>
+    <ProtectedRoute>
+      <SafeAreaView style={{ padding: 50 }}>
+        <Text>
+          Profile cua {user.firstname} : {user.testAction}
+        </Text>
+        <Button
+          title="Click Me"
+          onPress={() => router.push("/(tabs)/profile/login")}
+        />
+      </SafeAreaView>
+    </ProtectedRoute>
   );
 }
 
