@@ -13,6 +13,7 @@ export const User = createSlice({
         // state : current data, action : sent data
         updateFirstname : (state, action) => {
             state.firstname = action.payload.firstname;
+            state.testAction= "test";
         }
     }
 })

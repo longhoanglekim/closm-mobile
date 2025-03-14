@@ -8,6 +8,7 @@ import {
     ScrollView,
     StyleSheet,
     Button,
+    
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -16,12 +17,25 @@ import { useRouter } from "expo-router";
 // import Icon from "react-native-vector-icons/Feather";
 
 export default function ProfileScreen() {
-    const user = useSelector((state: RootState) => state.user);
-    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const router = useRouter();
+    console.log(user);
+    const dispatch = useDispatch();
+    
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* <ProtectedRoute> */}
+      <SafeAreaView style={{ padding: 50 }}>
+        <Text>
+          Profile cua {user.firstname} : {user.testAction}
+        </Text>
+        <Button
+          title="Click Me"
+          onPress={() => router.push("/(tabs)/profile/login")}
+        />
+      </SafeAreaView>
+    {/* </ProtectedRoute> */}
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
@@ -203,4 +217,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         fontSize: 12,
     },
-});
+})
+
+
