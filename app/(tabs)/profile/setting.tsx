@@ -12,7 +12,4 @@ export default function SettingScreen() {
   );
 }
 
-// const styles = StyleSheet.create({
-
-// })
 

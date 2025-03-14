@@ -38,7 +38,7 @@ export default function ProfileScreen() {
                 {/* Chào người dùng */}
                 <View>
                     <Text style={styles.greeting}>Hello, {user.firstname}!</Text>
-                    <Button title="Setting" onPress={() => router.push("/(tabs)/profile/setting")} />
+                    <Button title="Setting" onPress={() => router.push("/profile/setting")} />
                 </View>
 
 
