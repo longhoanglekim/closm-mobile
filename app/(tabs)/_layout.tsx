@@ -44,12 +44,13 @@ export default function TabLayout() {
           title: "Explore",
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="profile"
         options={{
+          headerTitle: "profile",
           title: "Profile",
         }}
-      />
+      /> */}
     </Tabs>
   );
 }
