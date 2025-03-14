@@ -10,8 +10,11 @@ import {
   Button,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function ProfileScreen() {
+
+
   const user = useSelector((state) => state.user);
   const router = useRouter();
   console.log(user);
