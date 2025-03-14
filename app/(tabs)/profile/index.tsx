@@ -1,4 +1,5 @@
 import { updateFirstname } from "@/redux/reducers/User";
+import { Redirect, useRouter } from "expo-router";
 import {
   Image,
   StyleSheet,
@@ -11,6 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
+  const router = useRouter();
+  let isLoggedIn = false;
+  if (!isLoggedIn) {
+    return <Redirect href="/(tabs)/profile/login" />;
+  }
   console.log(user);
   const dispatch = useDispatch();
   return (
@@ -20,7 +26,7 @@ export default function ProfileScreen() {
       </Text>
       <Button
         title="Click Me"
-        onPress={() => dispatch(updateFirstname({ firstname: "Dung" }))}
+        onPress={() => router.push("/(tabs)/profile/login")}
       />
     </SafeAreaView>
   );
