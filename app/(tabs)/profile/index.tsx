@@ -13,24 +13,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
 export default function ProfileScreen() {
-
-
   const user = useSelector((state) => state.user);
   const router = useRouter();
   console.log(user);
   const dispatch = useDispatch();
   return (
-    <ProtectedRoute>
-      <SafeAreaView style={{ padding: 50 }}>
-        <Text>
-          Profile cua {user.firstname} : {user.testAction}
-        </Text>
-        <Button
-          title="Click Me"
-          onPress={() => router.push("/(tabs)/profile/login")}
-        />
-      </SafeAreaView>
-    </ProtectedRoute>
+    <SafeAreaView style={{ padding: 50 }}>
+      <Text>
+        Profile cua {user.firstname} : {user.testAction}
+      </Text>
+      <Button
+        title="Click Me"
+        onPress={() => router.push("/(tabs)/profile/login")}
+      />
+    </SafeAreaView>
   );
 }
 
