@@ -1,5 +1,5 @@
 import ProtectedRoute from "@/route/ProtectedRoute";
-import { updateFirstname } from "@/redux/reducers/User";
+import { logout, updateFirstname } from "@/redux/reducers/User";
 import { Redirect, useRouter } from "expo-router";
 import {
   Image,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { auth } from "@/firebaseConfig";
 
 export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
@@ -24,7 +25,11 @@ export default function ProfileScreen() {
       </Text>
       <Button
         title="Click Me"
-        onPress={() => router.push("/(tabs)/profile/login")}
+        onPress={async () => {
+          await auth.signOut();
+          dispatch(logout())
+          router.push("/(tabs)/profile/login");
+        }}
       />
     </SafeAreaView>
   );
