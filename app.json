@@ -15,6 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
+    
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -29,6 +30,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app", 
       "expo-router",
       [
         "expo-splash-screen",

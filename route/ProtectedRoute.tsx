@@ -1,32 +1,33 @@
 // ProtectedRoute.tsx
 import React, { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { useSelector } from "react-redux";
-import { useRouter } from "expo-router";
 
+import { useSelector } from "react-redux";
+import { usePathname, useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const user = useSelector((state) => state.user);
-  const isLoggedIn = false;
+  console.log(user);
+  const isLoggedIn = user.firstname !== "";
   const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/(tabs)/profile/login");
-    }
-  }, [isLoggedIn, router]);
-
-  if (!isLoggedIn) {
-    // Trong lúc chuyển hướng, bạn có thể hiển thị loading indicator
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+  const pathname = usePathname();
+  // console.log(" path " + pathname);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (
+        !isLoggedIn &&
+        pathname !== "/profile/login" &&
+        pathname !== "/profile/register"
+      ) {
+        router.replace("/profile/login");
+      }
+      console.log("Callback");
+    }, [isLoggedIn, pathname])
+  );
+  console.log("dang load");
 
   return <>{children}</>;
 }
