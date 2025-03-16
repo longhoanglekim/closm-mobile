@@ -1,5 +1,5 @@
-import { Link } from "expo-router";
-import React from "react";
+import { Link, router } from "expo-router";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,14 @@ import {
   Pressable,
   KeyboardAvoidingView,
 } from "react-native";
-
-const login = () => {
+import { login } from "../../../api/auth/auth";
+import { useSelector } from "react-redux";
+const LoginScreen = () => {
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   return (
     <View className="flex-1 items-center">
       <View>
@@ -20,6 +26,8 @@ const login = () => {
           <Text>Email</Text>
           <TextInput
             placeholder="Nhap tai khoan email"
+            value={email}
+            onChangeText={(value) => setEmail(value)}
             style={{
               width: 250,
               height: 40,
@@ -33,6 +41,8 @@ const login = () => {
           <KeyboardAvoidingView behavior="padding">
             <TextInput
               placeholder="*******"
+              value={password}
+              onChangeText={(value) => setPassword(value)}
               secureTextEntry={true}
               style={{
                 width: 250,
@@ -44,6 +54,11 @@ const login = () => {
               }}
             ></TextInput>
           </KeyboardAvoidingView>
+          {error !== "" && (
+            <View>
+              <Text>{error}</Text>
+            </View>
+          )}
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Pressable
               style={{
@@ -55,8 +70,14 @@ const login = () => {
                 alignItems: "center",
                 borderRadius: 20,
               }}
-              onPress={() => {
+              onPress={async () => {
                 console.log("login");
+                const repsonse = await login(email, password);
+                if (repsonse.status) {
+                  router.replace("/(tabs)/cart");
+                } else {
+                  setError(repsonse.message);
+                }
               }}
             >
               <Text>Đăng nhập</Text>
@@ -79,4 +100,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default LoginScreen;

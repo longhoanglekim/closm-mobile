@@ -94,18 +94,18 @@ const Register = () => {
                 onChangeText={setRepeatPassword}
               />
 
-              {invalidMessage && (
+              {invalidMessage != "" && (
                 <Text style={{ color: "red", marginVertical: 5 }}>
                   {invalidMessage}
                 </Text>
               )}
-              {errorMessage !== null && (
+              {errorMessage !== "" && (
                 <View>
                   <Text>{errorMessage}</Text>
                 </View>
               )}
               {/* Nút đăng ký */}
-              {successMessage !== null && (
+              {successMessage !== "" && (
                 <View>
                   <Text>{successMessage}</Text>
                 </View>
