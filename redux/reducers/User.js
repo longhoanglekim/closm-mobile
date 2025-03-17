@@ -41,7 +41,7 @@ export const User = createSlice({
             state.firstname = action.payload.firstname;
             state.testAction= "test";
         },
-        logout: (state) => {
+        logout: () => {
             return initialState; // Reset toàn bộ state về giá trị ban đầu
         }
     },
@@ -62,7 +62,7 @@ export const User = createSlice({
             });
     }
 })
-export const { updateFirstname } = User.actions; //destructoring
+export const { logout } = User.actions; //destructoring
 // ✅ Tạo action creator (hàm trả về action object)
 
 // 📌 Khi gọi action creator này, nó sẽ tạo ra một action object:
