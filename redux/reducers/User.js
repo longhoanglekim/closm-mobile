@@ -1,14 +1,14 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import firestore from "@react-native-firebase/firestore"
 const initialState = {
-    firstname: "",
+    fullname: "",
     email: "",
     loading: false,
     error: null
 };
 export const fetchUserFromFirestore = createAsyncThunk(
     "user/fetchUserFromFirestore",
-    async (uid, { rejectWithValue }) => {
+    async ({uid, token}, { rejectWithValue }) => {
       try {
         console.log("🚀 Fetching user from Firestore with UID:", uid);
   
@@ -19,8 +19,7 @@ export const fetchUserFromFirestore = createAsyncThunk(
           
           // ✅ Chuyển Firestore Timestamp thành milliseconds (số)
           return {
-            ...userData,
-            createdAt: userData.createdAt?.toMillis() || null, // Tránh lỗi nếu `createdAt` không tồn tại
+            fullname : userData.fullname, email : userData.email, token, token, role : userData.role
           };
         } else {
           console.warn("⚠ User not found in Firestore");
@@ -37,10 +36,6 @@ export const User = createSlice({
     initialState : initialState,
     reducers : {
         // state : current data, action : sent data
-        updateFirstname : (state, action) => {
-            state.firstname = action.payload.firstname;
-            state.testAction= "test";
-        },
         logout: () => {
             return initialState; // Reset toàn bộ state về giá trị ban đầu
         }
@@ -54,7 +49,8 @@ export const User = createSlice({
             .addCase(fetchUserFromFirestore.fulfilled, (state, action) => {
                 state.loading = false;
                 state.email = action.payload.email;
-                state.firstname = action.payload.fullname;
+                state.fullname = action.payload.fullname;
+                state.token = action.payload.token;
             })
             .addCase(fetchUserFromFirestore.rejected, (state, action) => {
                 state.loading = false;
@@ -63,21 +59,5 @@ export const User = createSlice({
     }
 })
 export const { logout } = User.actions; //destructoring
-// ✅ Tạo action creator (hàm trả về action object)
 
-// 📌 Khi gọi action creator này, nó sẽ tạo ra một action object:
-// updateFirstname({ firstname: "someone" }) 
-// → Trả về:
-// {
-//   type: "user/updateFirstname",
-//   payload: { firstname: "someone" }
-// }
-
-// 📌 Action object này sẽ được gửi đến reducer tương ứng trong slice
-// để cập nhật state.
-
-// Thành phần	                                         Chức năng
-// User.actions	                                         Chứa các action creators được tự động tạo.
-// updateFirstname	                                     Một action creator, khi gọi sẽ trả về action object.
-// dispatch(updateFirstname({ firstname: "someone" }))	Gửi action object này đến reducer để cập nhật state.
 export default User;
