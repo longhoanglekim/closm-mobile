@@ -22,7 +22,7 @@ export const createUser = async (fullname: string, email: string, password: stri
       fullname,
       email,
       role: "customer",
-      createdAt: serverTimestamp(),
+     
     });
 
     console.log("✅ User đã lưu vào Firestore:", user.uid);
@@ -40,7 +40,8 @@ export const login = async (email : string, password : string) => {
     const token = await response.user.getIdToken();
     const user = auth.currentUser;
     if (user) {
-      store.dispatch(fetchUserFromFirestore(user.uid))
+      store.dispatch(fetchUserFromFirestore({ uid: user.uid, token: token }));
+
     } else {
       throw new Error("Không tìm thấy user trong Firebstore.");
     }

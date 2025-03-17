@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const user = useSelector((state) => state.user);
   const isLoading = user.loading;
-  const isLoggedIn = user.firstname !== "";
+  const isLoggedIn = user.fullname !== "";
   const router = useRouter();
   const pathname = usePathname();
 
