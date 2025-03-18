@@ -12,11 +12,11 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 20,
-    marginTop:20,
+    marginTop:35,
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 25,
   },
   greeting: {
@@ -75,4 +75,36 @@ export default StyleSheet.create({
     height: "100%",
     borderRadius: 10,
   },
+
+
+  //setting
+  backButton: {
+    fontSize: 18,
+    color: "#007AFF",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    flex: 1,
+  },
+  settingItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "white",
+    borderRadius: 10,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  settingText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  
 });

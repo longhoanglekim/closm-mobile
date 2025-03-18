@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+// index.tsx
+import React from "react";
 import { SafeAreaView, Text, Image, View, ScrollView, Pressable } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/reducers/User";
@@ -12,30 +12,19 @@ export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
-  const [avatar, setAvatar] = useState(require("@/assets/images/img_profile/default-avatar.png"));
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setAvatar({ uri: result.assets[0].uri });
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Pressable onPress={pickImage}>
-            <Image source={avatar} style={styles.avatar} />
-          </Pressable>
+          <Image
+            source={{ uri: "https://www.iconpacks.net/icons/1/free-user-icon-295-thumb.png" }}
+            style={styles.avatar}
+          />
           <Text style={styles.greeting}>Hello, {user.fullname}!</Text>
-          <FontAwesome name="cog" size={24} color="black" />
+          <Pressable onPress={() => router.push('/(tabs)/profile/setting')}>
+            <FontAwesome name="cog" size={24} color="black" />
+          </Pressable>
         </View>
 
         <View style={styles.announcement}>
