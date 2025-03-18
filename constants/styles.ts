@@ -12,7 +12,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 20,
-    marginTop:35,
+    marginTop: 35,
   },
   avatar: {
     width: 40,
@@ -77,7 +77,12 @@ export default StyleSheet.create({
   },
 
 
-  //setting
+
+  
+
+});
+
+export  const settingClass ={
   backButton: {
     fontSize: 18,
     color: "#007AFF",
@@ -106,5 +111,4 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
-  
-});
+};

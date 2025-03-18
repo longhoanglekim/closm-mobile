@@ -1,6 +1,6 @@
 // index.tsx
 import React from "react";
-import { SafeAreaView, Text, Image, View, ScrollView, Pressable } from "react-native";
+import { SafeAreaView, Text, Image, View, ScrollView, Pressable, Button } from "react-native";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/reducers/User";
@@ -22,6 +22,7 @@ export default function ProfileScreen() {
             style={styles.avatar}
           />
           <Text style={styles.greeting}>Hello, {user.fullname}!</Text>
+
           <Pressable onPress={() => router.push('/(tabs)/profile/setting')}>
             <FontAwesome name="cog" size={24} color="black" />
           </Pressable>
@@ -39,7 +40,7 @@ export default function ProfileScreen() {
           {[1, 2, 3, 4, 5].map((item, index) => (
             <Image
               key={index}
-              source={{ uri: "https://via.placeholder.com/50" }}
+              source={{ uri: "" }}
               style={styles.recentlyViewed}
             />
           ))}
@@ -57,7 +58,7 @@ export default function ProfileScreen() {
           {[1, 2, 3].map((item, index) => (
             <View key={index} style={styles.storyCard}>
               <Image
-                source={{ uri: "https://via.placeholder.com/100" }}
+                source={{ uri: "" }}
                 style={styles.storyImage}
               />
             </View>
