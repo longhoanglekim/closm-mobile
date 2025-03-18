@@ -12,6 +12,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 20,
+    marginTop:20,
   },
   avatar: {
     width: 50,
