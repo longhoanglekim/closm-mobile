@@ -1,4 +1,3 @@
-// index.tsx
 import React, { useState } from "react";
 import { SafeAreaView, Text, Image, View, ScrollView, Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,7 +12,7 @@ export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
-  const [avatar, setAvatar] = useState(require("@/assets/images/img_profile"));
+  const [avatar, setAvatar] = useState(require("@/assets/images/img_profile/default-avatar.png"));
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
