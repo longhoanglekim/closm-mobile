@@ -3,8 +3,6 @@ import React from "react";
 import { SafeAreaView, Text, Image, View, ScrollView, Pressable, Button } from "react-native";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/redux/reducers/User";
-import { auth } from "@/firebaseConfig";
 import styles from "@/constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
 
