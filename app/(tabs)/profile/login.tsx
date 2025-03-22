@@ -12,7 +12,7 @@ import { login } from "../../../api/auth/auth";
 import { useSelector } from "react-redux";
 const LoginScreen = () => {
   const user = useSelector((state) => state.user);
-  console.log(user);
+  console.log(user.fullname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
