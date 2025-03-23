@@ -11,16 +11,16 @@ const Category = () => {
       const fetchProductOverview = async () => {
         try {
           const result = await getProductOverview();
-          setProductOverview(result);
-      
+          setProductOverview(result); 
         } catch (err) {
           console.error("Lỗi khi fetch product overview:", err);
         }
-      }
- 
+      };
+  
       fetchProductOverview();
-    }, [productOverview]) // Theo dõi sự thay đổi
+    }, [])
   );
+  
 
   const imageUrl = "https://picsum.photos/200";
   const categories = [
