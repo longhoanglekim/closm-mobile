@@ -27,3 +27,10 @@ export const getCategories = async () => {
   }
   return response.json();
 };
+export const getProductOverview = async () => {
+  const response = await fetch("http://172.23.112.1:8080/variants/product_overview");
+  if (!response.ok) {
+    throw new Error("Lỗi khi lấy danh mục sản phẩm");
+  }
+  return response.json();
+};

@@ -1,36 +1,27 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import styles from "@/constants/home";
-import { getCategories } from "@/api/products/products";
+import { getProductOverview } from "@/api/products/products";
 import { useFocusEffect } from "expo-router";
 const Category = () => {
-  const [categoryList, setCategoryList] = useState([]);
 
+  const [productOverview, setProductOverview] = useState([]);
   useFocusEffect(
     useCallback(() => {
-      const fetchCategories = async () => {
+      const fetchProductOverview = async () => {
         try {
-          const result = await getCategories();
-
-          // ✅ Chỉ cập nhật state nếu kết quả thực sự khác (so sánh nội dung)
-          if (JSON.stringify(result) !== JSON.stringify(categoryList)) {
-            setCategoryList(result);
-            console.log("Fetched categories and updated:", result);
-          }
+          const result = await getProductOverview();
+          setProductOverview(result);
+      
         } catch (err) {
-          console.error("Lỗi khi fetch danh mục:", err);
+          console.error("Lỗi khi fetch product overview:", err);
         }
-      };
-
-      fetchCategories();
-    }, [categoryList]) // Theo dõi sự thay đổi
+      }
+ 
+      fetchProductOverview();
+    }, [productOverview]) // Theo dõi sự thay đổi
   );
 
-  // Nếu muốn theo dõi khi categoryList thay đổi:
-  useEffect(() => {
-    console.log("Updated categoryList:", categoryList); // ✅ Log giá trị mới mỗi khi state cập nhật
-  }, [categoryList]); // Theo dõi sự thay đổi của categoryList
-  console.log("Confirm categoryList:", categoryList);
   const imageUrl = "https://picsum.photos/200";
   const categories = [
     {
