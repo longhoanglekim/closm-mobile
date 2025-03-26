@@ -15,7 +15,10 @@ import {
   faCartShopping,
 } from "@fortawesome/free-solid-svg-icons";
 import globalStyle from "@/assets/styles/globalStyle";
-const HomeTaskbar = () => {
+interface HomeTaskbarProps {
+  onSearchPress: () => void;
+}
+const HomeTaskbar = ({ onSearchPress }: HomeTaskbarProps) => {
   const [text, setText] = useState("");
   return (
     <View
@@ -41,6 +44,7 @@ const HomeTaskbar = () => {
         placeholder="Nhập văn bản..."
         value={text}
         onChangeText={(newText) => setText(newText)}
+        onPress={onSearchPress}
       />
       <TouchableOpacity style={globalStyle.messageIcon}>
         <FontAwesomeIcon icon={faMessage} style={{ position: "relative" }} />

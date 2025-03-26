@@ -34,3 +34,10 @@ export const getProductOverview = async () => {
   }
   return response.json();
 };
+export const getVariantsDetails = async (id : number) => {
+  const response = await fetch("http://172.23.112.1:8080/variants/{id}");
+  if (!response.ok) {
+    throw new Error("Lỗi khi lấy danh mục sản phẩm");
+  }
+  return response.json();
+};
