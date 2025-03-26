@@ -2,10 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import styles from "@/constants/home";
 import { getProductOverview } from "@/api/products/products";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useNavigation } from "expo-router";
 const Category = () => {
 
   const [productOverview, setProductOverview] = useState([]);
+  const navigation = useNavigation();
+
   useFocusEffect(
     useCallback(() => {
       const fetchProductOverview = async () => {
@@ -66,11 +69,12 @@ const Category = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Categories</Text>
-        <TouchableOpacity style={styles.seeAllButton}>
+        <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push("/productDetail")}>
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>
             <Text style={styles.arrowIcon}>-></Text>
           </View>
+          
         </TouchableOpacity>
       </View>
 
@@ -78,6 +82,7 @@ const Category = () => {
         {categories.map((category) => (
           <View key={category.id} style={styles.categoryGroup}>
             <View style={styles.categoryImagesContainer}>
+
               {category.images.map((image, index) => (
                 <Image
                   key={index}
