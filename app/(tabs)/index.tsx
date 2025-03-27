@@ -13,7 +13,7 @@ import TopProduct from "@/components/homeComponent/topProduct/topProduct";
 import ListProductType from "@/components/ListProductType/ListProductType";
 import Banner from "@/components/banner/Bannner";
 import NewItems from "@/components/newItems/NewItems";
-
+import SearchModal from "@/components/homeComponent/search/searchModal";
 export default function HomeScreen() {
   const [isMoalVisible, setModalVisible] = useState(false);
 
@@ -29,7 +29,8 @@ export default function HomeScreen() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalText}>Search anything...</Text>
+              <SearchModal />
+
               <Text
                 style={{ color: "blue", marginTop: 20 }}
                 onPress={() => setModalVisible(false)}
@@ -60,13 +61,10 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 0,
     borderRadius: 10,
     alignItems: "center",
     width: "80%",
-    height: "30%",
-  },
-  modalText: {
-    fontSize: 18,
+    height: "80%",
   },
 });
