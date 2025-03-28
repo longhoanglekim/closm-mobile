@@ -66,6 +66,7 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
+    flex : 1
   },
   productItem: {
     width: '48%',

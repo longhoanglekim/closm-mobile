@@ -65,7 +65,7 @@ export default StyleSheet.create({
       gap: 3,
     },
     categoryImage: {
-      width: 75,
+      width: 70,
       height: 80,
       borderRadius: 8,
       marginBottom: 4,

@@ -57,12 +57,13 @@ const Category = () => {
                   {/* <Text>{categoryData.category}</Text> */}
                 </TouchableOpacity>
               ))}
-
             </View>
             <View style={styles.categoryInfo}>
               <Text style={styles.categoryName}>{categoryData.category}</Text>
               <View style={styles.countBadge}>
-                <Text style={styles.countText}>{categoryData.variants.length}</Text>
+                <Text style={styles.countText}>
+                  {categoryData.variants.length}
+                </Text>
               </View>
             </View>
           </View>
