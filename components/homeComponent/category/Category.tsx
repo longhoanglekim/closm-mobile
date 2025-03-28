@@ -1,97 +1,69 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useCallback, useState } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import styles from "@/constants/home";
 import { getProductOverview } from "@/api/products/products";
-import { useFocusEffect } from "expo-router";
-const Category = () => {
+import { router, useFocusEffect } from "expo-router";
 
+const Category = () => {
   const [productOverview, setProductOverview] = useState([]);
+
   useFocusEffect(
     useCallback(() => {
       const fetchProductOverview = async () => {
         try {
           const result = await getProductOverview();
-          setProductOverview(result); 
-          
+          setProductOverview(result);
         } catch (err) {
           console.error("Lỗi khi fetch product overview:", err);
         }
       };
-  
+
       fetchProductOverview();
     }, [])
   );
-  
-
-  const imageUrl = "https://picsum.photos/200";
-  const categories = [
-    {
-      id: 1,
-      name: "Clothing",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-    {
-      id: 2,
-      name: "Shoes",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-    {
-      id: 3,
-      name: "Bags",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-    {
-      id: 4,
-      name: "Lingerie",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-    {
-      id: 5,
-      name: "Watch",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-    {
-      id: 6,
-      name: "Hoodies",
-      count: 4,
-      images: [imageUrl, imageUrl, imageUrl, imageUrl],
-    },
-  ];
+  const handleVariantPress = (variantId: number) => {
+    router.push(`/productDetail?id=${variantId}`);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Categories</Text>
-        <TouchableOpacity style={styles.seeAllButton}>
+        <TouchableOpacity
+          style={styles.seeAllButton}
+          onPress={() => router.push("/productDetail")}
+        >
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>
-            <Text style={styles.arrowIcon}>-></Text>
+            <Text style={styles.arrowIcon}>-&gt;</Text>
           </View>
         </TouchableOpacity>
       </View>
 
       <View style={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <View key={category.id} style={styles.categoryGroup}>
-            <View style={styles.categoryImagesContainer}>
-              {category.images.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: image }}
-                  style={styles.categoryImage}
-                  resizeMode="cover"
-                />
+        {productOverview.map((categoryData) => (
+          <View key={categoryData.category} style={styles.categoryGroup}>
+            <View style={styles.categoryTouhablepacity}>
+              {categoryData.variants.map((variant) => (
+                <TouchableOpacity
+                  key={variant.id}
+                  onPress={() => handleVariantPress(variant.id)}
+                >
+                  <Image
+                    source={{ uri: variant.imageUrl }}
+                    style={styles.categoryImage}
+                    resizeMode="cover"
+                  />
+                  {/* <Text>{categoryData.category}</Text> */}
+                </TouchableOpacity>
               ))}
             </View>
             <View style={styles.categoryInfo}>
-              <Text style={styles.categoryName}>{category.name}</Text>
+              <Text style={styles.categoryName}>{categoryData.category}</Text>
               <View style={styles.countBadge}>
-                <Text style={styles.countText}>{category.count}</Text>
+                <Text style={styles.countText}>
+                  {categoryData.variants.length}
+                </Text>
               </View>
             </View>
           </View>

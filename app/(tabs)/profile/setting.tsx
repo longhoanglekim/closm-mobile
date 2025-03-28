@@ -21,13 +21,8 @@ export default function SettingsScreen() {
         </Pressable>
       </View>
 
-      <View style={settingClass.settingItem}>
-        <Text style={settingClass.settingText}>Enable Notifications
-
-        </Text>
-
-
-
+      <View>
+        <Text>Enable Notifications</Text>
 
         <Switch
           value={notificationsEnabled}
