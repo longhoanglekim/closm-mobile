@@ -59,8 +59,13 @@ export default StyleSheet.create({
       justifyContent: 'space-between',
       marginBottom: 8,
     },
+    categoryTouhablepacity: {
+      flexWrap: 'wrap',
+      flexDirection: 'row',
+      gap: 3,
+    },
     categoryImage: {
-      width: '48%',
+      width: 75,
       height: 80,
       borderRadius: 8,
       marginBottom: 4,
