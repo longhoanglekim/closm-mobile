@@ -1,3 +1,4 @@
+import { useStateContext } from "@/context/StateContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -5,6 +6,8 @@ import React from "react";
 import { Pressable, TextInput, View } from "react-native";
 const searchModal = () => {
   const [text, setText] = React.useState("");
+  const { variantList, setVariantList } = useStateContext();
+  console.log("variantList", variantList);
   return (
     <View>
       <View

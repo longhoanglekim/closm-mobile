@@ -12,6 +12,7 @@ const Category = () => {
         try {
           const result = await getProductOverview();
           setProductOverview(result); 
+          
         } catch (err) {
           console.error("Lỗi khi fetch product overview:", err);
         }
