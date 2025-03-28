@@ -21,16 +21,17 @@ export const addProduct = async (product: {
   }
 };
 export const getCategories = async () => {
-  const response = await fetch("http://192.168.202.100:8080/product/categories");
+  const response = await fetch("http://192.168.69.72:8080/product/categories");
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
   }
   return response.json();
 };
 export const getProductOverview = async () => {
-  const response = await fetch("http://192.168.202.100:8080/variants/product_overview");
+  const response = await fetch("http://192.168.69.72:8080/variants/product_overview");
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
   }
-  return response.json();
+  return response.json();console.log("Adding product to Firestore...");
+
 };

@@ -1,141 +1,103 @@
-import React from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  ScrollView, 
-  TouchableOpacity, 
-  StyleSheet 
-} from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import styles from '@/constants/ProductDetail';
+import { getProductOverview } from "@/api/products/products";
+import { useFocusEffect } from "expo-router";
+import stylesHome from "@/constants/home";
+
 
 const ProductDetail = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
-//   const { categoryName } = route.params;
+  const { id } = useLocalSearchParams();
+  const [productOverview, setProductOverview] = useState([]);
 
-  // Mock data - replace with your actual product data
-  const products = [
-    {
-      id: 1,
-      name: 'Classic T-Shirt',
-      price: 29.99,
-      image: 'https://picsum.photos/300/400?random=1'
-    },
-    {
-      id: 2,
-      name: 'Stylish Hoodie',
-      price: 49.99,
-      image: 'https://picsum.photos/300/400?random=2'
-    },
-    {
-      id: 3,
-      name: 'Trendy Jacket',
-      price: 79.99,
-      image: 'https://picsum.photos/300/400?random=3'
-    },
-    {
-      id: 4,
-      name: 'Casual Shirt',
-      price: 39.99,
-      image: 'https://picsum.photos/300/400?random=4'
-    }
-  ];
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProductOverview = async () => {
+        try {
+          const result = await getProductOverview();
+          setProductOverview(result);
+        } catch (err) {
+          console.error("Lỗi khi fetch product overview:", err);
+        }
+      };
+
+      fetchProductOverview();
+    }, [])
+  );
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()} 
-          style={styles.backButton}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
+      <View style={styles.detailHeader}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        {/* <Text style={styles.headerTitle}>{categoryName}</Text> */}
+        <Text style={styles.headerTitle}></Text>
+
+      </View>
+
+      {/* Category Tabs */}
+      <View style={styles.categoryTabs}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryTabsScroll}
+        >
+          {[
+            'Dresses', 'Pants', 'Skirts', 'Shorts', 'Jackets',
+            'Hoodies', 'Shirts', 'Polo', 'T-shirts', 'Tunics'
+          ].map((category) => (
+            <TouchableOpacity key={category} style={styles.categoryTab}>
+              <Text style={styles.categoryTabText}>{category}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* All Items Header */}
+      <View style={styles.allItemsHeader}>
+        <Text style={styles.allItemsTitle}>All Items</Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterButtonText}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Product Grid */}
-      <ScrollView contentContainerStyle={styles.productGrid}>
-        {products.map((product) => (
-          <TouchableOpacity 
-            key={product.id} 
-            style={styles.productCard}
-            onPress={() => {/* Navigate to product detail */}}
-          >
-            <Image 
-              source={{ uri: product.image }} 
-              style={styles.productImage} 
-            />
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{product.name}</Text>
-              <Text style={styles.productPrice}>${product.price}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
+      <View style={styles.productGrid}>
+        
+        {productOverview.map((categoryData) => (
+                  <View key={categoryData.category}>
+                    <View >
+                      {categoryData.variants.map((variant) => (
+                        <TouchableOpacity
+                          key={variant.id}
+                        >
+                          <Image
+                            source={{ uri: variant.imageUrl }}
+                            style={stylesHome.categoryImage}
+                            resizeMode="cover"
+                          />
+                          {/* <Text>{categoryData.category}</Text> */}
+                        </TouchableOpacity>
+                      ))}
+        
+                    </View>
+                    <View style={stylesHome.categoryInfo}>
+                      <Text style={stylesHome.categoryName}>{categoryData.category}</Text>
+                      <View style={stylesHome.countBadge}>
+                        <Text style={stylesHome.countText}>{categoryData.variants.length}</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+
+      </View>
+    </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF'
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0'
-  },
-  backButton: {
-    marginRight: 15
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#333'
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  productGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    padding: 10
-  },
-  productCard: {
-    width: '48%',
-    marginBottom: 15,
-    borderRadius: 10,
-    backgroundColor: '#F5F5F5',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
-  },
-  productImage: {
-    width: '100%',
-    height: 200,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10
-  },
-  productInfo: {
-    padding: 10
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  productPrice: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 5
-  }
-});
 
 export default ProductDetail;
