@@ -4,10 +4,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import styles from '@/constants/ProductDetail';
 import { getProductOverview } from "@/api/products/products";
 import { useFocusEffect } from "expo-router";
-import stylesHome from "@/constants/home";
+
 
 const ProductDetail = () => {
-  const { id } = useLocalSearchParams();
   const [productOverview, setProductOverview] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [availableCategories, setAvailableCategories] = useState(['All']);

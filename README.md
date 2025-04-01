@@ -55,3 +55,4 @@ Join our community of developers creating universal apps.
    - https://redux.js.org/introduction/installation
 3. Project architecture
    - https://medium.com/@jwbrendan/an-implementation-of-expo-router-with-typescript-tab-navigators-and-stack-navigators-in-a-react-f0655d12d86b
+     eas build --profile development --platform android
