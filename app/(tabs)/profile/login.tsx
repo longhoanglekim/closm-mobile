@@ -73,7 +73,8 @@ const LoginScreen = () => {
               onPress={async () => {
                 console.log("login");
                 const repsonse = await login(email, password);
-                if (repsonse.status) {
+                if (repsonse.token) {
+                  console.log(repsonse);
                   router.replace("/(tabs)/cart");
                 } else {
                   setError(repsonse.message);

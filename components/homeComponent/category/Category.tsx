@@ -22,6 +22,7 @@ const Category = () => {
     }, [])
   );
   const handleVariantPress = (variantId: number) => {
+    console.log("Variant ID:", variantId);
     router.push(`/productDetail?id=${variantId}`);
   };
 

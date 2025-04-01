@@ -11,7 +11,7 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import { createUser } from "../../../api/auth/auth";
+import { register } from "../../../api/auth/auth";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -123,11 +123,7 @@ const Register = () => {
                 }}
                 onPress={async () => {
                   console.log("🛠 Bắt đầu đăng ký với:", email, password);
-                  const userCreator = await createUser(
-                    fullName,
-                    email,
-                    password
-                  );
+                  const userCreator = await register(fullName, email, password);
 
                   if (userCreator.error) {
                     console.log("❌ Lỗi đăng ký:", userCreator.error);
