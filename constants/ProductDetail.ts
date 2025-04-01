@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  // Your original styles
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -66,11 +67,13 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    flex : 1
+    flex: 1,
   },
   productItem: {
-    width: '48%',
+    width: '100%',
+    height: '100%',
     marginBottom: 15,
+    aspectRatio: 1,
   },
   productImage: {
     width: '100%',
@@ -83,8 +86,110 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  categoryContainer: {
+    width: '48%',
+    marginBottom: 20,
+  },
+  imagesContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    marginBottom: 8,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#f5f5f5',
+  },
+  selectedCategoryTab: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#ddd',
+  },
+  selectedCategoryTabText: {
+    fontWeight: 'bold',
+  },
+
+  // Additional styles from my suggestion
+  variantsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  variantItem: {
+    width: '48%',
+    aspectRatio: 1,
+    marginBottom: 10,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#f5f5f5',
+  },
+  // variantImage: {
+  //   width: '100%',
+  //   height: '100%',
+  // },
+  selectedCategoryInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  selectedCategoryName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  selectedCountBadge: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  selectedCountText: {
+    fontSize: 14,
+  },
+  noProductsText: {
+    textAlign: 'center',
+    padding: 20,
+    fontSize: 16,
+    color: '#888',
+    width: '100%',
+  },
+  //neww
+  variantCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 15,
+    overflow: 'hidden',
+    elevation: 2,
+  },
+  variantImage: {
+    width: '100%',
+    height: 140,
+  },
+  variantInfo: {
+    padding: 10,
+  },
+  variantName: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
+    color: '#333',
+  },
+  variantPrice: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#d42f2f',
+    marginBottom: 4,
+  },
+  //details items
+  variantDesc: {
+    fontSize: 12,
+    color: '#555',
+    marginBottom: 4,
+  },
+  variantMeta: {
+    fontSize: 12,
+    color: '#777',
+  },
+  
+  
 });
-
-
-
-
