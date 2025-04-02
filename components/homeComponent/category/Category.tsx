@@ -23,10 +23,10 @@ const Category = () => {
   );
   const handleVariantPress = (variantId: number) => {
     console.log("Variant ID:", variantId);
-    router.push(`/CategoryOverview?id=${variantId}`);
+    router.push(`/view/CategoryOverview?id=${variantId}`);
   };
   const handleCategoryPress = (category: string) => {
-    router.push(`/CategoryOverview?category=${category}`);
+    router.push(`/view/CategoryOverview?category=${category}`);
   };
 
   return (
@@ -35,7 +35,7 @@ const Category = () => {
         <Text style={styles.headerTitle}>Categories</Text>
         <TouchableOpacity
           style={styles.seeAllButton}
-          onPress={() => router.push("/CategoryOverview")}
+          onPress={() => router.push("/view/CategoryOverview")}
         >
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>

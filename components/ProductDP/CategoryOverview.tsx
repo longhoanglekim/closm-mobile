@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import styles from "@/constants/ProductDetail";
-import { getProductOverview } from "@/api/products/products";
+import { getProductDetails } from "@/api/products/products";
 import { useFocusEffect } from "expo-router";
 
 const CategoryOverview = () => {
@@ -33,7 +33,7 @@ const CategoryOverview = () => {
     useCallback(() => {
       const fetchProductOverview = async () => {
         try {
-          const result = await getProductOverview();
+          const result = await getProductDetails();
           setProductOverview(result);
 
           // Extract unique categories from the data
@@ -50,12 +50,12 @@ const CategoryOverview = () => {
       fetchProductOverview();
     }, [])
   );
-
-  const handleBack = () => {
-    router.back();
+  const handleClickVariant = (variantId: number) => {
+    console.log("Variant ID:", variantId);
+    router.push(`/view/VariantDetails?id=${variantId}`);
   };
 
-  const handleCategoryPress = (category) => {
+  const handleCategoryPress = (category: string) => {
     setSelectedCategory(category);
   };
 
@@ -147,7 +147,11 @@ const CategoryOverview = () => {
               {/* Display all variants in a grid */}
               <View style={styles.variantsGrid}>
                 {categoryData.variants.map((variant) => (
-                  <TouchableOpacity key={variant.id} style={styles.variantCard}>
+                  <TouchableOpacity
+                    key={variant.id}
+                    style={styles.variantCard}
+                    onPress={() => handleClickVariant(variant.id)}
+                  >
                     <Image
                       source={{ uri: variant.imageUrl }}
                       style={styles.variantImage}
