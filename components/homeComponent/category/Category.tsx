@@ -23,7 +23,10 @@ const Category = () => {
   );
   const handleVariantPress = (variantId: number) => {
     console.log("Variant ID:", variantId);
-    router.push(`/productDetail?id=${variantId}`);
+    router.push(`/CategoryOverview?id=${variantId}`);
+  };
+  const handleCategoryPress = (category: string) => {
+    router.push(`/CategoryOverview?category=${category}`);
   };
 
   return (
@@ -32,7 +35,7 @@ const Category = () => {
         <Text style={styles.headerTitle}>Categories</Text>
         <TouchableOpacity
           style={styles.seeAllButton}
-          onPress={() => router.push("/productDetail")}
+          onPress={() => router.push("/CategoryOverview")}
         >
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>
@@ -44,29 +47,33 @@ const Category = () => {
       <View style={styles.categoriesContainer}>
         {productOverview.map((categoryData) => (
           <View key={categoryData.category} style={styles.categoryGroup}>
-            <View style={styles.categoryTouhablepacity}>
-              {categoryData.variants.map((variant) => (
-                <TouchableOpacity
-                  key={variant.id}
-                  onPress={() => handleVariantPress(variant.id)}
-                >
-                  <Image
-                    source={{ uri: variant.imageUrl }}
-                    style={styles.categoryImage}
-                    resizeMode="cover"
-                  />
-                  {/* <Text>{categoryData.category}</Text> */}
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View style={styles.categoryInfo}>
-              <Text style={styles.categoryName}>{categoryData.category}</Text>
-              <View style={styles.countBadge}>
-                <Text style={styles.countText}>
-                  {categoryData.variants.length}
-                </Text>
+            <TouchableOpacity
+              onPress={() => handleCategoryPress(categoryData.category)}
+            >
+              <View style={styles.categoryTouhablepacity}>
+                {categoryData.variants.map((variant) => (
+                  <TouchableOpacity
+                    key={variant.id}
+                    onPress={() => handleVariantPress(variant.id)}
+                  >
+                    <Image
+                      source={{ uri: variant.imageUrl }}
+                      style={styles.categoryImage}
+                      resizeMode="cover"
+                    />
+                    {/* <Text>{categoryData.category}</Text> */}
+                  </TouchableOpacity>
+                ))}
               </View>
-            </View>
+              <View style={styles.categoryInfo}>
+                <Text style={styles.categoryName}>{categoryData.category}</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countText}>
+                    {categoryData.variants.length}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
         ))}
       </View>

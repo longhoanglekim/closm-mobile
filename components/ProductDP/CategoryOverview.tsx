@@ -1,18 +1,25 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import styles from '@/constants/ProductDetail';
+import React, { useCallback, useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import styles from "@/constants/ProductDetail";
 import { getProductOverview } from "@/api/products/products";
 import { useFocusEffect } from "expo-router";
 
-
-const ProductDetail = () => {
+const CategoryOverview = () => {
+  const { category } = useLocalSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  useEffect(() => {
+    if (category && category !== selectedCategory) {
+      console.log("Category:", category);
+      setSelectedCategory(category.toString());
+    }
+  }, [category]); // Chỉ chạy khi category thay đổi
   const [productOverview, setProductOverview] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [availableCategories, setAvailableCategories] = useState(['All']);
+
+  const [availableCategories, setAvailableCategories] = useState(["All"]);
   //random mỗi khi render
   const allVariants = productOverview
-    .flatMap(category => category.variants)
+    .flatMap((category) => category.variants)
     .sort(() => Math.random() - 0.5);
 
   //random 1 lần duy nhất khi productoverview thay đổi sử dụng usememo
@@ -22,8 +29,6 @@ const ProductDetail = () => {
   //     .sort(() => Math.random() - 0.5);
   // }, [productOverview]);
 
-
-
   useFocusEffect(
     useCallback(() => {
       const fetchProductOverview = async () => {
@@ -32,7 +37,10 @@ const ProductDetail = () => {
           setProductOverview(result);
 
           // Extract unique categories from the data
-          const categories = ['All', ...new Set(result.map(item => item.category))];
+          const categories = [
+            "All",
+            ...new Set(result.map((item) => item.category)),
+          ];
           setAvailableCategories(categories);
         } catch (err) {
           console.error("Lỗi khi fetch product overview:", err);
@@ -52,19 +60,20 @@ const ProductDetail = () => {
   };
 
   // Filter products based on selected category
-  const filteredProducts = selectedCategory === 'All'
-    ? productOverview
-    : productOverview.filter(item => item.category === selectedCategory);
+  const filteredProducts =
+    selectedCategory === "All"
+      ? productOverview
+      : productOverview.filter((item) => item.category === selectedCategory);
 
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.detailHeader}>
+      {/* <View style={styles.detailHeader}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}></Text>
-      </View>
+      </View> */}
 
       {/* Category Tabs */}
       <View style={styles.categoryTabs}>
@@ -78,14 +87,17 @@ const ProductDetail = () => {
               key={category}
               style={[
                 styles.categoryTab,
-                selectedCategory === category && styles.selectedCategoryTab
+                selectedCategory === category && styles.selectedCategoryTab,
               ]}
               onPress={() => handleCategoryPress(category)}
             >
-              <Text style={[
-                styles.categoryTabText,
-                selectedCategory === category && styles.selectedCategoryTabText
-              ]}>
+              <Text
+                style={[
+                  styles.categoryTabText,
+                  selectedCategory === category &&
+                    styles.selectedCategoryTabText,
+                ]}
+              >
                 {category}
               </Text>
             </TouchableOpacity>
@@ -96,7 +108,7 @@ const ProductDetail = () => {
       {/* Category Title */}
       <View style={styles.allItemsHeader}>
         <Text style={styles.allItemsTitle}>
-          {selectedCategory === 'All' ? 'All Items' : selectedCategory}
+          {selectedCategory === "All" ? "All Items" : selectedCategory}
         </Text>
         <TouchableOpacity style={styles.filterButton}>
           <Text style={styles.filterButtonText}>⚙️</Text>
@@ -104,9 +116,9 @@ const ProductDetail = () => {
       </View>
 
       {/* Product Grid */}
-      {selectedCategory === 'All' ? (
+      {selectedCategory === "All" ? (
         <View style={styles.variantsGrid}>
-          {allVariants.map(variant => (
+          {allVariants.map((variant) => (
             <TouchableOpacity key={variant.id} style={styles.variantCard}>
               <Image
                 source={{ uri: variant.imageUrl }}
@@ -115,16 +127,20 @@ const ProductDetail = () => {
               />
               <View style={styles.variantInfo}>
                 <Text style={styles.variantName}>{variant.name}</Text>
-                <Text style={styles.variantPrice}>{variant.price.toLocaleString()}₫</Text>
-                <Text style={styles.variantDesc} numberOfLines={2}>{variant.description}</Text>
-                <Text style={styles.variantMeta}>Size: {variant.size} | Color: {variant.color}</Text>
+                <Text style={styles.variantPrice}>
+                  {variant.price.toLocaleString()}₫
+                </Text>
+                <Text style={styles.variantDesc} numberOfLines={2}>
+                  {variant.description}
+                </Text>
+                <Text style={styles.variantMeta}>
+                  Size: {variant.size} | Color: {variant.color}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
         </View>
-
       ) : (
-
         <View>
           {filteredProducts.map((categoryData) => (
             <View key={categoryData.category}>
@@ -153,22 +169,23 @@ const ProductDetail = () => {
                 ))}
               </View>
 
-
-              {/* Category info at bottom */}
-              <View style={styles.selectedCategoryInfo}>
-                <Text style={styles.selectedCategoryName}>{categoryData.category}</Text>
+              {/* Doi lai layout nhin nay tron qua */}
+              {/* <View style={styles.selectedCategoryInfo}>
+                <Text style={styles.selectedCategoryName}>
+                  {categoryData.category}
+                </Text>
                 <View style={styles.selectedCountBadge}>
-                  <Text style={styles.selectedCountText}>{categoryData.variants.length}</Text>
+                  <Text style={styles.selectedCountText}>
+                    {categoryData.variants.length}
+                  </Text>
                 </View>
-              </View>
+              </View> */}
             </View>
           ))}
         </View>
-
-
       )}
     </ScrollView>
   );
 };
 
-export default ProductDetail;
+export default CategoryOverview;
