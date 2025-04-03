@@ -14,8 +14,24 @@ import ListProductType from "@/components/ListProductType/ListProductType";
 import Banner from "@/components/banner/Bannner";
 import NewItems from "@/components/newItems/NewItems";
 import SearchModal from "@/components/homeComponent/search/searchModal";
+import { getProductOverview } from "@/api/products/products";
+
 export default function HomeScreen() {
   const [isMoalVisible, setModalVisible] = useState(false);
+  const [productOverview, setProductOverview] = useState([]);
+
+  useEffect(() => {
+    const fetchProductOverview = async () => {
+      try {
+        const result = await getProductOverview();
+        setProductOverview(result);
+      } catch (err) {
+        console.error("Lỗi khi fetch product overview:", err);
+      }
+    };
+
+    fetchProductOverview();
+  }, []);
 
   return (
     <SafeAreaView className="pt-10 px-5 gap-4">
@@ -30,7 +46,6 @@ export default function HomeScreen() {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <SearchModal />
-
               <Text
                 style={{ color: "blue", marginTop: 20 }}
                 onPress={() => setModalVisible(false)}
@@ -42,7 +57,7 @@ export default function HomeScreen() {
         </Modal>
 
         <Banner />
-        <Category />
+        <Category productOverview={productOverview} />
         <TopProduct />
         <NewItems />
         <ListProductType />
@@ -50,6 +65,7 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
