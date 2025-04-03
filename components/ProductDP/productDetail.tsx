@@ -14,7 +14,6 @@ const ProductDetail = () => {
   const navigation = useNavigation();
 //   const { categoryName } = route.params;
 
-  // Mock data - replace with your actual product data
   const products = [
     {
       id: 1,
@@ -61,7 +60,7 @@ const ProductDetail = () => {
           <TouchableOpacity 
             key={product.id} 
             style={styles.productCard}
-            onPress={() => {/* Navigate to product detail */}}
+            onPress={() => {}}
           >
             <Image 
               source={{ uri: product.image }} 

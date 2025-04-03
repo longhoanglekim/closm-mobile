@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent dark background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     borderRadius: 8,
     marginVertical: 10,
   },
