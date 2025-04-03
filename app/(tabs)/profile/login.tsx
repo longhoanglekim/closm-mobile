@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Pressable,
   KeyboardAvoidingView,
 } from "react-native";
@@ -20,12 +19,12 @@ const LoginScreen = () => {
     <View className="flex-1 items-center">
       <View>
         <View style={{ marginTop: 120 }}>
-          <Text style={{ fontSize: 45 }}>Thật vui khi thấy bạn quay lại</Text>
+          <Text style={{ fontSize: 45 }}>Welcome back</Text>
         </View>
         <View style={{ marginTop: 80, gap: 10, paddingLeft: 20 }}>
           <Text>Email</Text>
           <TextInput
-            placeholder="Nhap tai khoan email"
+            placeholder="Enter your email"
             value={email}
             onChangeText={(value) => setEmail(value)}
             style={{
@@ -73,14 +72,15 @@ const LoginScreen = () => {
               onPress={async () => {
                 console.log("login");
                 const repsonse = await login(email, password);
-                if (repsonse.status) {
+                if (repsonse.token) {
+                  console.log(repsonse);
                   router.replace("/(tabs)/cart");
                 } else {
                   setError(repsonse.message);
                 }
               }}
             >
-              <Text>Đăng nhập</Text>
+              <Text>Login</Text>
             </Pressable>
             <View style={{ backgroundColor: "lightgray", borderRadius: 10 }}>
               <Link
@@ -90,7 +90,7 @@ const LoginScreen = () => {
                   padding: 13,
                 }}
               >
-                Chưa có tài khoản?
+                Don't have an account?
               </Link>
             </View>
           </View>

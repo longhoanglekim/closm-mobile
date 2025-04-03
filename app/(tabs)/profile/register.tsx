@@ -11,7 +11,7 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import { createUser } from "../../../api/auth/auth";
+import { register } from "../../../api/auth/auth";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,10 +29,10 @@ const Register = () => {
       fullName === ""
     ) {
       setIsReady(false);
-      setInvalidMessage("Chưa nhập đủ thông tin");
+      setInvalidMessage("Haven't filled in all the fields yet!");
     } else if (password !== repeatPassword) {
       setIsReady(false);
-      setInvalidMessage("Mật khẩu nhập lại không khớp nhau");
+      setInvalidMessage("Password and repeat password do not match!");
     } else {
       setInvalidMessage("");
       setIsReady(true);
@@ -49,15 +49,15 @@ const Register = () => {
           <View className="flex-1 items-center" style={{ padding: 20 }}>
             <View style={{ marginTop: 100 }}>
               <Text style={{ fontSize: 30, textAlign: "center" }}>
-                Chào mừng bạn đến với Closm
+                Welcome to Closm!
               </Text>
             </View>
 
             {/* Form nhập liệu */}
             <View style={{ marginTop: 40, width: "100%" }}>
-              <Text>Họ tên của bạn</Text>
+              <Text>Full name</Text>
               <TextInput
-                placeholder="Họ tên của bạn"
+                placeholder="Enter your full name"
                 autoCorrect={false}
                 autoComplete="off"
                 spellCheck={false}
@@ -69,7 +69,7 @@ const Register = () => {
 
               <Text>Email</Text>
               <TextInput
-                placeholder="Nhập email"
+                placeholder="Enter your email"
                 keyboardType="email-address"
                 style={styles.input}
                 value={email}
@@ -85,7 +85,7 @@ const Register = () => {
                 onChangeText={setPassword}
               />
 
-              <Text>Nhập lại mật khẩu</Text>
+              <Text>Repeat password</Text>
               <TextInput
                 placeholder="*******"
                 secureTextEntry
@@ -123,11 +123,7 @@ const Register = () => {
                 }}
                 onPress={async () => {
                   console.log("🛠 Bắt đầu đăng ký với:", email, password);
-                  const userCreator = await createUser(
-                    fullName,
-                    email,
-                    password
-                  );
+                  const userCreator = await register(fullName, email, password);
 
                   if (userCreator.error) {
                     console.log("❌ Lỗi đăng ký:", userCreator.error);
@@ -144,13 +140,13 @@ const Register = () => {
                 }}
               >
                 <Text style={{ color: "white", fontWeight: "bold" }}>
-                  Đăng ký
+                  Sign up
                 </Text>
               </Pressable>
 
               {/* Chuyển sang đăng nhập */}
               <View style={{ marginTop: 10, alignItems: "center" }}>
-                <Link href={"/(tabs)/profile/login"}>Đã có tài khoản?</Link>
+                <Link href={"/(tabs)/profile/login"}>Have an accounht?</Link>
               </View>
             </View>
           </View>

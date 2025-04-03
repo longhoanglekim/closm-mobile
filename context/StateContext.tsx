@@ -8,15 +8,13 @@ import React, {
 } from "react";
 import * as Notifications from "expo-notifications";
 import { registerForPushNotificationsAsync } from "@/utils/registerForPushNotificationAsync";
-interface NotificationContextType {
+interface ContextType {
   expoPushToken: string | null;
   notification: Notifications.Notification | null;
   error: Error | null;
 }
 
-const StateContext = createContext<NotificationContextType | undefined>(
-  undefined
-);
+const StateContext = createContext<ContextType | undefined>(undefined);
 
 export const useStateContext = () => {
   const context = useContext(StateContext);
@@ -37,6 +35,7 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
   const [notification, setNotification] =
     useState<Notifications.Notification | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [variantList, setVariantList] = useState<any[]>([]); // Đã đầy đủ
 
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
@@ -75,7 +74,15 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <StateContext.Provider value={{ expoPushToken, notification, error }}>
+    <StateContext.Provider
+      value={{
+        expoPushToken,
+        notification,
+        error,
+        variantList,
+        setVariantList,
+      }}
+    >
       {children}
     </StateContext.Provider>
   );
