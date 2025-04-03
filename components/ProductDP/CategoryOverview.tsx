@@ -51,7 +51,7 @@ const CategoryOverview = () => {
     }, [])
   );
   const handleClickVariant = (variantId: number) => {
-    console.log("Variant ID:", variantId);
+    console.log("Variant ID :", variantId);
     router.push(`/view/VariantDetails?id=${variantId}`);
   };
 
