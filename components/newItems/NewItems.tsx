@@ -16,19 +16,19 @@ const NewItems = () => {
         <Text style={styles.seeAll}>See All →</Text>
       </View>
       <FlatList
-  data={newItems}
-  numColumns={2}
-  keyExtractor={(item) => item.id.toString()}
-  nestedScrollEnabled={true} 
-  scrollEnabled={false} 
-  renderItem={({ item }) => (
-    <View style={styles.productContainer}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.price}>{item.price}</Text>
-    </View>
-  )}
-/>
+        data={newItems}
+        numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
+        nestedScrollEnabled={true}
+        scrollEnabled={false}
+        renderItem={({ item }) => (
+          <View style={styles.productContainer}>
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.price}>{item.price}</Text>
+          </View>
+        )}
+      />
 
 
     </View>
