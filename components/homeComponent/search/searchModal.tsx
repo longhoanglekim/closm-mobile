@@ -1,13 +1,11 @@
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
 import {
   FlatList,
-  Pressable,
   Text,
-  TextInput,
   View,
   Image,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 
 interface Variant {
@@ -23,108 +21,83 @@ interface CategoryData {
 
 interface Props {
   productOverview: CategoryData[];
+  searchText: string;
+  setSearchText: (text: string) => void;
+  searchResults: Variant[];
+  setSearchResults: (results: Variant[]) => void;
 }
 
-const SearchModal = ({ productOverview }: Props) => {
-  const [text, setText] = React.useState("");
-  const [filteredData, setFilteredData] = React.useState<Variant[]>([]);
-  // console.log("productOverview", productOverview);
-  // Xử lý tìm kiếm khi người dùng nhập
-  const handleSearch = (searchText: string) => {
-    setText(searchText);
-
-    if (searchText.trim() === "") {
-      setFilteredData([]);
-      return;
-    }
-
-    // Chuẩn hóa dữ liệu: loại bỏ "-" và chuyển về chữ thường
-    const normalizedSearchText = searchText.replace(/-/g, "").toLowerCase();
-
-    const results: Variant[] = [];
-    productOverview.forEach((category) => {
-      category.variants.forEach((variant) => {
-        const normalizedName = variant.name.replace(/-/g, "").toLowerCase();
-        console.log("normalizedName product", normalizedName);
-        console.log("normalizedName search", normalizedSearchText);
-        const words = normalizedName.split(" "); // Tách tên sản phẩm thành mảng từ
-        if (
-          words.some(
-            (word) =>
-              word.includes(normalizedSearchText) &&
-              word[0] === normalizedSearchText[0]
-          )
-        ) {
-          results.push(variant);
-        }
-      });
-    });
-
-    setFilteredData(results);
-  };
-
+const SearchModal = ({ searchResults, setSearchText }: Props) => {
   return (
-    <View>
-      {/* Ô tìm kiếm */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: 20,
-          paddingHorizontal: 10,
-        }}
-      >
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            paddingLeft: 10,
-            borderRadius: 5,
-            width: "85%",
-          }}
-          placeholder="Enter text..."
-          value={text}
-          onChangeText={handleSearch}
-        />
-        <Pressable>
-          <FontAwesomeIcon icon={faSearch} style={{ marginLeft: 10 }} />
-        </Pressable>
-      </View>
-
-      {/* Danh sách kết quả tìm kiếm */}
-      {filteredData.length > 0 && (
+    <View style={styles.overlay}>
+      <View style={styles.container}>
         <FlatList
-          data={filteredData}
+          data={searchResults}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 10,
-                borderBottomWidth: 1,
-                borderBottomColor: "#ddd",
-              }}
-            >
-              <Image
-                source={{ uri: item.imageUrl }}
-                style={{ width: 50, height: 50, marginRight: 10 }}
-              />
+            <View style={styles.resultItem}>
+              <Image source={{ uri: item.imageUrl }} style={styles.image} />
               <Text>{item.name}</Text>
             </View>
           )}
-          style={{
-            marginTop: 10,
-            maxHeight: 300, // Giới hạn chiều cao
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            elevation: 3, // Hiệu ứng đổ bóng
-          }}
+          ListEmptyComponent={
+            <View style={styles.resultItem}>
+              <Text>Không tìm thấy sản phẩm</Text>
+            </View>
+          }
         />
-      )}
+        <TouchableOpacity
+          onPress={() => setSearchText("")}
+          style={styles.closeBtn}
+        >
+          <Text style={styles.closeText}>Đóng</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 export default SearchModal;
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 100, // Điều chỉnh nếu taskbar cao hơn
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    zIndex: 999,
+    paddingHorizontal: 10,
+  },
+  container: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    maxHeight: 400, // <-- Giới hạn chiều cao tối đa
+    elevation: 4,
+  },
+  resultItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  image: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+    borderRadius: 6,
+  },
+  closeBtn: {
+    marginTop: 10,
+    paddingVertical: 10,
+    backgroundColor: "#eee",
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  closeText: {
+    fontWeight: "bold",
+    color: "#333",
+  },
+});
