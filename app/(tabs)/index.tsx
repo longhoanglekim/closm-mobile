@@ -45,13 +45,13 @@ export default function HomeScreen() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <SearchModal />
-              <Text
+              <SearchModal productOverview={productOverview} />
+              {/* <Text
                 style={{ color: "blue", marginTop: 20 }}
                 onPress={() => setModalVisible(false)}
               >
                 Close Modal
-              </Text>
+              </Text> */}
             </View>
           </View>
         </Modal>
