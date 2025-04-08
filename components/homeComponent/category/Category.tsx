@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import styles from "@/constants/home";
 import { router } from "expo-router";
-
 interface Variant {
   id: number;
   imageUrl: string;
@@ -46,6 +45,7 @@ const Category = (props: Props) => {
 
       <View style={styles.categoriesContainer}>
         {productOverview.map((categoryData) => (
+
           <TouchableOpacity
             key={categoryData.category}
             style={styles.categoryGroup}

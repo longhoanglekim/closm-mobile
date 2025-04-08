@@ -95,7 +95,7 @@ const CategoryOverview = () => {
                 style={[
                   styles.categoryTabText,
                   selectedCategory === category &&
-                    styles.selectedCategoryTabText,
+                  styles.selectedCategoryTabText,
                 ]}
               >
                 {category}
@@ -156,6 +156,7 @@ const CategoryOverview = () => {
                       source={{ uri: variant.imageUrl }}
                       style={styles.variantImage}
                       resizeMode="cover"
+
                     />
                     <View style={styles.variantInfo}>
                       <Text style={styles.variantName}>{variant.name}</Text>
@@ -172,19 +173,7 @@ const CategoryOverview = () => {
                   </TouchableOpacity>
                 ))}
               </View>
-
-              {/* Doi lai layout nhin nay tron qua */}
-              {/* <View style={styles.selectedCategoryInfo}>
-                <Text style={styles.selectedCategoryName}>
-                  {categoryData.category}
-                </Text>
-                <View style={styles.selectedCountBadge}>
-                  <Text style={styles.selectedCountText}>
-                    {categoryData.variants.length}
-                  </Text>
-                </View>
-              </View> */}
-            </View>
+           </View>
           ))}
         </View>
       )}

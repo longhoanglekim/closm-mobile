@@ -1,11 +1,10 @@
 import React from "react";
-import { Text } from "react-native";
-const VariantDetails = () => {
-  return (
-    <>
-      <Text>VariantDetails</Text>
-    </>
-  );
-};
+import CategoryOverview from "../../components/ProductDP/CategoryOverview";
+import VariantDetails from "@/components/ProductDP/productDetail";
 
-export default VariantDetails;
+export default function ComponentScreen() {
+
+  return (
+    <VariantDetails />
+  );
+}
