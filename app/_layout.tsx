@@ -55,7 +55,10 @@ export default function RootLayout() {
           >
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+<<<<<<< HEAD
 
+=======
+>>>>>>> ba40067453ad99a9ed1bdccbe794e6717b0d429f
               <Stack.Screen
                 name="CategoryOverview"
                 options={{ headerShown: false }}

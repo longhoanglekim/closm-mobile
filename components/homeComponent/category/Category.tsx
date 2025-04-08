@@ -1,30 +1,30 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import styles from "@/constants/home";
-import { getProductOverview } from "@/api/products/products";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 
-const Category = () => {
-  const [productOverview, setProductOverview] = useState([]);
+interface Variant {
+  id: number;
+  imageUrl: string;
+}
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchProductOverview = async () => {
-        try {
-          const result = await getProductOverview();
-          setProductOverview(result);
-        } catch (err) {
-          console.error("Lỗi khi fetch product overview:", err);
-        }
-      };
+interface CategoryData {
+  category: string;
+  variants: Variant[];
+}
 
-      fetchProductOverview();
-    }, [])
-  );
+interface Props {
+  productOverview: CategoryData[];
+}
+//const Category: React.FC<Props> = ({ productOverview }) => ngắn gọn
+
+const Category = (props: Props) => {
+  const { productOverview } = props;
   const handleVariantPress = (variantId: number) => {
     console.log("Variant ID:", variantId);
     router.push(`/view/CategoryOverview?id=${variantId}`);
   };
+
   const handleCategoryPress = (category: string) => {
     router.push(`/view/CategoryOverview?category=${category}`);
   };
@@ -46,6 +46,7 @@ const Category = () => {
 
       <View style={styles.categoriesContainer}>
         {productOverview.map((categoryData) => (
+<<<<<<< HEAD
           <View key={categoryData.category} style={styles.categoryGroup}>
             <TouchableOpacity
               onPress={() => handleCategoryPress(categoryData.category)}
@@ -68,19 +69,36 @@ const Category = () => {
                     {/* <Text>{categoryData.category}</Text> */}
                   </TouchableOpacity>
                 ))}
+=======
+          <TouchableOpacity
+            key={categoryData.category}
+            style={styles.categoryGroup}
+            onPress={() => handleCategoryPress(categoryData.category)}
+          >
+            <View style={styles.categoryTouhablepacity}>
+              {categoryData.variants.map((variant) => (
+                <Image
+                  key={variant.id}
+                  source={{ uri: variant.imageUrl }}
+                  style={styles.categoryImage}
+                  resizeMode="cover"
+                />
+              ))}
+            </View>
+
+            <View style={styles.categoryInfo}>
+              <Text style={styles.categoryName}>{categoryData.category}</Text>
+              <View style={styles.countBadge}>
+                <Text style={styles.countText}>
+                  {categoryData.variants.length}
+                </Text>
+>>>>>>> ba40067453ad99a9ed1bdccbe794e6717b0d429f
               </View>
-              <View style={styles.categoryInfo}>
-                <Text style={styles.categoryName}>{categoryData.category}</Text>
-                <View style={styles.countBadge}>
-                  <Text style={styles.countText}>
-                    {categoryData.variants.length}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         ))}
       </View>
+
     </View>
   );
 };
