@@ -10,23 +10,28 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
+  Dimensions,
 } from "react-native";
 import { register } from "../../../api/auth/auth";
+
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [fullName, setFullname] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [readyToRegister, setIsReady] = useState(false);
   const [invalidMessage, setInvalidMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
   useEffect(() => {
     if (
       email === "" ||
       password === "" ||
       repeatPassword === "" ||
-      fullName === ""
+      fullName === "" ||
+      phone === ""
     ) {
       setIsReady(false);
       setInvalidMessage("Haven't filled in all the fields yet!");
@@ -37,11 +42,19 @@ const Register = () => {
       setInvalidMessage("");
       setIsReady(true);
     }
-  }, [email, password, fullName, repeatPassword, errorMessage, successMessage]);
+  }, [
+    email,
+    password,
+    fullName,
+    repeatPassword,
+    phone,
+    errorMessage,
+    successMessage,
+  ]);
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"} // Chỉ hoạt động trên iOS
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -64,7 +77,16 @@ const Register = () => {
                 keyboardType="default"
                 style={styles.input}
                 value={fullName}
-                onChangeText={setFullname}
+                onChangeText={setFullName}
+              />
+
+              <Text>Phone</Text>
+              <TextInput
+                placeholder="Enter your phone number"
+                keyboardType="phone-pad"
+                style={styles.input}
+                value={phone}
+                onChangeText={setPhone}
               />
 
               <Text>Email</Text>
@@ -94,22 +116,23 @@ const Register = () => {
                 onChangeText={setRepeatPassword}
               />
 
-              {invalidMessage != "" && (
+              {invalidMessage !== "" && (
                 <Text style={{ color: "red", marginVertical: 5 }}>
                   {invalidMessage}
                 </Text>
               )}
               {errorMessage !== "" && (
                 <View>
-                  <Text>{errorMessage}</Text>
+                  <Text style={{ color: "red" }}>{errorMessage}</Text>
                 </View>
               )}
-              {/* Nút đăng ký */}
               {successMessage !== "" && (
                 <View>
-                  <Text>{successMessage}</Text>
+                  <Text style={{ color: "green" }}>{successMessage}</Text>
                 </View>
               )}
+
+              {/* Nút đăng ký */}
               <Pressable
                 disabled={!readyToRegister}
                 style={{
@@ -122,8 +145,19 @@ const Register = () => {
                   marginTop: 10,
                 }}
                 onPress={async () => {
-                  console.log("🛠 Bắt đầu đăng ký với:", email, password);
-                  const userCreator = await register(fullName, email, password);
+                  console.log(
+                    "🛠 Bắt đầu đăng ký với:",
+                    fullName,
+                    email,
+                    phone,
+                    password
+                  );
+                  const userCreator = await register(
+                    fullName,
+                    email,
+                    password,
+                    phone
+                  ); // Nhớ cập nhật hàm register
 
                   if (userCreator.error) {
                     console.log("❌ Lỗi đăng ký:", userCreator.error);
@@ -146,7 +180,7 @@ const Register = () => {
 
               {/* Chuyển sang đăng nhập */}
               <View style={{ marginTop: 10, alignItems: "center" }}>
-                <Link href={"/(tabs)/profile/login"}>Have an accounht?</Link>
+                <Link href={"/(tabs)/profile/login"}>Have an account?</Link>
               </View>
             </View>
           </View>
@@ -156,13 +190,11 @@ const Register = () => {
   );
 };
 
-import { Dimensions } from "react-native";
-
 const { width } = Dimensions.get("window");
 
 const styles = {
   input: {
-    width: width - 40, // Trừ 40px để tránh sát viền màn hình
+    width: width - 40,
     height: 40,
     borderColor: "black",
     borderWidth: 1,
