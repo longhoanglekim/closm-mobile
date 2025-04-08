@@ -173,9 +173,7 @@ const CategoryOverview = () => {
                   </TouchableOpacity>
                 ))}
               </View>
-
-
-            </View>
+           </View>
           ))}
         </View>
       )}

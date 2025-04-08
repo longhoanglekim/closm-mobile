@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import styles from "@/constants/home";
 import { router } from "expo-router";
-
 interface Variant {
   id: number;
   imageUrl: string;
@@ -46,30 +45,7 @@ const Category = (props: Props) => {
 
       <View style={styles.categoriesContainer}>
         {productOverview.map((categoryData) => (
-<<<<<<< HEAD
-          <View key={categoryData.category} style={styles.categoryGroup}>
-            <TouchableOpacity
-              onPress={() => handleCategoryPress(categoryData.category)}
-            >
-              <View style={styles.categoryTouhablepacity}>
-                {categoryData.variants.map((variant) => (
-                  <TouchableOpacity
-                    key={variant.id}
-                    onPress={() => handleVariantPress(variant.id)}
-                  >
 
-                    <TouchableOpacity onPress={() => handleCategoryPress(categoryData.category)}>
-                      <Image
-                        source={{ uri: variant.imageUrl }}
-                        style={styles.categoryImage}
-                        resizeMode="cover"
-                      />
-                    </TouchableOpacity>
-
-                    {/* <Text>{categoryData.category}</Text> */}
-                  </TouchableOpacity>
-                ))}
-=======
           <TouchableOpacity
             key={categoryData.category}
             style={styles.categoryGroup}
@@ -92,7 +68,6 @@ const Category = (props: Props) => {
                 <Text style={styles.countText}>
                   {categoryData.variants.length}
                 </Text>
->>>>>>> ba40067453ad99a9ed1bdccbe794e6717b0d429f
               </View>
             </View>
           </TouchableOpacity>
