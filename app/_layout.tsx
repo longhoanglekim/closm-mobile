@@ -25,10 +25,8 @@ import { Provider } from "react-redux";
 import store from "@/redux/store";
 import { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
-<<<<<<< HEAD
-=======
+
 import ProductDetail from "@/components/ProductDP/CategoryOverview";
->>>>>>> 29c1c6d6997a87723af3f2da0f718c28c56bac21
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -57,13 +55,11 @@ export default function RootLayout() {
           >
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-<<<<<<< HEAD
-=======
+
               <Stack.Screen
                 name="CategoryOverview"
                 options={{ headerShown: false }}
               />
->>>>>>> 29c1c6d6997a87723af3f2da0f718c28c56bac21
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style="auto" />

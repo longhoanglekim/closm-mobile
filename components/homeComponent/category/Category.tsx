@@ -56,11 +56,15 @@ const Category = () => {
                     key={variant.id}
                     onPress={() => handleVariantPress(variant.id)}
                   >
-                    <Image
-                      source={{ uri: variant.imageUrl }}
-                      style={styles.categoryImage}
-                      resizeMode="cover"
-                    />
+
+                    <TouchableOpacity onPress={() => handleCategoryPress(categoryData.category)}>
+                      <Image
+                        source={{ uri: variant.imageUrl }}
+                        style={styles.categoryImage}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+
                     {/* <Text>{categoryData.category}</Text> */}
                   </TouchableOpacity>
                 ))}
