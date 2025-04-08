@@ -8,13 +8,15 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { login } from "../../../api/auth/auth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "@/redux/reducers/User";
 const LoginScreen = () => {
-  const user = useSelector((state) => state.user);
-  console.log(user.fullname);
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   return (
     <View className="flex-1 items-center">
       <View>
@@ -71,9 +73,14 @@ const LoginScreen = () => {
               }}
               onPress={async () => {
                 console.log("login");
-                const repsonse = await login(email, password);
-                if (repsonse.token) {
-                  console.log(repsonse);
+                const response = await login(email, password);
+                if (response.token) {
+                  console.log("Login successful:", response.token);
+                  dispatch(
+                    loginSuccess({
+                      token: response.token,
+                    })
+                  );
                   router.replace("/(tabs)/cart");
                 } else {
                   setError(repsonse.message);

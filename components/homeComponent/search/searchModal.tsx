@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -6,6 +7,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 
 interface Variant {
@@ -28,6 +30,13 @@ interface Props {
 }
 
 const SearchModal = ({ searchResults, setSearchText }: Props) => {
+  const router = useRouter(); // Assuming you're using a router for navigation
+  const handleClickItem = (id: number) => {
+    // Handle the click event for the item
+    console.log(`Clicked item with id: ${id}`);
+    router.push(`/view/VariantDetails?id=${id}`); // Navigate to the details page
+  };
+
   return (
     <View style={styles.overlay}>
       <View style={styles.container}>
@@ -35,10 +44,12 @@ const SearchModal = ({ searchResults, setSearchText }: Props) => {
           data={searchResults}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.resultItem}>
-              <Image source={{ uri: item.imageUrl }} style={styles.image} />
-              <Text>{item.name}</Text>
-            </View>
+            <Pressable onPress={() => handleClickItem(item.id)}>
+              <View style={styles.resultItem}>
+                <Image source={{ uri: item.imageUrl }} style={styles.image} />
+                <Text>{item.name}</Text>
+              </View>
+            </Pressable>
           )}
           ListEmptyComponent={
             <View style={styles.resultItem}>
