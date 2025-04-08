@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   backButton: {
     padding: 10,
-  },
+  }, 
   backButtonText: {
     fontSize: 24,
   },

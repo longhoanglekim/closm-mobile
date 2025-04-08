@@ -4,8 +4,6 @@
 export const getCategories = async () => {
   const response = await fetch("http://172.23.64.1:8080/products/categories");
 
-
-
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
   }
@@ -17,6 +15,7 @@ export const getProductOverview = async () => {
   const response = await fetch("http://172.23.64.1:8080/products/overview");
 
 
+
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
   }
@@ -25,7 +24,7 @@ export const getProductOverview = async () => {
 
 
 export const getProductDetails = async () => {
-  const response = await fetch("http://172.23.64.1:8080/products/details");
+  const response = await fetch("http://192.168.69.72:8080/products/details");
 
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
