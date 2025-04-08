@@ -177,7 +177,7 @@ export default StyleSheet.create({
     fontSize: 12,
   },
   buyBtn: {
-    flex: 2,
+    flex: 1,
     backgroundColor: "#33CCFF",
     justifyContent: "center",
     alignItems: "center",

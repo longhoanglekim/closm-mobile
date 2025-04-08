@@ -10,6 +10,7 @@ import {
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { getProductDetails } from "@/api/products/products";
 import styles from "@/constants/VariantDetails";
+import ProductDetailModal from "./ProductDetailModal";
 
 type VariantDetail = {
   id: number;
@@ -22,6 +23,12 @@ type VariantDetail = {
   quantity: number;
 };
 
+type ProductCategory = {
+  id: number;
+  name: string;
+  variants: VariantDetail[];
+};
+
 const ProductDetail = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -31,27 +38,41 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+  const [allProductData, setAllProductData] = useState<ProductCategory[]>([]);
 
   useEffect(() => {
     const fetchVariantDetails = async () => {
       try {
         setLoading(true);
-        // Get all products
         const allProducts = await getProductDetails();
-        
-        // Find the variant with matching ID
+        setAllProductData(allProducts);
+
         let foundVariant = null;
+        let productCategory = null;
+
         for (const category of allProducts) {
           const variantFound = category.variants.find((v: VariantDetail) => v.id === Number(id));
           if (variantFound) {
             foundVariant = variantFound;
+            productCategory = category;
             break;
           }
         }
-        
+
         if (foundVariant) {
           setVariant(foundVariant);
           setSelectedSize(foundVariant.size);
+
+          if (productCategory) {
+            const sizes = productCategory.variants
+              .filter((v: VariantDetail) => v.name === foundVariant.name && v.color === foundVariant.color)
+              .map((v: VariantDetail) => v.size);
+
+            const uniqueSizes = [...new Set(sizes)];
+            setAvailableSizes(uniqueSizes);
+          }
         }
       } catch (err) {
         console.error("Error fetching variant details:", err);
@@ -63,22 +84,10 @@ const ProductDetail = () => {
     fetchVariantDetails();
   }, [id]);
 
-  const decreaseQuantity = () => {
-    if (quantity > 1) setQuantity(quantity - 1);
-  };
+  const handleAddToCart = (cartItem) => {
+    console.log("Added to cart:", cartItem);
+    setModalVisible(false);
 
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const handleAddToCart = () => {
-    console.log("Added to cart:", {
-      id: variant?.id,
-      name: variant?.name,
-      quantity,
-      size: selectedSize,
-      price: variant?.price,
-    });
   };
 
   const handleBuyNow = () => {
@@ -110,10 +119,6 @@ const ProductDetail = () => {
       </View>
     );
   }
-
-  // If the current variant has size, use it as one of the available sizes
-  // You can also get sizes from other variants with the same name if needed
-  const availableSizes = [variant.size];
 
   return (
     <View style={styles.page}>
@@ -174,13 +179,13 @@ const ProductDetail = () => {
         <View style={styles.shippingSection}>
           <View style={styles.shippingRow}>
             <Text>🚚</Text>
-            <Text style={styles.shippingText}>Nhận vào ngày mai, phí giao đỡ</Text>
+            <Text style={styles.shippingText}>Nhận hàng nhanh chóng, tiện lợi</Text>
             <Text>▶</Text>
           </View>
           <View style={styles.shippingRow}>
             <Text>🛡️</Text>
             <Text style={styles.shippingText}>
-              Trả hàng miễn phí 15 ngày • Bảo hiểm Thời trang
+              Trả hàng miễn phí 10 ngày | Bảo hiểm Thời trang
             </Text>
             <Text>▶</Text>
           </View>
@@ -192,13 +197,26 @@ const ProductDetail = () => {
             <Text>▶</Text>
           </View>
           <View style={styles.sizeList}>
-            <TouchableOpacity
-              style={[styles.sizeBox, styles.sizeBoxSelected]}
-            >
-              <Text style={[styles.sizeText, styles.sizeTextSelected]}>
-                {variant.size}
-              </Text>
-            </TouchableOpacity>
+            {availableSizes.map((size) => (
+              <TouchableOpacity
+                key={size}
+                style={[
+                  styles.sizeBox,
+                  selectedSize === size && styles.sizeBoxSelected,
+                ]}
+                onPress={() => setSelectedSize(size)}
+              >
+                <Text
+                  style={[
+                    styles.sizeText,
+                    selectedSize === size && styles.sizeTextSelected,
+                  ]}
+                >
+                  {size}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
             <View style={styles.colorInfo}>
               <Text style={styles.colorText}>Color: {variant.color}</Text>
               <Text style={styles.stockText}> | Số lượng: {variant.quantity}</Text>
@@ -220,9 +238,12 @@ const ProductDetail = () => {
           <Text>💬</Text>
           <Text style={styles.bottomBtnText}>Chat ngay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomBtn} onPress={handleAddToCart}>
+        <TouchableOpacity
+          style={styles.bottomBtn}
+          onPress={() => setModalVisible(true)}
+        >
           <Text>🛒</Text>
-          <Text style={styles.bottomBtnText}>Thêm vào giỏ hàng</Text>
+          <Text style={styles.bottomBtnText}>Thêm giỏ hàng</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buyBtn}
@@ -233,6 +254,14 @@ const ProductDetail = () => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <ProductDetailModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        variant={variant}
+        onAddToCart={handleAddToCart}
+        availableSizes={availableSizes}
+      />
     </View>
   );
 };
