@@ -31,3 +31,13 @@ export const getProductDetails = async () => {
   }
   return response.json();
 };
+
+
+export const getVariantListByName = async (name : string) => {
+  const response = await fetch(`${apiUrl}/variants?variantName=${name}`);
+
+  if (!response.ok) {
+    throw new Error("Lỗi khi lấy danh mục sản phẩm");
+  }
+  return response.json();
+};
