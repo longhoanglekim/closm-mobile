@@ -5,8 +5,6 @@ import styles from "@/constants/styles";
 import { settingClass } from "@/constants/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/reducers/User";
-import { auth } from "@/firebaseConfig";
-
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -35,7 +33,7 @@ export default function SettingsScreen() {
       <Button
         title="Log out"
         onPress={async () => {
-          await auth.signOut();
+          // await auth.signOut();
           dispatch(logout());
           router.push("/(tabs)/profile/login");
         }}

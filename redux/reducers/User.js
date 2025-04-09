@@ -1,5 +1,5 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
-import firestore from "@react-native-firebase/firestore"
+
 const initialState = {
     isLoggedIn: false,
     fullname : null,

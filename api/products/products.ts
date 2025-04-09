@@ -1,8 +1,8 @@
 
-
-
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+console.log("API URL:", apiUrl);
 export const getCategories = async () => {
-  const response = await fetch("http://192.168.202.103:8080/products/categories");
+  const response = await fetch(`${apiUrl}/products/categories`);
 
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
@@ -12,7 +12,7 @@ export const getCategories = async () => {
 
 export const getProductOverview = async () => {
 
-  const response = await fetch("http://192.168.202.103:8080/products/overview");
+  const response = await fetch(`${apiUrl}/products/overview`);
 
 
 
@@ -24,7 +24,17 @@ export const getProductOverview = async () => {
 
 
 export const getProductDetails = async () => {
-  const response = await fetch("http://192.168.202.103:8080/products/details");
+  const response = await fetch(`${apiUrl}/products/details`);
+
+  if (!response.ok) {
+    throw new Error("Lỗi khi lấy danh mục sản phẩm");
+  }
+  return response.json();
+};
+
+
+export const getVariantListByName = async (name : string) => {
+  const response = await fetch(`${apiUrl}/variants?variantName=${name}`);
 
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
