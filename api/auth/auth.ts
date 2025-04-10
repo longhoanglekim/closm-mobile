@@ -1,10 +1,10 @@
 
-import { createUserWithEmailAndPassword, updateProfile } from "@react-native-firebase/auth";
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 import store from "@/redux/store";
 
 export const login = async (email : string, password : string) => {
-  const response = await fetch("http://172.16.0.2:8080/auth/login", {
+  const response = await fetch(`${apiUrl}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const login = async (email : string, password : string) => {
   return response.json();
 };
 export const register = async (fullName : string, email : string, password : string, phone : string) => {
-  const response = await fetch("http://172.16.0.2:8080/auth/register", {
+  const response = await fetch(`${apiUrl}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
