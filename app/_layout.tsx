@@ -55,8 +55,13 @@ export default function RootLayout() {
           >
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
               <Stack.Screen
-                name="CategoryOverview"
+                name="view/CategoryOverview"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="view/VariantDetails"
                 options={{ headerShown: false }}
               />
               <Stack.Screen name="+not-found" />
