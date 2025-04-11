@@ -11,69 +11,45 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { getProductDetails } from "@/api/products/products";
 import styles from "@/constants/VariantDetails";
 import ProductDetailModal from "./ProductDetailModal";
-
-type VariantDetail = {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  imageUrl: string;
-  size: string;
-  color: string;
-  quantity: number;
-};
+import { getVariantListByName } from "@/api/products/products";
+// type VariantDetail = {
+//   id: number;
+//   name: string;
+//   price: number;
+//   description: string;
+//   imageUrl: string;
+//   size: string;
+//   color: string;
+//   quantity: number;
+// };
 
 type ProductCategory = {
   id: number;
   name: string;
-  variants: VariantDetail[];
+  variants: any[];
 };
 
 const ProductDetail = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { id } = route.params as { id: number };
+  const { id, tag } = route.params as { id: number; tag: string };
 
-  const [variant, setVariant] = useState<VariantDetail | null>(null);
+  const [variant, setVariant] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
-  const [allProductData, setAllProductData] = useState<ProductCategory[]>([]);
-
+  // lONG TEST
+  const [tagVariants, setTagVariants] = useState<any[]>([]);
   useEffect(() => {
     const fetchVariantDetails = async () => {
       try {
         setLoading(true);
-        const allProducts = await getProductDetails();
-        setAllProductData(allProducts);
 
-        let foundVariant = null;
-        let productCategory = null;
-
-        for (const category of allProducts) {
-          const variantFound = category.variants.find((v: VariantDetail) => v.id === Number(id));
-          if (variantFound) {
-            foundVariant = variantFound;
-            productCategory = category;
-            break;
-          }
-        }
-
-        if (foundVariant) {
-          setVariant(foundVariant);
-          setSelectedSize(foundVariant.size);
-
-          if (productCategory) {
-            const sizes = productCategory.variants
-              .filter((v: VariantDetail) => v.name === foundVariant.name && v.color === foundVariant.color)
-              .map((v: VariantDetail) => v.size);
-
-            const uniqueSizes = [...new Set(sizes)];
-            setAvailableSizes(uniqueSizes);
-          }
-        }
+        const tagData = await getVariantListByName(tag);
+        setTagVariants(tagData);
+        // console.log("Tag Variants:", tagVariants[0]?.imageUrl);
       } catch (err) {
         console.error("Error fetching variant details:", err);
       } finally {
@@ -82,12 +58,11 @@ const ProductDetail = () => {
     };
 
     fetchVariantDetails();
-  }, [id]);
+  }, [tag]); // ✅ Đúng dependency
 
   const handleAddToCart = (cartItem) => {
     console.log("Added to cart:", cartItem);
     setModalVisible(false);
-
   };
 
   const handleBuyNow = () => {
@@ -104,6 +79,10 @@ const ProductDetail = () => {
     navigation.goBack();
   };
 
+  const formatPrice = (price?: number) => {
+    return price != null ? price.toLocaleString() : "N/A";
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -112,13 +91,13 @@ const ProductDetail = () => {
     );
   }
 
-  if (!variant) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Product not found</Text>
-      </View>
-    );
-  }
+  // if (!tagVariants) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <Text>Product not found</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.page}>
@@ -137,20 +116,27 @@ const ProductDetail = () => {
         </View>
 
         <Image
-          source={{ uri: variant.imageUrl }}
+          source={{ uri: tagVariants.variantList[0]?.imageUrl }}
           style={styles.productImage}
           resizeMode="cover"
         />
+
         <View style={styles.imageNavigation}>
           <Text>1/1</Text>
         </View>
 
         <View style={styles.priceSection}>
-          <Text style={styles.price}>₫{variant.price.toLocaleString()}</Text>
-          <Text style={styles.originalPrice}>₫{(variant.price * 1.5).toLocaleString()}</Text>
+          {/* <Text style={styles.price}>₫{formatPrice(variant.price)}</Text> */}
+          <Text style={styles.price}>
+            ₫{formatPrice(tagVariants.variantList[0]?.price)}
+          </Text>
+          <Text style={styles.originalPrice}>
+            ₫{formatPrice(tagVariants.variantList[0]?.price * 1.5)}
+          </Text>
           <View style={styles.installment}>
             <Text style={styles.installmentText}>
-              Chỉ từ ₫{variant.price.toLocaleString()} x 1 kỳ với Closm Pay
+              Chỉ từ ₫{formatPrice(tagVariants.variantList[0]?.price)} x 1 kỳ
+              với Closm Pay
             </Text>
             <Text>▶</Text>
           </View>
@@ -167,9 +153,7 @@ const ProductDetail = () => {
 
         <View style={styles.titleSection}>
           <View style={styles.titleRow}>
-            <Text style={styles.titleText}>
-              {variant.name} - {variant.color} - {variant.description}
-            </Text>
+            <Text style={styles.titleText}>{tagVariants.name}</Text>
             <TouchableOpacity>
               <Text style={styles.heartIcon}>♡</Text>
             </TouchableOpacity>
@@ -179,7 +163,9 @@ const ProductDetail = () => {
         <View style={styles.shippingSection}>
           <View style={styles.shippingRow}>
             <Text>🚚</Text>
-            <Text style={styles.shippingText}>Nhận hàng nhanh chóng, tiện lợi</Text>
+            <Text style={styles.shippingText}>
+              Nhận hàng nhanh chóng, tiện lợi
+            </Text>
             <Text>▶</Text>
           </View>
           <View style={styles.shippingRow}>
@@ -193,7 +179,9 @@ const ProductDetail = () => {
 
         <View style={styles.sizeSection}>
           <View style={styles.sizeHeader}>
-            <Text>Chọn loại hàng (Size: {variant.size})</Text>
+            <Text>
+              Chọn loại hàng (Size: {tagVariants.variantList[0]?.size})
+            </Text>
             <Text>▶</Text>
           </View>
           <View style={styles.sizeList}>
@@ -216,10 +204,9 @@ const ProductDetail = () => {
                 </Text>
               </TouchableOpacity>
             ))}
-
             <View style={styles.colorInfo}>
-              <Text style={styles.colorText}>Color: {variant.color}</Text>
-              <Text style={styles.stockText}> | Số lượng: {variant.quantity}</Text>
+              <Text style={styles.colorText}>Color: {"red"}</Text>
+              <Text style={styles.stockText}> | Số lượng: {"100"}</Text>
             </View>
           </View>
         </View>
@@ -245,12 +232,9 @@ const ProductDetail = () => {
           <Text>🛒</Text>
           <Text style={styles.bottomBtnText}>Thêm giỏ hàng</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buyBtn}
-          onPress={handleBuyNow}
-        >
+        <TouchableOpacity style={styles.buyBtn} onPress={handleBuyNow}>
           <Text style={styles.buyBtnText}>
-            Mua với voucher ₫{variant.price.toLocaleString()}
+            Mua với voucher ₫{formatPrice(tagVariants.variantList[0]?.price)}
           </Text>
         </TouchableOpacity>
       </View>
@@ -258,7 +242,7 @@ const ProductDetail = () => {
       <ProductDetailModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        variant={variant}
+        tagVariants={tagVariants}
         onAddToCart={handleAddToCart}
         availableSizes={availableSizes}
       />

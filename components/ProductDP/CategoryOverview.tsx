@@ -22,13 +22,6 @@ const CategoryOverview = () => {
     .flatMap((category) => category.variants)
     .sort(() => Math.random() - 0.5);
 
-  //random 1 lần duy nhất khi productoverview thay đổi sử dụng usememo
-  // const allVariants = useMemo(() => {
-  //   return productOverview
-  //     .flatMap(category => category.variants)
-  //     .sort(() => Math.random() - 0.5);
-  // }, [productOverview]);
-
   useFocusEffect(
     useCallback(() => {
       const fetchProductOverview = async () => {
@@ -50,9 +43,9 @@ const CategoryOverview = () => {
       fetchProductOverview();
     }, [])
   );
-  const handleClickVariant = (variantId: number) => {
+  const handleClickVariant = (variantId: number, tag: string) => {
     console.log("Variant ID :", variantId);
-    router.push(`/view/VariantDetails?id=${variantId}`);
+    router.push(`/view/VariantDetails?id=${variantId}&tag=${tag}`);
   };
 
   const handleCategoryPress = (category: string) => {
@@ -67,15 +60,6 @@ const CategoryOverview = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      {/* <View style={styles.detailHeader}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}></Text>
-      </View> */}
-
-      {/* Category Tabs */}
       <View style={styles.categoryTabs}>
         <ScrollView
           horizontal
@@ -95,7 +79,7 @@ const CategoryOverview = () => {
                 style={[
                   styles.categoryTabText,
                   selectedCategory === category &&
-                  styles.selectedCategoryTabText,
+                    styles.selectedCategoryTabText,
                 ]}
               >
                 {category}
@@ -121,7 +105,7 @@ const CategoryOverview = () => {
           {allVariants.map((variant) => (
             <TouchableOpacity key={variant.id} style={styles.variantCard}>
               <Image
-                source={{ uri: variant.imageUrl }}
+                source={{ uri: variant.imgUrl }}
                 style={styles.variantImage}
                 resizeMode="cover"
               />
@@ -150,19 +134,26 @@ const CategoryOverview = () => {
                   <TouchableOpacity
                     key={variant.id}
                     style={styles.variantCard}
-                    onPress={() => handleClickVariant(variant.id)}
+                    onPress={() => handleClickVariant(variant.id, variant.tag)}
                   >
                     <Image
-                      source={{ uri: variant.imageUrl }}
+                      source={{ uri: variant.imgUrl }}
                       style={styles.variantImage}
                       resizeMode="cover"
-
                     />
                     <View style={styles.variantInfo}>
-                      <Text style={styles.variantName}>{variant.name}</Text>
+                      <Text style={styles.variantName}>{variant.tag}</Text>
                       <Text style={styles.variantPrice}>
-                        {variant.price?.toLocaleString()}₫
+                        {variant.minPrice != null
+                          ? variant.minPrice.toLocaleString()
+                          : "N/A"}{" "}
+                        -
+                        {variant.maxPrice != null
+                          ? variant.maxPrice.toLocaleString()
+                          : "N/A"}{" "}
+                        ₫
                       </Text>
+
                       <Text style={styles.variantDesc} numberOfLines={2}>
                         {variant.description}
                       </Text>
@@ -173,7 +164,7 @@ const CategoryOverview = () => {
                   </TouchableOpacity>
                 ))}
               </View>
-           </View>
+            </View>
           ))}
         </View>
       )}
