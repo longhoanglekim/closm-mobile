@@ -2,7 +2,6 @@
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 import store from "@/redux/store";
-
 export const login = async (email : string, password : string) => {
   const response = await fetch(`${apiUrl}/auth/login`, {
     method: "POST",

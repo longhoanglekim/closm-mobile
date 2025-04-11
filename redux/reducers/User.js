@@ -15,6 +15,7 @@ export const User = createSlice({
           state.token = action.payload.token;
         },
         logout: () => {
+            console.log("Logout")
             return initialState; // Reset toàn bộ state về giá trị ban đầu
         }
     }
