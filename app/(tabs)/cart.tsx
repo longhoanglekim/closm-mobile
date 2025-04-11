@@ -14,6 +14,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useStateContext } from "@/context/StateContext"; // Adjust import path as needed
 import styles from "@/constants/Cart";
+import ProtectedRoute from "@/route/ProtectedRoute";
 
 export default function CartScreen() {
   const { cartItems, addToCart, removeFromCart, updateQuantity } = useStateContext();
@@ -34,6 +35,7 @@ export default function CartScreen() {
   };
 
   return (
+    <ProtectedRoute>
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
@@ -132,6 +134,7 @@ export default function CartScreen() {
         </TouchableOpacity>
       </ThemedView>
     </SafeAreaView>
+    </ProtectedRoute>
   );
 }
 
