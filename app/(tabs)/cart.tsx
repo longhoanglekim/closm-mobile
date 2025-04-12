@@ -21,6 +21,10 @@ export default function CartScreen() {
   const { cartItems, addToCart, removeFromCart, updateQuantity } =
     useStateContext();
   const user = useSelector((state) => state.user);
+  if (user.isLoggedIn) {
+    console.log("User is logged in:", user.userInfo.email);
+  }
+
   const calculateTotal = () => {
     return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };

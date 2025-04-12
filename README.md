@@ -56,3 +56,5 @@ Join our community of developers creating universal apps.
 3. Project architecture
    - https://medium.com/@jwbrendan/an-implementation-of-expo-router-with-typescript-tab-navigators-and-stack-navigators-in-a-react-f0655d12d86b
      eas build --profile development --platform android
+
+- api lay tinh thanh : "https://provinces.open-api.vn/api/?depth=2"
