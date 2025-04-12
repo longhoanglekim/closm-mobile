@@ -1,5 +1,6 @@
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+// console.log(apiUrl);
 export const getCategories = async () => {
   const response = await fetch(`${apiUrl}/products/categories`);
 
@@ -12,9 +13,6 @@ export const getCategories = async () => {
 export const getProductOverview = async () => {
 
   const response = await fetch(`${apiUrl}/products/overview`);
-
-
-
   if (!response.ok) {
     throw new Error("Lỗi khi lấy danh mục sản phẩm");
   }

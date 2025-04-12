@@ -10,13 +10,18 @@ import {
 import { login } from "../../../api/auth/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
+import { useEffect } from "react";
+import { logout } from "@/redux/reducers/User";
 const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  useEffect(() => {
+    // Reset state như chưa đăng nhập để bảo đảm trạng thái ban đầu
+    dispatch(logout());
+  }, []);
   return (
     <View className="flex-1 items-center">
       <View>
