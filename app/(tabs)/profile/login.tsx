@@ -1,5 +1,5 @@
 import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,10 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  useEffect(() => {
+    // Reset state như chưa đăng nhập để bảo đảm trạng thái ban đầu
+    dispatch(logout());
+  }, []);
   return (
     <View className="flex-1 items-center">
       <View>
