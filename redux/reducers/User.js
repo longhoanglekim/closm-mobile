@@ -2,7 +2,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 
 const initialState = {
     isLoggedIn: false,
-    fullname : null,
+    userInfo : null,
     token : null,
 };
 export const User = createSlice({
@@ -13,6 +13,7 @@ export const User = createSlice({
         loginSuccess: (state, action) => {
           state.isLoggedIn = true;
           state.token = action.payload.token;
+        state.userInfo = action.payload.userInfo;
         },
         logout: () => {
             console.log("Logout")

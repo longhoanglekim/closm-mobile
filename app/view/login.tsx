@@ -10,6 +10,8 @@ import {
 import { login } from "../../api/auth/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
+import { getUptimeAsync } from "expo-device";
+import { getUserInfo } from "@/api/user/user";
 const LoginScreen = () => {
   const dispatch = useDispatch();
 
@@ -76,11 +78,15 @@ const LoginScreen = () => {
                 const response = await login(email, password);
                 if (response.token) {
                   console.log("Login successful:", response.token);
+                  const userInfo = await getUserInfo(email);
+    
                   dispatch(
                     loginSuccess({
                       token: response.token,
+                      userInfo: userInfo,
                     })
                   );
+                  console.log("Redirecting to cart screen");
                   router.replace("/(tabs)/cart");
                 } else {
                   setError(repsonse.message);
