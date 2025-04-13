@@ -1,6 +1,6 @@
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-// console.log(apiUrl);
+console.log(apiUrl);
 export const getCategories = async () => {
   const response = await fetch(`${apiUrl}/products/categories`);
 
