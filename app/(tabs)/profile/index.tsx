@@ -12,13 +12,13 @@ import {
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "@/constants/styles";
+import profileStyles from "@/constants/profile";
 import { FontAwesome } from "@expo/vector-icons";
 
 export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
-  console.log(user);
+  // console.log(user.userInfo);
   const router = useRouter();
-  const dispatch = useDispatch();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,18 +30,32 @@ export default function ProfileScreen() {
             }}
             style={styles.avatar}
           />
-          <Text style={styles.greeting}>Hello, {user.fullname}!</Text>
+          <Text style={styles.greeting}>Hello, {user.userInfo.fullName}!</Text>
 
           <Pressable onPress={() => router.push("/(tabs)/profile/setting")}>
             <FontAwesome name="cog" size={24} color="black" />
           </Pressable>
         </View>
 
-        <View style={styles.announcement}>
-          <Text style={styles.announcementText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </Text>
-          <FontAwesome name="arrow-right" size={20} color="blue" />
+        <View style={profileStyles.userAchivementContainer}>
+          <View style={profileStyles.achievement}>
+            <Text>Collecting Points {10}P</Text>
+          </View>
+          <View style={profileStyles.achievement}>
+            <Text>Voucher : {1} available </Text>
+          </View>
+        </View>
+
+        <View style={profileStyles.userActivityContainer}>
+          <View style={profileStyles.activity}>
+            <Text>Orders : 10P</Text>
+          </View>
+
+          <View style={profileStyles.verticalDivider} />
+
+          <View style={profileStyles.activity}>
+            <Text>Favorite : 1 items</Text>
+          </View>
         </View>
 
         <Text style={styles.sectionTitle}>Recently viewed</Text>
