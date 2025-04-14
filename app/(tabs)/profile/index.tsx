@@ -14,13 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "@/constants/styles";
 import profileStyles from "@/constants/profile";
 import { FontAwesome } from "@expo/vector-icons";
+import LoginScreen from "./login";
 
 export default function ProfileScreen() {
   const user = useSelector((state) => state.user);
   // console.log(user.userInfo);
   const router = useRouter();
 
-  return (
+  return ( (!user.isLoggedIn && <LoginScreen />) || (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
@@ -91,6 +92,6 @@ export default function ProfileScreen() {
           ))}
         </ScrollView>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView>)
   );
 }
