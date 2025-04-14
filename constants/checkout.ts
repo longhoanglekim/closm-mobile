@@ -1,0 +1,275 @@
+import { StyleSheet } from "react-native";
+
+
+export default StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#F2F2F7",
+      },
+      scrollView: {
+        flex: 1,
+      },
+      header: {
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+      },
+      headerTitle: {
+        fontSize: 28,
+        fontWeight: "bold",
+      },
+      sectionContainer: {
+        marginHorizontal: 16,
+        marginBottom: 20,
+      },
+      sectionTitle: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginBottom: 8,
+      },
+      infoBox: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 10,
+        padding: 16,
+        position: "relative",
+      },
+      addressText: {
+        fontSize: 14,
+        lineHeight: 20,
+      },
+      contactText: {
+        fontSize: 14,
+        lineHeight: 20,
+      },
+      editButton: {
+        position: "absolute",
+        top: 12,
+        right: 12,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: "#E5F2FF",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      itemsHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 8,
+      },
+      itemsTitleContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+      },
+      itemCountBadge: {
+        backgroundColor: "#007AFF",
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: 6,
+      },
+      itemCount: {
+        color: "#FFFFFF",
+        fontSize: 12,
+        fontWeight: "600",
+      },
+      voucherButton: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+      },
+      voucherButtonText: {
+        color: "#007AFF",
+        fontSize: 14,
+        fontWeight: "500",
+      },
+      itemsContainer: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 10,
+        overflow: "hidden",
+      },
+      cartItem: {
+        flexDirection: "row",
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F2F2F7",
+      },
+      productImage: {
+        width: 48,
+        height: 48,
+        borderRadius: 8,
+      },
+      productDetails: {
+        flex: 1,
+        marginLeft: 12,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      },
+      productInfo: {
+        flex: 1,
+        flexDirection: "row",
+      },
+      quantityBadge: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: "#F2F2F7",
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 8,
+      },
+      quantityText: {
+        fontSize: 12,
+        fontWeight: "600",
+      },
+      productName: {
+        flex: 1,
+        fontSize: 14,
+      },
+      productPrice: {
+        fontSize: 16,
+        fontWeight: "600",
+      },
+      shippingOptions: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 10,
+        overflow: "hidden",
+      },
+      shippingOption: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F2F2F7",
+      },
+      selectedShipping: {
+        backgroundColor: "#E5F2FF",
+      },
+      radioContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+      },
+      radioOuter: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "#007AFF",
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 8,
+      },
+      radioInner: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: "#007AFF",
+      },
+      shippingLabel: {
+        fontSize: 16,
+        fontWeight: "500",
+      },
+      shippingDetail: {
+        flexDirection: "row",
+        alignItems: "center",
+      },
+      shippingTime: {
+        fontSize: 14,
+        color: "#8E8E93",
+        marginRight: 8,
+      },
+      shippingPrice: {
+        fontSize: 16,
+        fontWeight: "600",
+        minWidth: 60,
+        textAlign: "right",
+      },
+      deliveryDate: {
+        fontSize: 12,
+        color: "#8E8E93",
+        marginTop: 8,
+      },
+      paymentMethodHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      },
+      paymentMethodBox: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 10,
+        padding: 16,
+      },
+      paymentMethodText: {
+        fontSize: 16,
+        fontWeight: "500",
+      },
+      footer: {
+        backgroundColor: "#FFFFFF",
+        padding: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderTopWidth: 1,
+        borderTopColor: "#F2F2F7",
+      },
+      totalContainer: {
+        flex: 1,
+      },
+      totalLabel: {
+        fontSize: 14,
+        color: "#8E8E93",
+      },
+      totalAmount: {
+        fontSize: 22,
+        fontWeight: "bold",
+      },
+      payButton: {
+        backgroundColor: "#000000",
+        borderRadius: 8,
+        padding: 16,
+        width: 150,
+        alignItems: "center",
+      },
+      payButtonText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "600",
+      },
+      tabBar: {
+        flexDirection: "row",
+        height: 50,
+        borderTopWidth: 1,
+        borderTopColor: "#F2F2F7",
+        backgroundColor: "#FFFFFF",
+        justifyContent: "space-around",
+        alignItems: "center",
+      },
+      tabItem: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+      },
+      cartBadge: {
+        position: "absolute",
+        top: 0,
+        right: "28%",
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: "#007AFF",
+      },
+      homeIndicator: {
+        width: 36,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: "#000000",
+        alignSelf: "center",
+        marginTop: 8,
+      },
+    });

@@ -17,10 +17,9 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  useEffect(() => {
-    // Reset state như chưa đăng nhập để bảo đảm trạng thái ban đầu
-    dispatch(logout());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(logout());
+  // }, []);
   return (
     <View className="flex-1 items-center">
       <View>

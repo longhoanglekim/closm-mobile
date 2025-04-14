@@ -30,7 +30,7 @@ export default function CartScreen() {
   };
 
   const handleCheckout = () => {
-    router.push("/(tabs)/checkout");
+    router.push("/view/checkout");
   };
 
   const addWishlistItemToCart = (item) => {

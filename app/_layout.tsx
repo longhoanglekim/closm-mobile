@@ -64,6 +64,10 @@ export default function RootLayout() {
                 name="view/VariantDetails"
                 options={{ headerShown: false }}
               />
+              <Stack.Screen
+                name="view/checkout"
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style="auto" />
