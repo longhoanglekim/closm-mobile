@@ -272,4 +272,33 @@ export default StyleSheet.create({
         alignSelf: "center",
         marginTop: 8,
       },
+      modalContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      modalContent: {
+        width: "90%",
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        padding: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      closeButton: {
+        marginTop: 16,
+        backgroundColor: "#007AFF",
+        paddingVertical: 10,
+        borderRadius: 4,
+        alignItems: "center",
+      },
+      closeButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+      },
     });
