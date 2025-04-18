@@ -7,74 +7,26 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { useStateContext } from "@/context/StateContext";
 import { useSelector } from "react-redux";
-import styles from "@/constants/checkout";
-import { getUserInfo } from "@/api/user/user"
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "@/constants/payment/checkout";
+import ShippingAddress from "./ShippingAddress";
 
 const Checkout = () => {
   const { cartItems } = useStateContext();
   const user = useSelector((state) => state.user);
 
+  const userInfo = user?.userInfo || { fullname: "", phone: "", email: "" };
+
   const [selectedShipping, setSelectedShipping] = useState("standard");
   const [shippingCost, setShippingCost] = useState(0);
-  const [contactInfo, setContactInfo] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const email = await AsyncStorage.getItem("email"); 
-        console.log("Email từ AsyncStorage:", email);
-  
-        if (!email) {
-          setError("Vui lòng đăng nhập để tiếp tục");
-          setLoading(false);
-          return;
-        }
-  
-        const data = await getUserInfo(email);
-        console.log("Dữ liệu từ API:", data);
-  
-        setContactInfo({
-          fullName: data.fullName,
-          email: data.email,
-          phone: data.phone,
-        });
-      } catch (err) {
-        setError("Không thể tải thông tin liên hệ");
-        console.error("Lỗi API:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchUserInfo();
-  }, []);
-  if (loading) {
-    return <Text>Đang tải...</Text>;
-  }
+  const [isShippingModalVisible, setIsShippingModalVisible] = useState(false); // State for modal visibility
 
-//   if (error) {
-//     return (
-//         <View style={styles.errorContainer}>
-//             <Text style={styles.errorText}>{error}</Text>
-//             <TouchableOpacity onPress={() => router.push('/(tabs)/profile/login')}>
-//                 <Text style={styles.loginLink}>Đăng nhập</Text>
-//             </TouchableOpacity>
-//         </View>
-//     );
-// }
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
@@ -84,8 +36,11 @@ const Checkout = () => {
   };
 
   const handlePayment = () => {
-    alert("Payment successful!");
-    router.push("/");
+    setIsShippingModalVisible(true); 
+  };
+
+  const closeShippingModal = () => {
+    setIsShippingModalVisible(false); 
   };
 
   return (
@@ -97,7 +52,7 @@ const Checkout = () => {
 
         {/* Shipping Address */}
         <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>Address</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Địa chỉ giao hàng</ThemedText>
           <View style={styles.infoBox}>
             <ThemedText style={styles.addressText}>
               địa chỉ giao hàng đến
@@ -111,10 +66,17 @@ const Checkout = () => {
 
         {/* Contact Information */}
         <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>Contact Information</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Thông tin liên hệ</ThemedText>
           <View style={styles.infoBox}>
-            <ThemedText style={styles.contactText}>{contactInfo.phone}</ThemedText>
-            <ThemedText style={styles.contactText}>{contactInfo.email}</ThemedText>
+            <ThemedText style={styles.contactText}>
+              {userInfo.fullName || "Chưa có tên"}
+            </ThemedText>
+            <ThemedText style={styles.contactText}>
+              {userInfo.phone || "Chưa có số điện thoại"}
+            </ThemedText>
+            <ThemedText style={styles.contactText}>
+              {userInfo.email || "Chưa có email"}
+            </ThemedText>
             <TouchableOpacity style={styles.editButton}>
               <Ionicons name="pencil" size={20} color="#007AFF" />
             </TouchableOpacity>
@@ -205,7 +167,7 @@ const Checkout = () => {
           </View>
 
           <ThemedText style={styles.deliveryDate}>
-            Ngày đến duwjw kiến chưa có
+            Ngày đến dự kiến chưa có
           </ThemedText>
         </View>
 
@@ -227,7 +189,7 @@ const Checkout = () => {
       <View style={styles.footer}>
         <View style={styles.totalContainer}>
           <ThemedText style={styles.totalLabel}>Tổng</ThemedText>
-          <ThemedText style={styles.totalAmount}>{(calculateTotal()).toLocaleString()}đ</ThemedText>
+          <ThemedText style={styles.totalAmount}>{calculateTotal().toLocaleString()}đ</ThemedText>
         </View>
 
         <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
@@ -235,25 +197,22 @@ const Checkout = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Bottom Tab Bar
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="home-outline" size={24} color="#007AFF" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="heart-outline" size={24} color="#8E8E93" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="document-text-outline" size={24} color="#8E8E93" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="cart-outline" size={24} color="#8E8E93" />
-          <View style={styles.cartBadge} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="person-outline" size={24} color="#8E8E93" />
-        </TouchableOpacity>
-      </View> */}
+      {/* Shipping Address Modal */}
+      <Modal
+        visible={isShippingModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={closeShippingModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <ShippingAddress />
+            <TouchableOpacity style={styles.closeButton} onPress={closeShippingModal}>
+              <Text style={styles.closeButtonText}>Đóng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
