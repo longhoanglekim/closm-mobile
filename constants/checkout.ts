@@ -272,4 +272,20 @@ export default StyleSheet.create({
         alignSelf: "center",
         marginTop: 8,
       },
+      errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        fontSize: 16,
+        color: 'red',
+        marginBottom: 10,
+    },
+    loginLink: {
+        fontSize: 16,
+        color: '#007AFF',
+        textDecorationLine: 'underline',
+    },
     });
