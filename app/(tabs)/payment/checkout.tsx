@@ -15,7 +15,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useStateContext } from "@/context/StateContext";
 import { useSelector } from "react-redux";
 import styles from "@/constants/payment/checkout";
-import ShippingAddress from "../../../components/payment/ShippingAddress";
+import ShippingAddress from "@/app/(tabs)/payment/ShippingAddress";
 
 const Checkout = () => {
   const { cartItems } = useStateContext();
