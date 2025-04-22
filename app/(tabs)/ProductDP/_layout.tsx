@@ -6,24 +6,32 @@ export default function Layout() {
       <Tabs.Screen
         name="CategoryOverview"
         options={{
-          tabBarStyle: { display: 'none' },
+          tabBarButton: () => null,
+
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="productDetail"
         options={{
-          tabBarStyle: { display: 'none' }, 
-          // headerShown: false, 
+          tabBarButton: () => null,
+          headerShown: false, 
         }}
       />
       <Tabs.Screen
         name="productDetailModal"
         options={{
-          tabBarStyle: { display: 'none' }, 
-          headerShown: false, 
+          tabBarButton: () => null,
+          headerShown: false,
         }}
-        />
-      
+      />
+      <Tabs.Screen
+        name="ProductDP"
+        options={{
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+      />
+
     </Tabs>
   );
 }

@@ -55,19 +55,6 @@ export default function RootLayout() {
           >
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-              <Stack.Screen
-                name="view/CategoryOverview"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="view/VariantDetails"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="view/checkout"
-                options={{ headerShown: false }}
-              />
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style="auto" />

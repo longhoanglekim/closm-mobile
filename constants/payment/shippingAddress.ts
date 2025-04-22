@@ -2,49 +2,63 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderRadius: 12,
+    padding: 16,
+    width: '100%',
+  },
+  header: {
+    marginBottom: 24,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    textAlign: 'center',
+  },
+  form: {
+    gap: 16,
+  },
+  formGroup: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    color: '#555',
     marginBottom: 8,
-    marginTop: 16,
+    color: '#333',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    borderColor: '#ddd',
+    borderRadius: 8,
     padding: 12,
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
     backgroundColor: '#f9f9f9',
   },
-  saveButton: {
+  buttonGroup: {
     marginTop: 24,
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    borderRadius: 4,
+    gap: 12,
+  },
+  button: {
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
   },
-  saveButtonText: {
+  saveButton: {
+    backgroundColor: '#007AFF',
+  },
+  cancelButton: {
+    backgroundColor: '#f2f2f2',
+  },
+  buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  cancelButtonText: {
+    color: '#666',
+    fontSize: 16,
+  }
 });
 
 export default styles;

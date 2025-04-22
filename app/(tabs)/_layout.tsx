@@ -14,15 +14,6 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: "absolute",
-          },
-          android: {
-            backgroundColor: "lightblue",
-          } as ViewStyle,
-          default: {},
-        }),
       }}
     >
       <Tabs.Screen
@@ -48,11 +39,19 @@ export default function TabLayout() {
         options={{
           title: "Profile",
         }}
-      /><Tabs.Screen  
+      />
+      <Tabs.Screen
         name="payment"
         options={{
-          tabBarStyle: { display: "none" },
-          headerShown: false, 
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="ProductDP"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

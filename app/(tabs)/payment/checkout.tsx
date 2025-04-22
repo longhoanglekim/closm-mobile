@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
@@ -16,31 +15,35 @@ import { useStateContext } from "@/context/StateContext";
 import { useSelector } from "react-redux";
 import styles from "@/constants/payment/checkout";
 import ShippingAddress from "@/app/(tabs)/payment/ShippingAddress";
+import { useCheckoutLogic } from "./useCheckoutLogic";
 
 const Checkout = () => {
   const { cartItems } = useStateContext();
   const user = useSelector((state) => state.user);
-
   const userInfo = user?.userInfo || { fullname: "", phone: "", email: "" };
-
   const [selectedShipping, setSelectedShipping] = useState("standard");
   const [shippingCost, setShippingCost] = useState(0);
-  const [isShippingModalVisible, setIsShippingModalVisible] = useState(false); // State for modal visibility
+  const [isShippingModalVisible, setIsShippingModalVisible] = useState(false);
+  const [userAddress, setUserAddress] = useState("");
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
-
-  const calculateTotal = () => {
-    return calculateSubtotal() + shippingCost;
-  };
+  const {
+    distance,
+    availableDiscounts,
+    selectedDiscounts,
+    deliveryFee,
+    calculateSubtotal,
+    calculateTotal,
+    calculateFinalPrice,
+    handleSubmitOrder,
+    handleSelectDiscount
+  } = useCheckoutLogic(cartItems, user, userAddress, shippingCost);
 
   const handlePayment = () => {
-    setIsShippingModalVisible(true); 
+    setIsShippingModalVisible(true);
   };
 
   const closeShippingModal = () => {
-    setIsShippingModalVisible(false); 
+    setIsShippingModalVisible(false);
   };
 
   return (
@@ -52,15 +55,31 @@ const Checkout = () => {
 
         {/* Shipping Address */}
         <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>Địa chỉ giao hàng</ThemedText>
+          <View style={styles.addressHeader}>
+            <ThemedText style={styles.sectionTitle}>Địa chỉ giao hàng</ThemedText>
+          </View>
           <View style={styles.infoBox}>
-            <ThemedText style={styles.addressText}>
-              địa chỉ giao hàng đến
-            </ThemedText>
-            <ThemedText style={styles.addressText}>Thành phố</ThemedText>
-            <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="pencil" size={20} color="#007AFF" />
-            </TouchableOpacity>
+            {userAddress ? (
+              <View style={styles.addressContainer}>
+                <ThemedText style={styles.addressText}>{userAddress}</ThemedText>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => setIsShippingModalVisible(true)}
+                >
+                  <Ionicons name="pencil" size={20} color="#007AFF" />
+                  
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.addAddressButton}
+                onPress={() => setIsShippingModalVisible(true)}
+              >
+                <ThemedText style={styles.addAddressText}>
+                  + Thêm địa chỉ giao hàng
+                </ThemedText>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -98,7 +117,7 @@ const Checkout = () => {
           </View>
 
           <View style={styles.itemsContainer}>
-            {cartItems.map((item, index) => (
+            {cartItems.map((item) => (
               <View key={`${item.id}-${item.size}-${item.color}`} style={styles.cartItem}>
                 <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
                 <View style={styles.productDetails}>
@@ -115,6 +134,28 @@ const Checkout = () => {
               </View>
             ))}
           </View>
+        </View>
+
+        {/* Discounts Section */}
+        <View style={styles.sectionContainer}>
+          <ThemedText style={styles.sectionTitle}>Mã giảm giá</ThemedText>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {availableDiscounts.map((discount) => (
+              <TouchableOpacity
+                key={discount.id}
+                style={[
+                  styles.discountItem,
+                  selectedDiscounts.includes(discount) && styles.selectedDiscount
+                ]}
+                onPress={() => handleSelectDiscount(discount)}
+              >
+                <ThemedText style={styles.discountCode}>{discount.code}</ThemedText>
+                <ThemedText style={styles.discountAmount}>
+                  -{discount.amount.toLocaleString()}đ
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Shipping Options */}
@@ -185,15 +226,31 @@ const Checkout = () => {
         </View>
       </ScrollView>
 
-      {/* Total and Pay Button */}
+      {/* Total and Pay Button - Updated to include delivery fee and discounts */}
       <View style={styles.footer}>
         <View style={styles.totalContainer}>
-          <ThemedText style={styles.totalLabel}>Tổng</ThemedText>
-          <ThemedText style={styles.totalAmount}>{calculateTotal().toLocaleString()}đ</ThemedText>
+          <View style={styles.totalRow}>
+            <ThemedText style={styles.totalLabel}>Tạm tính</ThemedText>
+            <ThemedText style={styles.totalAmount}>{calculateSubtotal().toLocaleString()}đ</ThemedText>
+          </View>
+          <View style={styles.totalRow}>
+            <ThemedText style={styles.totalLabel}>Phí vận chuyển ({distance.toFixed(1)}km)</ThemedText>
+            <ThemedText style={styles.totalAmount}>{deliveryFee.toLocaleString()}đ</ThemedText>
+          </View>
+          <View style={styles.totalRow}>
+            <ThemedText style={styles.totalLabel}>Giảm giá</ThemedText>
+            <ThemedText style={styles.totalAmount}>
+              -{selectedDiscounts.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}đ
+            </ThemedText>
+          </View>
+          <View style={styles.totalRow}>
+            <ThemedText style={styles.totalLabel}>Tổng cộng</ThemedText>
+            <ThemedText style={styles.totalAmount}>{calculateFinalPrice().toLocaleString()}đ</ThemedText>
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
-          <ThemedText style={styles.payButtonText}>Thanh toán</ThemedText>
+        <TouchableOpacity style={styles.payButton} onPress={handleSubmitOrder}>
+          <ThemedText style={styles.payButtonText}>Đặt hàng</ThemedText>
         </TouchableOpacity>
       </View>
 
@@ -206,10 +263,16 @@ const Checkout = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <ShippingAddress />
-            <TouchableOpacity style={styles.closeButton} onPress={closeShippingModal}>
-              <Text style={styles.closeButtonText}>Đóng</Text>
-            </TouchableOpacity>
+            <ShippingAddress
+              key={userAddress}
+              currentAddress={userAddress}
+              onSave={(address) => {
+                setUserAddress(address);
+                closeShippingModal();
+              }}
+              onClose={closeShippingModal}
+            />
+
           </View>
         </View>
       </Modal>
