@@ -25,9 +25,11 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
   }, [user?.email]);
 
   // Calculate delivery fee based on distance
-  const calculateDeliveryFee = async (shopAddress, userAddress) => {
+  const calculateDeliveryFee = async (shopAddress: string, userAddress: string) => {
     try {
       const shopLocation = await getLocationFromAddress(shopAddress);
+      console.log('Shop Location:', shopLocation);
+      console.log('User Address:', userAddress);
       const userLocation = await getLocationFromAddress(userAddress);
       
       const distanceInMeters = await calculateDistance(

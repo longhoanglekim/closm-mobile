@@ -55,6 +55,7 @@ const Checkout = () => {
 
         {/* Shipping Address */}
         <View style={styles.sectionContainer}>
+
           <View style={styles.addressHeader}>
             <ThemedText style={styles.sectionTitle}>Địa chỉ giao hàng</ThemedText>
           </View>
@@ -267,6 +268,7 @@ const Checkout = () => {
               key={userAddress}
               currentAddress={userAddress}
               onSave={(address) => {
+                console.log("Địa chỉ vừa lưu:", address);
                 setUserAddress(address);
                 closeShippingModal();
               }}
@@ -276,6 +278,7 @@ const Checkout = () => {
           </View>
         </View>
       </Modal>
+      
     </SafeAreaView>
   );
 };

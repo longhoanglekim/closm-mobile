@@ -58,7 +58,36 @@ export default function ShippingAddress({ currentAddress, onSave, onClose }: Shi
           {currentAddress ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
         </ThemedText>
       </View>
-
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Tỉnh/Thành phố *</ThemedText>
+        <TextInput
+          style={styles.input}
+          value={formData.city}
+          onChangeText={(value) => handleChange('city', value)}
+          placeholder="Nhập tỉnh/thành phố"
+          placeholderTextColor="#999"
+        />
+      </View>
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Quận/Huyện *</ThemedText>
+        <TextInput
+          style={styles.input}
+          value={formData.district}
+          onChangeText={(value) => handleChange('district', value)}
+          placeholder="Nhập quận/huyện"
+          placeholderTextColor="#999"
+        />
+      </View>
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Phường/Xã *</ThemedText>
+        <TextInput
+          style={styles.input}
+          value={formData.ward}
+          onChangeText={(value) => handleChange('ward', value)}
+          placeholder="Nhập phường/xã"
+          placeholderTextColor="#999"
+        />
+      </View>
       <View style={styles.form}>
         <View style={styles.formGroup}>
           <ThemedText style={styles.label}>Số nhà, Tên đường *</ThemedText>
@@ -70,44 +99,11 @@ export default function ShippingAddress({ currentAddress, onSave, onClose }: Shi
             placeholderTextColor="#999"
           />
         </View>
-
-        <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>Phường/Xã *</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.ward}
-            onChangeText={(value) => handleChange('ward', value)}
-            placeholder="Nhập phường/xã"
-            placeholderTextColor="#999"
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>Quận/Huyện *</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.district}
-            onChangeText={(value) => handleChange('district', value)}
-            placeholder="Nhập quận/huyện"
-            placeholderTextColor="#999"
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>Tỉnh/Thành phố *</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.city}
-            onChangeText={(value) => handleChange('city', value)}
-            placeholder="Nhập tỉnh/thành phố"
-            placeholderTextColor="#999"
-          />
-        </View>
       </View>
 
       <View style={styles.buttonGroup}>
-        <TouchableOpacity 
-          style={[styles.button, styles.saveButton]} 
+        <TouchableOpacity
+          style={[styles.button, styles.saveButton]}
           onPress={handleSave}
         >
           <ThemedText style={styles.buttonText}>
@@ -115,8 +111,8 @@ export default function ShippingAddress({ currentAddress, onSave, onClose }: Shi
           </ThemedText>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.button, styles.cancelButton]} 
+        <TouchableOpacity
+          style={[styles.button, styles.cancelButton]}
           onPress={onClose}
         >
           <ThemedText style={styles.cancelButtonText}>Hủy</ThemedText>
