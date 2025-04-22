@@ -26,7 +26,7 @@ import store from "@/redux/store";
 import { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 
-import ProductDetail from "@/components/ProductDP/CategoryOverview";
+import ProductDetail from "@/app/(tabs)/ProductDP/CategoryOverview";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 

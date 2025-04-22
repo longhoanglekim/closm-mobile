@@ -48,6 +48,12 @@ export default function TabLayout() {
         options={{
           title: "Profile",
         }}
+      /><Tabs.Screen  
+        name="payment"
+        options={{
+          tabBarStyle: { display: "none" },
+          headerShown: false, 
+        }}
       />
     </Tabs>
   );
