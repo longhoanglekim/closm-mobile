@@ -1,58 +1,124 @@
 import { StyleSheet } from "react-native";
 
-
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: "#f5f5f5",
   },
   scrollView: {
     flex: 1,
   },
+
+  // Header
   header: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  backButton: {
+    marginRight: 10,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
   },
+
+  // Section Container
   sectionContainer: {
-    marginHorizontal: 16,
-    marginBottom: 20,
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    marginHorizontal: 15,
+    marginVertical: 10,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 8,
-  },
-  infoBox: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 16,
-    position: "relative",
+    marginBottom: 10,
+    color: "#333",
   },
 
-  contactText: {
-    fontSize: 14,
-    lineHeight: 20,
+  // Address Section
+  addressHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
-  editButton: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#e0e0e0',
-    justifyContent: "center",
+  addressContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
+  addressText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#333",
+    marginRight: 8,
+  },
+  editButton: {
+    padding: 5,
+  },
+  addAddressButton: {
+    padding: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: "#cccccc",
+    borderRadius: 5,
+  },
+  addAddressText: {
+    color: "#007AFF",
+    fontWeight: "500",
+  },
+
+  // Info Box
+  infoBox: {
+    padding: 10,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 5,
+    position: "relative",
+  },
+  contactText: {
+    fontSize: 14,
+    marginBottom: 5,
+    lineHeight: 20,
+    color: "#000",
+  },
+
+  // Loading and Error
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
+  loadingText: {
+    marginLeft: 10,
+    color: "#666",
+  },
+  errorText: {
+    color: "#d32f2f",
+    textAlign: "center",
+    padding: 10,
+  },
+
+  // Items Section
   itemsHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 15,
   },
   itemsTitleContainer: {
     flexDirection: "row",
@@ -60,151 +126,169 @@ export default StyleSheet.create({
   },
   itemCountBadge: {
     backgroundColor: "#007AFF",
-    borderRadius: 10,
-    width: 20,
-    height: 20,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 6,
+    marginLeft: 8,
   },
   itemCount: {
-    color: "#FFFFFF",
+    color: "#ffffff",
     fontSize: 12,
     fontWeight: "600",
   },
-  voucherButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  voucherButtonText: {
-    color: "#007AFF",
-    fontSize: 14,
-    fontWeight: "500",
-  },
   itemsContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    overflow: "hidden",
+    backgroundColor: "#f9f9f9",
+    borderRadius: 5,
+    padding: 10,
   },
   cartItem: {
     flexDirection: "row",
-    padding: 12,
+    alignItems: "center",
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F2F2F7",
+    borderBottomColor: "#eeeeee",
   },
   productImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
+    width: 60,
+    height: 60,
+    borderRadius: 5,
+    marginRight: 10,
   },
   productDetails: {
     flex: 1,
-    marginLeft: 12,
-    flexDirection: "row",
     justifyContent: "space-between",
+    flexDirection: "row",
     alignItems: "center",
   },
   productInfo: {
     flex: 1,
     flexDirection: "row",
+    alignItems: "center",
   },
   quantityBadge: {
+    backgroundColor: "#eeeeee",
+    borderRadius: 12,
     width: 24,
     height: 24,
-    borderRadius: 12,
-    backgroundColor: "#F2F2F7",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    marginRight: 10,
   },
   quantityText: {
     fontSize: 12,
     fontWeight: "600",
   },
   productName: {
-    flex: 1,
     fontSize: 14,
+    flex: 1,
+    color: "#333",
   },
   productPrice: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#000",
+  },
+
+  // Discounts Section
+  discountHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  noDiscountsText: {
+    fontSize: 12,
+    color: "#888",
+    fontStyle: "italic",
+  },
+  discountScrollView: {
+    flexDirection: "row",
+  },
+  discountItem: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 6,
+    padding: 10,
+    marginRight: 10,
+    width: 150,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  selectedDiscount: {
+    backgroundColor: "#e3f2fd",
+    borderColor: "#2196f3",
+  },
+  discountCode: {
+    fontWeight: "600",
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  discountDescription: {
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 6,
+  },
+  discountAmount: {
+    color: "#e53935",
     fontWeight: "600",
   },
+
+  // Shipping Options
   shippingOptions: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    overflow: "hidden",
+    backgroundColor: "#f9f9f9",
+    borderRadius: 5,
+    padding: 10,
   },
   shippingOption: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#F2F2F7",
+    borderBottomColor: "#eeeeee",
   },
   selectedShipping: {
-    backgroundColor: "#E5F2FF",
+    backgroundColor: "#e3f2fd",
   },
   radioContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   radioOuter: {
-    width: 20,
     height: 20,
+    width: 20,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#007AFF",
-    justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    justifyContent: "center",
+    marginRight: 10,
   },
   radioInner: {
-    width: 10,
     height: 10,
+    width: 10,
     borderRadius: 5,
     backgroundColor: "#007AFF",
   },
   shippingLabel: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
   },
   shippingDetail: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
   },
   shippingTime: {
-    fontSize: 14,
-    color: "#8E8E93",
-    marginRight: 8,
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 4,
   },
   shippingPrice: {
-    fontSize: 16,
-    fontWeight: "600",
-    minWidth: 60,
-    textAlign: "right",
-  },
-  deliveryDate: {
-    fontSize: 12,
-    color: "#8E8E93",
-    marginTop: 8,
-  },
-  paymentMethodHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  paymentMethodBox: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 16,
-  },
-  paymentMethodText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
   },
+
+  // Footer
   footer: {
     backgroundColor: "#FFFFFF",
     padding: 16,
@@ -225,8 +309,26 @@ export default StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
+  totalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  finalRow: {
+    marginTop: 10,
+  },
+  finalTotalLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+  finalTotalAmount: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#000",
+  },
   payButton: {
-    backgroundColor: "#000000",
+    backgroundColor: "#007AFF",
     borderRadius: 8,
     padding: 16,
     width: 150,
@@ -237,38 +339,11 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  tabBar: {
-    flexDirection: "row",
-    height: 50,
-    borderTopWidth: 1,
-    borderTopColor: "#F2F2F7",
-    backgroundColor: "#FFFFFF",
-    justifyContent: "space-around",
-    alignItems: "center",
+  disabledButton: {
+    backgroundColor: "#cccccc",
   },
-  tabItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  cartBadge: {
-    position: "absolute",
-    top: 0,
-    right: "28%",
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#007AFF",
-  },
-  homeIndicator: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#000000",
-    alignSelf: "center",
-    marginTop: 8,
-  },
+
+  // Modal
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -298,61 +373,4 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  discountItem: {
-    padding: 12,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    marginRight: 12,
-    minWidth: 120,
-  },
-  selectedDiscount: {
-    backgroundColor: '#e3f2fd',
-    borderColor: '#2196f3',
-    borderWidth: 1,
-  },
-  discountCode: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  discountAmount: {
-    fontSize: 12,
-    color: '#f44336',
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  addAddressButton: {
-    padding: 12,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#007AFF',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  addAddressText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
-  addressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  addressContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-  },
-  addressText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#333',
-    marginRight: 8,
-  },
-
 });

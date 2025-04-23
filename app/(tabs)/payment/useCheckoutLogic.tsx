@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { getLocationFromAddress, calculateDistance } from '@/api/products/products';
-import { getAvailableDiscounts } from '@/api/products/products';
+import { getLocationFromAddress, calculateDistance, getAvailableDiscounts } from '@/api/products/products';
 import { router } from "expo-router";
 
 export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => {
@@ -8,8 +7,10 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedDiscounts, setSelectedDiscounts] = useState([]);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
+  const [calculationError, setCalculationError] = useState(null);
 
-  // Fetch available discounts when component mounts
+  // Fetch available discounts when component mounts or user changes
   useEffect(() => {
     const fetchDiscounts = async () => {
       if (user?.email) {
@@ -25,13 +26,29 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
   }, [user?.email]);
 
   // Calculate delivery fee based on distance
-  const calculateDeliveryFee = async (shopAddress: string, userAddress: string) => {
+  const calculateDeliveryFee = async (shopAddress, userAddress) => {
+    if (!shopAddress || !userAddress) {
+      console.log('Missing address information');
+      return;
+    }
+    
+    setIsCalculatingDistance(true);
+    setCalculationError(null);
+    
     try {
+      // Get coordinates for shop address
       const shopLocation = await getLocationFromAddress(shopAddress);
       console.log('Shop Location:', shopLocation);
-      console.log('User Address:', userAddress);
-      const userLocation = await getLocationFromAddress(userAddress);
       
+      // Get coordinates for user address
+      const userLocation = await getLocationFromAddress(userAddress);
+      console.log('User Location:', userLocation);
+      
+      if (!shopLocation || !userLocation) {
+        throw new Error('Could not find coordinates for one or both addresses');
+      }
+      
+      // Calculate distance between coordinates
       const distanceInMeters = await calculateDistance(
         [shopLocation.lon, shopLocation.lat],
         [userLocation.lon, userLocation.lat]
@@ -43,10 +60,16 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
       // Calculate delivery fee based on distance
       const baseFee = 15000; // Base delivery fee in VND
       const perKmFee = 5000; // Additional fee per km in VND
-      const calculatedFee = baseFee + (distanceInKm * perKmFee);
+      const calculatedFee = Math.round(baseFee + (distanceInKm * perKmFee));
       setDeliveryFee(calculatedFee);
+      
+      console.log(`Distance: ${distanceInKm.toFixed(2)}km, Delivery Fee: ${calculatedFee}đ`);
+      
     } catch (error) {
       console.error('Error calculating delivery fee:', error);
+      setCalculationError('Could not calculate delivery distance. Please check your address.');
+    } finally {
+      setIsCalculatingDistance(false);
     }
   };
 
@@ -69,7 +92,7 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
 
   // Handle discount selection/deselection
   const handleSelectDiscount = (discount) => {
-    if (selectedDiscounts.includes(discount)) {
+    if (selectedDiscounts.some(d => d.id === discount.id)) {
       setSelectedDiscounts(selectedDiscounts.filter(d => d.id !== discount.id));
     } else {
       setSelectedDiscounts([...selectedDiscounts, discount]);
@@ -78,6 +101,11 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
 
   // Handle order submission
   const handleSubmitOrder = async () => {
+    if (!userAddress) {
+      alert('Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.');
+      return;
+    }
+    
     try {
       const orderData = {
         userEmail: user.email,
@@ -95,17 +123,21 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
         }
       };
 
+      console.log('Sending order data:', orderData);
+
       // Call your API to submit the order
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/orders`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
         },
         body: JSON.stringify(orderData)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit order');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit order');
       }
 
       // Handle successful order
@@ -113,14 +145,14 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
       router.push('/');
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại!');
+      alert(`Có lỗi xảy ra khi đặt hàng: ${error.message}. Vui lòng thử lại!`);
     }
   };
 
-  // Call this when you need to update delivery fee
+  // Update delivery fee when user address changes
   useEffect(() => {
     if (userAddress) {
-      const shopAddress = "123 Shop Address"; // Replace with actual shop address
+      const shopAddress = "123 Nguyễn Du, Quận 1, TP. Hồ Chí Minh"; // Replace with actual shop address
       calculateDeliveryFee(shopAddress, userAddress);
     }
   }, [userAddress]);
@@ -130,6 +162,8 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
     availableDiscounts,
     selectedDiscounts,
     deliveryFee,
+    isCalculatingDistance,
+    calculationError,
     calculateSubtotal,
     calculateTotal,
     calculateFinalPrice,
