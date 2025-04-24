@@ -82,13 +82,71 @@ const detailStyles = StyleSheet.create({
   paymentMethodText: { fontSize: 14, color: "#000" },
 
   // Totals
-  totalContainer: { flex: 1 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", marginVertical: 4 },
-  totalLabel: { fontSize: 14, color: "#8E8E93" },
-  totalAmount: { fontSize: 16, fontWeight: "500", color: "#000" },
-  finalRow: { marginTop: 10, borderTopWidth: 1, borderTopColor: "#eee", paddingTop: 8 },
-  finalTotalLabel: { fontSize: 16, fontWeight: "600", color: "#000" },
-  finalTotalAmount: { fontSize: 18, fontWeight: "bold", color: "#000" },
+  totalContainer: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  totalLabel: {
+    fontSize: 15,
+    color: '#666',
+  },
+  totalAmount: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '500',
+  },
+  totalSubtext: {
+    fontSize: 13,
+    color: '#888',
+    marginTop: 2,
+  },
+  summaryContainer: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
+    marginTop: 8,
+    paddingVertical: 12,
+  },
+  finalTotalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  finalTotalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+  },
+  finalTotalAmount: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  paymentButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 16,
+    marginHorizontal: 16,
+    marginBottom: 24,
+  },
+  paymentButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  paymentButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 
   // Modal Styles
   modalContainer: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.5)" },

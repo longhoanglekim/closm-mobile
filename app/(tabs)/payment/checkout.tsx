@@ -58,7 +58,7 @@ const Checkout = () => {
     <SafeAreaView style={layoutStyles.container}>
       <ScrollView style={layoutStyles.scrollView}>
         <View style={layoutStyles.header}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={layoutStyles.backButton}
             onPress={() => router.back()}
           >
@@ -271,44 +271,45 @@ const Checkout = () => {
       {/* Total and Pay Button */}
       <View style={layoutStyles.footer}>
         <View style={detailStyles.totalContainer}>
+          {/* Tạm tính */}
           <View style={detailStyles.totalRow}>
-            <ThemedText style={detailStyles.totalLabel}>Tạm tính</ThemedText>
-            <ThemedText style={detailStyles.totalAmount}>{calculateSubtotal().toLocaleString()}đ</ThemedText>
+            <Text style={detailStyles.totalLabel}>Tạm tính</Text>
+            <Text style={detailStyles.totalAmount}>
+              {calculateSubtotal().toLocaleString()}đ
+            </Text>
           </View>
+
+          {/* Phí vận chuyển */}
           <View style={detailStyles.totalRow}>
-            <ThemedText style={detailStyles.totalLabel}>Phí vận chuyển</ThemedText>
-            <ThemedText style={detailStyles.totalAmount}>
-              {isCalculatingDistance ? "Đang tính..." : `${deliveryFee.toLocaleString()}đ`}
-            </ThemedText>
+            <Text style={detailStyles.totalLabel}>Phí vận chuyển</Text>
+            <Text style={detailStyles.totalAmount}>
+              {deliveryFee.toLocaleString()}đ
+            </Text>
           </View>
-          {selectedDiscounts.length > 0 && (
-            <View style={detailStyles.totalRow}>
-              <ThemedText style={detailStyles.totalLabel}>Giảm giá</ThemedText>
-              <ThemedText style={detailStyles.totalAmount}>
-                -{selectedDiscounts.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}đ
-              </ThemedText>
+
+          {/* Tổng cộng */}
+          <View style={detailStyles.summaryContainer}>
+            <View style={detailStyles.finalTotalRow}>
+              <Text style={detailStyles.finalTotalLabel}>Tổng cộng:           </Text>
+              <Text style={detailStyles.finalTotalAmount}>
+                {calculateFinalPrice().toLocaleString()}đ
+              </Text>
             </View>
-          )}
-          <View style={[detailStyles.totalRow, detailStyles.finalRow]}>
-            <ThemedText style={detailStyles.finalTotalLabel}>Tổng cộng</ThemedText>
-            <ThemedText style={detailStyles.finalTotalAmount}>{calculateFinalPrice().toLocaleString()}đ</ThemedText>
           </View>
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
             layoutStyles.payButton,
-            (!userAddress || isCalculatingDistance) && layoutStyles.disabledButton
-          ]} 
+            (!userAddress || isCalculatingDistance) && layoutStyles.disabledButton,
+          ]}
           onPress={handleSubmitOrder}
           disabled={!userAddress || isCalculatingDistance}
         >
           <ThemedText style={layoutStyles.payButtonText}>
-            {!userAddress 
-              ? "Thêm địa chỉ để đặt hàng" 
-              : isCalculatingDistance 
-                ? "Đang tính phí vận chuyển..." 
-                : "Đặt hàng"}
+            {isCalculatingDistance
+              ? "Đang tính phí vận chuyển..."
+              : "Thanh toán"}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -325,6 +326,7 @@ const Checkout = () => {
             <ShippingAddress
               key={userAddress}
               currentAddress={userAddress}
+
               onSave={(address) => {
                 console.log("Địa chỉ vừa lưu:", address);
                 setUserAddress(address);
