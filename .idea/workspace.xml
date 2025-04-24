@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="9c7a3401-3ba3-46b3-85f5-85d46dc393aa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/user/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/user/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/payment/checkout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/payment/checkout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/checkout.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/payment/ShippingAddress.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/payment/ShippingAddress.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/payment/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/payment/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/payment/checkout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/payment/checkout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants/payment/checkoutDetails.ts" beforeDir="false" afterPath="$PROJECT_DIR$/constants/payment/checkoutDetails.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

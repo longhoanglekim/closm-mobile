@@ -13,6 +13,7 @@ import {
   Dimensions,
 } from "react-native";
 import { register } from "../../../api/auth/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Register = () => {
   const [email, setEmail] = useState("");

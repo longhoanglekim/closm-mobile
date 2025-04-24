@@ -11,6 +11,7 @@ import { login } from "../../../api/auth/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const LoginScreen = () => {
   const dispatch = useDispatch();
 
@@ -78,27 +79,25 @@ const LoginScreen = () => {
                 console.log("login");
                 const response = await login(email, password);
                 if (response.token) {
-                  console.log("Login successful:", response.token);
-                  const userInfo = await getUserInfo(email);
-                  if (userInfo) {
-                    console.log("User info:", userInfo);
-                    dispatch(
-                      loginSuccess({
-                        token: response.token,
-                        userInfo: userInfo,
-                      })
-                    );
-                  }
-                  // dispatch(
-                  //   loginSuccess({
-                  //     token: response.token,
-                  //   })
-                  // );
-                  router.replace("/(tabs)/cart");
+                    console.log("Login successful:", response.token);
+                    const userInfo = await getUserInfo(email);
+                    if (userInfo) {
+                        console.log("User info:", userInfo);
+                        dispatch(
+                            loginSuccess({
+                                token: response.token,
+                                userInfo: userInfo,
+                            })
+                        );
+                        // Lưu email vào AsyncStorage
+                        await AsyncStorage.setItem("email", email);
+                        console.log("Email đã được lưu vào AsyncStorage:", email);
+                    }
+                    router.replace("/(tabs)/cart");
                 } else {
-                  setError(repsonse.message);
+                    setError(response.message);
                 }
-              }}
+            }}
             >
               <Text>Login</Text>
             </Pressable>

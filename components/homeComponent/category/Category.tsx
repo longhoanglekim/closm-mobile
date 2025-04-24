@@ -21,11 +21,11 @@ const Category = (props: Props) => {
   const { productOverview } = props;
   const handleVariantPress = (variantId: number) => {
     console.log("Variant ID:", variantId);
-    router.push(`/view/CategoryOverview?id=${variantId}`);
+    router.push(`/(tabs)/ProductDP/CategoryOverview?id=${variantId}`);
   };
 
   const handleCategoryPress = (category: string) => {
-    router.push(`/view/CategoryOverview?category=${category}`);
+    router.push(`/(tabs)/ProductDP/CategoryOverview?category=${category}`);
   };
 
   return (
