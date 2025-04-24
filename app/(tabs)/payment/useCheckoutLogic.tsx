@@ -148,11 +148,10 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
       alert(`Có lỗi xảy ra khi đặt hàng: ${error.message}. Vui lòng thử lại!`);
     }
   };
-
+  const shopAddress = process.env.EXPO_PUBLIC_SHOP_LOCATION
   // Update delivery fee when user address changes
   useEffect(() => {
     if (userAddress) {
-      const shopAddress = "123 Nguyễn Du, Quận 1, TP. Hồ Chí Minh"; // Replace with actual shop address
       calculateDeliveryFee(shopAddress, userAddress);
     }
   }, [userAddress]);

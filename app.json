@@ -13,9 +13,11 @@
       "bundleIdentifier": "com.longhoanglekim.Closm",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "extra": {
+        "EXPO_PUBLIC_SHOP_LOCATION": "48 ngõ 50 Đình Thôn, Hà Nội"
       }
     },
-    
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -30,7 +32,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "@react-native-firebase/app", 
+      "@react-native-firebase/app",
       "expo-router",
       [
         "expo-splash-screen",
