@@ -21,13 +21,14 @@ import { useCheckoutLogic } from "./useCheckoutLogic";
 
 const Checkout = () => {
   const { cartItems } = useStateContext();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state: any) => state.user);
   const userInfo = user?.userInfo || { fullname: "", phone: "", email: "" };
   const [selectedShipping, setSelectedShipping] = useState("standard");
   const [shippingCost, setShippingCost] = useState(0);
   const [isShippingModalVisible, setIsShippingModalVisible] = useState(false);
   const [userAddress, setUserAddress] = useState("");
-
+  console.log("Redux user state:", user);
+  console.log("User Info:", userInfo);
   const {
     distance,
     availableDiscounts,
@@ -40,7 +41,7 @@ const Checkout = () => {
     calculateFinalPrice,
     handleSubmitOrder,
     handleSelectDiscount
-  } = useCheckoutLogic(cartItems, user, userAddress, shippingCost);
+  } = useCheckoutLogic(cartItems, userInfo, userAddress, shippingCost);
 
   const closeShippingModal = () => {
     setIsShippingModalVisible(false);
@@ -57,6 +58,7 @@ const Checkout = () => {
   return (
     <SafeAreaView style={layoutStyles.container}>
       <ScrollView style={layoutStyles.scrollView}>
+      
         <View style={layoutStyles.header}>
           <TouchableOpacity
             style={layoutStyles.backButton}
@@ -267,9 +269,10 @@ const Checkout = () => {
           </View>
         </View>
       </ScrollView>
-
       {/* Total and Pay Button */}
       <View style={layoutStyles.footer}>
+        
+        
         <View style={detailStyles.totalContainer}>
           {/* Tạm tính */}
           <View style={detailStyles.totalRow}>

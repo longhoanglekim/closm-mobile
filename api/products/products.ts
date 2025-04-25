@@ -1,5 +1,6 @@
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 console.log(apiUrl);
+
 export const getCategories = async () => {
   const response = await fetch(`${apiUrl}/products/categories`);
 
@@ -30,7 +31,7 @@ export const getProductDetails = async () => {
 
 
 export const getVariantListByName = async (name: string) => {
-  const response = await fetch(`${apiUrl}/variants?variantName=${encodeURIComponent(name)}`);
+  const response = await fetch(`${apiUrl}/item?variantName=${encodeURIComponent(name)}`);
   console.log(`${apiUrl}/variants?variantName=${name}`);
 
   if (!response.ok) {
@@ -100,6 +101,28 @@ export const getAvailableDiscounts = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching discounts:', error);
+    throw error;
+  }
+};
+// submit order
+export const confirmOrder = async (orderData: any) => {
+  try {
+    const response = await fetch(`${apiUrl}/order/confirm-order`, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Lỗi khi xác nhận đơn hàng');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error confirming order:', error);
     throw error;
   }
 };
