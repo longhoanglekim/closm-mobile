@@ -1,21 +1,49 @@
 import { useState, useEffect } from "react";
-import { getLocationFromAddress, calculateDistance, getAvailableDiscounts } from '@/api/products/products';
+import { getLocationFromAddress, calculateDistance, getAvailableDiscounts, confirmOrder } from '@/api/products/products';
 import { router } from "expo-router";
+type CartItem = {
+  id: number;
+  price: number;
+  quantity: number;
+};
 
-export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => {
-  const [distance, setDistance] = useState(0);
-  const [availableDiscounts, setAvailableDiscounts] = useState([]);
-  const [selectedDiscounts, setSelectedDiscounts] = useState([]);
-  const [deliveryFee, setDeliveryFee] = useState(0);
-  const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
-  const [calculationError, setCalculationError] = useState(null);
+type Discount = {
+  id: number;
+  amount: number;
+};
+
+type OrderConfirmationDTO = {
+  userEmail: string;
+  address: string;
+  itemIdsMap: Record<number, number>;
+  discountIds: number[];
+  summaryOrderPrice: {
+    itemsTotalPrice: number;
+    discountAmount: number;
+    deliveryAmount: number;
+    finalPrice: number;
+  };
+};
+export const useCheckoutLogic = (
+  cartItems: CartItem[],
+  user: { email: string } | null,
+  userAddress: string,
+  shippingCost: number
+) => {
+  const [distance, setDistance] = useState<number>(0);
+  const [availableDiscounts, setAvailableDiscounts] = useState<Discount[]>([]);
+  const [selectedDiscounts, setSelectedDiscounts] = useState<Discount[]>([]);
+  const [deliveryFee, setDeliveryFee] = useState<number>(0);
+  const [isCalculatingDistance, setIsCalculatingDistance] = useState<boolean>(false);
+  const [calculationError, setCalculationError] = useState<string | null>(null);
+
 
   // Fetch available discounts when component mounts or user changes
   useEffect(() => {
     const fetchDiscounts = async () => {
       if (user?.email) {
         try {
-          const discounts = await getAvailableDiscounts(user.email);
+          const discounts = await getAvailableDiscounts();
           setAvailableDiscounts(discounts);
         } catch (error) {
           console.error('Error fetching discounts:', error);
@@ -26,48 +54,48 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
   }, [user?.email]);
 
   // Calculate delivery fee based on distance
-  const calculateDeliveryFee = async (shopAddress, userAddress) => {
+  const calculateDeliveryFee = async (shopAddress: any, userAddress: any) => {
     if (!shopAddress || !userAddress) {
       console.log('Missing address information');
+      setCalculationError('Vui lòng cung cấp đầy đủ địa chỉ.');
       return;
     }
-    
+
     setIsCalculatingDistance(true);
     setCalculationError(null);
-    
+
     try {
       // Get coordinates for shop address
       const shopLocation = await getLocationFromAddress(shopAddress);
       console.log('Shop Location:', shopLocation);
-      
+
       // Get coordinates for user address
       const userLocation = await getLocationFromAddress(userAddress);
       console.log('User Location:', userLocation);
-      
+
       if (!shopLocation || !userLocation) {
-        throw new Error('Could not find coordinates for one or both addresses');
+        throw new Error('Không thể tìm thấy tọa độ cho một hoặc cả hai địa chỉ.');
       }
-      
+
       // Calculate distance between coordinates
       const distanceInMeters = await calculateDistance(
         [shopLocation.lon, shopLocation.lat],
         [userLocation.lon, userLocation.lat]
       );
-      
+
       const distanceInKm = distanceInMeters / 1000;
       setDistance(distanceInKm);
-      
+
       // Calculate delivery fee based on distance
       const baseFee = 15000; // Base delivery fee in VND
       const perKmFee = 5000; // Additional fee per km in VND
       const calculatedFee = Math.round(baseFee + (distanceInKm * perKmFee));
       setDeliveryFee(calculatedFee);
-      
+
       console.log(`Distance: ${distanceInKm.toFixed(2)}km, Delivery Fee: ${calculatedFee}đ`);
-      
     } catch (error) {
       console.error('Error calculating delivery fee:', error);
-      setCalculationError('Could not calculate delivery distance. Please check your address.');
+      setCalculationError('Không thể tính khoảng cách giao hàng. Vui lòng kiểm tra lại địa chỉ.');
     } finally {
       setIsCalculatingDistance(false);
     }
@@ -75,7 +103,7 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
 
   // Calculate subtotal (sum of all items)
   const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return cartItems.reduce((sum: any, item: any) => sum + item.price * item.quantity, 0);
   };
 
   // Calculate total with shipping cost (for the older calculation)
@@ -91,64 +119,60 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
   };
 
   // Handle discount selection/deselection
-  const handleSelectDiscount = (discount) => {
+  const handleSelectDiscount = (discount: Discount) => {
     if (selectedDiscounts.some(d => d.id === discount.id)) {
       setSelectedDiscounts(selectedDiscounts.filter(d => d.id !== discount.id));
     } else {
       setSelectedDiscounts([...selectedDiscounts, discount]);
     }
   };
-
   // Handle order submission
   const handleSubmitOrder = async () => {
     if (!userAddress) {
       alert('Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.');
       return;
     }
-    
-    try {
-      const orderData = {
-        userEmail: user.email,
-        address: userAddress,
-        itemIdsMap: cartItems.reduce((map, item) => {
-          map[item.id] = item.quantity;
-          return map;
-        }, {}),
-        discountIds: selectedDiscounts.map(d => d.id),
-        summaryOrderPrice: {
-          itemsTotalPrice: calculateSubtotal(),
-          discountAmount: selectedDiscounts.reduce((sum, d) => sum + d.amount, 0),
-          deliveryAmount: deliveryFee,
-          finalPrice: calculateFinalPrice()
-        }
-      };
 
-      console.log('Sending order data:', orderData);
+    if (!user?.email) {
+      alert('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+      return;
+    }
 
-      // Call your API to submit the order
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
-        body: JSON.stringify(orderData)
-      });
+    const itemIdsMap: Record<number, number> = {};
+    cartItems.forEach((item: CartItem) => {
+      itemIdsMap[item.id] = item.quantity;
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit order');
+    const orderData: OrderConfirmationDTO = {
+      userEmail: user.email,
+      address: userAddress,
+      itemIdsMap: itemIdsMap,
+      discountIds: selectedDiscounts.map(d => d.id),
+      summaryOrderPrice: {
+        itemsTotalPrice: calculateSubtotal(),
+        discountAmount: selectedDiscounts.reduce((sum, d) => sum + d.amount, 0),
+        deliveryAmount: deliveryFee,
+        finalPrice: calculateFinalPrice()
       }
-
-      // Handle successful order
-      alert('Đơn hàng đã được đặt thành công!');
+    };
+    console.log("orderData gửi lên:", JSON.stringify(orderData, null, 2));
+    try {
+      const result = await confirmOrder(orderData);
+      alert(`Đơn hàng #${result.orderId} đã được xác nhận thành công!`);
       router.push('/');
-    } catch (error) {
-      console.error('Error submitting order:', error);
-      alert(`Có lỗi xảy ra khi đặt hàng: ${error.message}. Vui lòng thử lại!`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error confirming order:', error.message);
+        alert(`Có lỗi xảy ra khi đặt hàng: ${error.message}`);
+      } else {
+        console.error('Unknown error:', error);
+        alert('Có lỗi không xác định xảy ra.');
+      }
     }
   };
-  const shopAddress = process.env.EXPO_PUBLIC_SHOP_LOCATION
+
+  const shopAddress = process.env.EXPO_PUBLIC_SHOP_LOCATION;
+
   // Update delivery fee when user address changes
   useEffect(() => {
     if (userAddress) {
