@@ -31,7 +31,7 @@ export const getProductDetails = async () => {
 
 
 export const getVariantListByName = async (name: string) => {
-  const response = await fetch(`${apiUrl}/variants?variantName=${encodeURIComponent(name)}`);
+  const response = await fetch(`${apiUrl}/item?variantName=${encodeURIComponent(name)}`);
   console.log(`${apiUrl}/variants?variantName=${name}`);
 
   if (!response.ok) {
@@ -107,7 +107,7 @@ export const getAvailableDiscounts = async () => {
 // submit order
 export const confirmOrder = async (orderData: any) => {
   try {
-    const response = await fetch(`${apiUrl}/confirm-order`, {
+    const response = await fetch(`${apiUrl}/order/confirm-order`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
