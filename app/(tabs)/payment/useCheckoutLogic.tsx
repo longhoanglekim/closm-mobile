@@ -23,6 +23,7 @@ type OrderConfirmationDTO = {
     deliveryAmount: number;
     finalPrice: number;
   };
+  paymentStatus: string;
 };
 export const useCheckoutLogic = (
   cartItems: CartItem[],
@@ -153,7 +154,8 @@ export const useCheckoutLogic = (
         discountAmount: selectedDiscounts.reduce((sum, d) => sum + d.amount, 0),
         deliveryAmount: deliveryFee,
         finalPrice: calculateFinalPrice()
-      }
+      },
+      paymentStatus: 'pending'
     };
     console.log("orderData gửi lên:", JSON.stringify(orderData, null, 2));
     try {
