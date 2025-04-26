@@ -58,8 +58,8 @@ export const useCheckoutLogic = (cartItems, user, userAddress, shippingCost) => 
       setDistance(distanceInKm);
       
       // Calculate delivery fee based on distance
-      const baseFee = 15000; // Base delivery fee in VND
-      const perKmFee = 5000; // Additional fee per km in VND
+      const baseFee = 15000; 
+      const perKmFee = 5000; 
       const calculatedFee = Math.round(baseFee + (distanceInKm * perKmFee));
       setDeliveryFee(calculatedFee);
       
