@@ -6,13 +6,15 @@ export default function Layout() {
       <Tabs.Screen
         name="checkout"
         options={{
+          tabBarStyle: { display: "none" },
           tabBarButton: () => null, 
           headerShown: false,
         }}
       />
        <Tabs.Screen
-        name="shippingAddress"
+        name="ShippingAddress"
         options={{
+          tabBarStyle: { display: "none" },
           tabBarButton: () => null, 
           headerShown: false, 
         }}

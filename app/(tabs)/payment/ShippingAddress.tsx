@@ -9,7 +9,7 @@ interface ShippingAddressProps {
   onClose: () => void;
 }
 
-export default function ShippingAddress({ currentAddress, onSave, onClose }: ShippingAddressProps) {
+const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressProps) =>{
   // Tách địa chỉ hiện tại thành các phần
   const parseAddress = (fullAddress: string = '') => {
     const parts = fullAddress.split(', ');
@@ -122,3 +122,4 @@ export default function ShippingAddress({ currentAddress, onSave, onClose }: Shi
   );
 }
 
+export default ShippingAddress;
