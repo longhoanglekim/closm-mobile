@@ -14,14 +14,14 @@ export default function Layout() {
         name="productDetail"
         options={{
           tabBarButton: () => null,
-          headerShown: false, 
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="productDetailModal"
+        name="ProductDetailModal"
         options={{
-          tabBarButton: () => null,
-          headerShown: false,
+          tabBarButton: () => null, 
+          headerShown: false, 
         }}
       />
       <Tabs.Screen
