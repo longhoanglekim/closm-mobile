@@ -7,10 +7,6 @@ type CartItem = {
   quantity: number;
 };
 
-type Discount = {
-  id: number;
-  amount: number;
-};
 
 type OrderConfirmationDTO = {
   userEmail: string;
@@ -23,8 +19,17 @@ type OrderConfirmationDTO = {
     deliveryAmount: number;
     finalPrice: number;
   };
-  paymentStatus: string;
+  // paymentStatus: string;
 };
+type Discount = {
+  id: number;
+  description: string;
+  discountPercentage: number;
+  discountType: string;
+  startDate: string;
+  endDate: string;
+};
+
 export const useCheckoutLogic = (
   cartItems: CartItem[],
   user: { email: string } | null,
@@ -88,8 +93,8 @@ export const useCheckoutLogic = (
       setDistance(distanceInKm);
 
       // Calculate delivery fee based on distance
-      const baseFee = 15000; 
-      const perKmFee = 5000; 
+      const baseFee = 15000;
+      const perKmFee = 5000;
       const calculatedFee = Math.round(baseFee + (distanceInKm * perKmFee));
       setDeliveryFee(calculatedFee);
 
@@ -106,7 +111,10 @@ export const useCheckoutLogic = (
   const calculateSubtotal = () => {
     return cartItems.reduce((sum: any, item: any) => sum + item.price * item.quantity, 0);
   };
-
+  const calculateDiscountAmount = (discount: Discount) => {
+    const subtotal = calculateSubtotal();
+    return Math.round((subtotal * discount.discountPercentage) / 100);
+  };
   // Calculate total with shipping cost (for the older calculation)
   const calculateTotal = () => {
     return calculateSubtotal() + shippingCost;
@@ -115,8 +123,12 @@ export const useCheckoutLogic = (
   // Calculate final price including discounts and delivery fee
   const calculateFinalPrice = () => {
     const subtotal = calculateSubtotal();
-    const discountAmount = selectedDiscounts.reduce((sum, discount) => sum + discount.amount, 0);
-    return subtotal + deliveryFee - discountAmount;
+    const discountAmount = selectedDiscounts.reduce(
+      (sum, discount) =>
+        sum + (subtotal * discount.discountPercentage) / 100,
+      0
+    );
+    return subtotal + deliveryFee - discountAmount || 0;
   };
 
   // Handle discount selection/deselection
@@ -130,12 +142,12 @@ export const useCheckoutLogic = (
   // Handle order submission
   const handleSubmitOrder = async () => {
     if (!userAddress) {
-      alert('Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.');
+      alert("Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.");
       return;
     }
 
     if (!user?.email) {
-      alert('Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.');
+      alert("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
       return;
     }
 
@@ -148,27 +160,31 @@ export const useCheckoutLogic = (
       userEmail: user.email,
       address: userAddress,
       itemIdsMap: itemIdsMap,
-      discountIds: selectedDiscounts.map(d => d.id),
+      discountIds: selectedDiscounts.map((d) => d.id),
       summaryOrderPrice: {
         itemsTotalPrice: calculateSubtotal(),
-        discountAmount: selectedDiscounts.reduce((sum, d) => sum + d.amount, 0),
+        discountAmount: selectedDiscounts.reduce(
+          (sum, discount) =>
+            sum + (calculateSubtotal() * discount.discountPercentage) / 100,
+          0
+        ),
         deliveryAmount: deliveryFee,
-        finalPrice: calculateFinalPrice()
+        finalPrice: calculateFinalPrice(),
       },
-      paymentStatus: 'pending'
     };
+
     console.log("orderData gửi lên:", JSON.stringify(orderData, null, 2));
     try {
       const result = await confirmOrder(orderData);
       alert(`Đơn hàng #${result.orderId} đã được xác nhận thành công!`);
-      router.push('/');
+      router.push("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('Error confirming order:', error.message);
+        console.error("Error confirming order:", error.message);
         alert(`Có lỗi xảy ra khi đặt hàng: ${error.message}`);
       } else {
-        console.error('Unknown error:', error);
-        alert('Có lỗi không xác định xảy ra.');
+        console.error("Unknown error:", error);
+        alert("Có lỗi không xác định xảy ra.");
       }
     }
   };
@@ -193,6 +209,7 @@ export const useCheckoutLogic = (
     calculateTotal,
     calculateFinalPrice,
     handleSubmitOrder,
-    handleSelectDiscount
+    handleSelectDiscount,
+    calculateDiscountAmount
   };
 };

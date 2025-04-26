@@ -34,7 +34,7 @@ const Category = (props: Props) => {
         <Text style={styles.headerTitle}>Categories</Text>
         <TouchableOpacity
           style={styles.seeAllButton}
-          onPress={() => router.push("/view/CategoryOverview")}
+          onPress={() => router.push("/(tabs)/ProductDP/CategoryOverview")}
         >
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>

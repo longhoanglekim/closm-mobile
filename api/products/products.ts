@@ -31,14 +31,15 @@ export const getProductDetails = async () => {
 
 
 export const getVariantListByName = async (name: string) => {
-  const response = await fetch(`${apiUrl}/item?variantName=${encodeURIComponent(name)}`);
-  console.log(`${apiUrl}/variants?variantName=${name}`);
+  const response = await fetch(`${apiUrl}/items?variantName=${encodeURIComponent(name)}`);
+  console.log(`${apiUrl}/products/items?category=${encodeURIComponent(name)}`);
 
   if (!response.ok) {
     throw new Error("Lỗi khi lấy tag sản phẩm");
   }
 
   const data = await response.json();
+
   console.log("Successfully fetched tag variants:");
   return data;
 };

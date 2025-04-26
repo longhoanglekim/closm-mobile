@@ -45,7 +45,7 @@ const CategoryOverview = () => {
   );
   const handleClickVariant = (variantId: number, tag: string) => {
     console.log("Variant ID :", variantId);
-    router.push(`/view/VariantDetails?id=${variantId}&tag=${tag}`);
+    router.push(`/(tabs)/ProductDP/productDetail?id=${variantId}&tag=${tag}`);
   };
 
   const handleCategoryPress = (category: string) => {
