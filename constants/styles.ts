@@ -60,6 +60,7 @@ export default StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
+    marginRight: 10,
   },
   storyCard: {
     width: 120,
@@ -76,9 +77,26 @@ export default StyleSheet.create({
     borderRadius: 10,
   },
 
-
-
-  
+  orderButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  orderList: {
+    padding: 15,
+    backgroundColor: "white",
+    borderRadius: 10,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  orderListItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
 });
 

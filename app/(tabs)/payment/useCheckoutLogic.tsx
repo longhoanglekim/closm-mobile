@@ -148,6 +148,7 @@ export const useCheckoutLogic = (
 
     if (!user?.email) {
       alert("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+      router.push("/(tabs)/profile/login");
       return;
     }
 
