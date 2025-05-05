@@ -1,12 +1,9 @@
-// app/(tabs)/payment/OnlinePayment.tsx
 import React from 'react';
 import { View, ActivityIndicator, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { useSearchParams, router } from 'expo-router';
-
+import { useLocalSearchParams, router } from 'expo-router';
 export default function OnlinePayment() {
-  const { paymentUrl } = useSearchParams<{ paymentUrl: string }>();
-
+    const { paymentUrl } = useLocalSearchParams<{ paymentUrl: string }>();
   if (!paymentUrl) {
     return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
