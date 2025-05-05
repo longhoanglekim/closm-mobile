@@ -24,6 +24,7 @@ const Checkout = () => {
   const user = useSelector((state: any) => state.user);
   const userInfo = user?.userInfo || { fullname: "", phone: "", email: "" };
   const [selectedShipping, setSelectedShipping] = useState("standard");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("cod");
   const [shippingCost, setShippingCost] = useState(0);
   const [isShippingModalVisible, setIsShippingModalVisible] = useState(false);
   const [userAddress, setUserAddress] = useState("");
@@ -34,6 +35,7 @@ const Checkout = () => {
     availableDiscounts,
     selectedDiscounts,
     deliveryFee,
+    deliveryMethod,
     isCalculatingDistance,
     calculationError,
     calculateSubtotal,
@@ -47,7 +49,10 @@ const Checkout = () => {
   const closeShippingModal = () => {
     setIsShippingModalVisible(false);
   };
-
+  const DeliveryTotal = () => {
+    const total = deliveryFee + shippingCost;
+    return total;
+  };
   // Check if cart is empty
   useEffect(() => {
     if (cartItems.length === 0) {
@@ -268,12 +273,39 @@ const Checkout = () => {
         <View style={detailStyles.sectionContainer}>
           <View style={detailStyles.paymentMethodHeader}>
             <ThemedText style={detailStyles.sectionTitle}>Phương thức thanh toán</ThemedText>
-            <TouchableOpacity style={detailStyles.editButton}>
-              <Ionicons name="pencil" size={20} color="#007AFF" />
-            </TouchableOpacity>
           </View>
-          <View style={detailStyles.paymentMethodBox}>
-            <ThemedText style={detailStyles.paymentMethodText}>Thanh toán khi nhận hàng (COD)</ThemedText>
+          <View style={detailStyles.paymentOptions}>
+            {/* Thanh toán online */}
+            <TouchableOpacity
+              style={[
+                detailStyles.paymentOption,
+                selectedPaymentMethod === "online" && detailStyles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod("online")}
+            >
+              <View style={detailStyles.radioContainer}>
+                <View style={detailStyles.radioOuter}>
+                  {selectedPaymentMethod === "online" && <View style={detailStyles.radioInner} />}
+                </View>
+                <ThemedText style={detailStyles.paymentLabel}>Thanh toán online</ThemedText>
+              </View>
+            </TouchableOpacity>
+
+            {/* Thanh toán khi nhận hàng (COD) */}
+            <TouchableOpacity
+              style={[
+                detailStyles.paymentOption,
+                selectedPaymentMethod === "cod" && detailStyles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod("cod")}
+            >
+              <View style={detailStyles.radioContainer}>
+                <View style={detailStyles.radioOuter}>
+                  {selectedPaymentMethod === "cod" && <View style={detailStyles.radioInner} />}
+                </View>
+                <ThemedText style={detailStyles.paymentLabel}>Thanh toán khi nhận hàng (COD)</ThemedText>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -294,7 +326,8 @@ const Checkout = () => {
           <View style={detailStyles.totalRow}>
             <Text style={detailStyles.totalLabel}>Phí vận chuyển</Text>
             <Text style={detailStyles.totalAmount}>
-              {deliveryFee.toLocaleString()}đ
+              {DeliveryTotal().toLocaleString()}đ
+
             </Text>
           </View>
 
@@ -303,7 +336,7 @@ const Checkout = () => {
             <Text style={detailStyles.totalLabel}>Giảm giá</Text>
             <Text style={detailStyles.totalAmount}>
               -{selectedDiscounts
-                .reduce((sum, discount) => sum + (discount.amount || 0), 0)
+                .reduce((sum, discount) => sum + calculateDiscountAmount(discount), 0)
                 .toLocaleString()}đ
             </Text>
           </View>
