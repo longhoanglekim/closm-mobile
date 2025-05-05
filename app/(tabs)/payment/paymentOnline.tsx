@@ -18,15 +18,13 @@ export default function OnlinePayment() {
       startInLoadingState
       onNavigationStateChange={navState => {
         const url = navState.url;
-        // Khi VNPay redirect về callback
         if (url.includes('/payment/vn-pay-callback')) {
           const ok = url.includes('vnp_ResponseCode=00');
           if (ok) {
             Alert.alert('Thanh toán thành công!');
-            // router.replace('/(tabs)/payment/Success'); 
+            router.replace('/'); 
           } else {
             Alert.alert('Thanh toán thất bại.');
-            // router.replace('/(tabs)/payment/Failed');
           }
         }
       }}
