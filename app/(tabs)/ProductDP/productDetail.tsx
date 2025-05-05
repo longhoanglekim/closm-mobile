@@ -60,7 +60,7 @@ const ProductDetail = () => {
     fetchVariantDetails();
   }, [tag]); // ✅ Đúng dependency
 
-  const handleAddToCart = (cartItem) => {
+  const handleAddToCart = (cartItem: any) => {
     console.log("Added to cart:", cartItem);
     setModalVisible(false);
   };

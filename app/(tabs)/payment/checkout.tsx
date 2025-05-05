@@ -18,12 +18,14 @@ import detailStyles from "@/constants/payment/checkoutDetails";
 import layoutStyles from "@/constants/payment/checkout";
 import ShippingAddress from "@/app/(tabs)/payment/ShippingAddress";
 import { useCheckoutLogic } from "./useCheckoutLogic";
+import { initiateVnPay } from "@/api/payment/paymentAPI";
 
 const Checkout = () => {
   const { cartItems } = useStateContext();
   const user = useSelector((state: any) => state.user);
   const userInfo = user?.userInfo || { fullname: "", phone: "", email: "" };
   const [selectedShipping, setSelectedShipping] = useState("standard");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("cod");
   const [shippingCost, setShippingCost] = useState(0);
   const [isShippingModalVisible, setIsShippingModalVisible] = useState(false);
   const [userAddress, setUserAddress] = useState("");
@@ -34,6 +36,7 @@ const Checkout = () => {
     availableDiscounts,
     selectedDiscounts,
     deliveryFee,
+    deliveryMethod,
     isCalculatingDistance,
     calculationError,
     calculateSubtotal,
@@ -47,7 +50,10 @@ const Checkout = () => {
   const closeShippingModal = () => {
     setIsShippingModalVisible(false);
   };
-
+  const DeliveryTotal = () => {
+    const total = deliveryFee + shippingCost;
+    return total;
+  };
   // Check if cart is empty
   useEffect(() => {
     if (cartItems.length === 0) {
@@ -174,9 +180,7 @@ const Checkout = () => {
             <ThemedText style={detailStyles.contactText}>
               {userInfo.email || "Chưa có email"}
             </ThemedText>
-            <TouchableOpacity style={detailStyles.editButton}>
-              <Ionicons name="pencil" size={20} color="#007AFF" />
-            </TouchableOpacity>
+
           </View>
         </View>
 
@@ -268,19 +272,44 @@ const Checkout = () => {
         <View style={detailStyles.sectionContainer}>
           <View style={detailStyles.paymentMethodHeader}>
             <ThemedText style={detailStyles.sectionTitle}>Phương thức thanh toán</ThemedText>
-            <TouchableOpacity style={detailStyles.editButton}>
-              <Ionicons name="pencil" size={20} color="#007AFF" />
-            </TouchableOpacity>
           </View>
-          <View style={detailStyles.paymentMethodBox}>
-            <ThemedText style={detailStyles.paymentMethodText}>Thanh toán khi nhận hàng (COD)</ThemedText>
+          <View style={detailStyles.paymentOptions}>
+            {/* Thanh toán online */}
+            <TouchableOpacity
+              style={[
+                detailStyles.paymentOption,
+                selectedPaymentMethod === "online" && detailStyles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod("online")}
+            >
+              <View style={detailStyles.radioContainer}>
+                <View style={detailStyles.radioOuter}>
+                  {selectedPaymentMethod === "online" && <View style={detailStyles.radioInner} />}
+                </View>
+                <ThemedText style={detailStyles.paymentLabel}>Thanh toán online</ThemedText>
+              </View>
+            </TouchableOpacity>
+
+            {/* Thanh toán khi nhận hàng (COD) */}
+            <TouchableOpacity
+              style={[
+                detailStyles.paymentOption,
+                selectedPaymentMethod === "cod" && detailStyles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod("cod")}
+            >
+              <View style={detailStyles.radioContainer}>
+                <View style={detailStyles.radioOuter}>
+                  {selectedPaymentMethod === "cod" && <View style={detailStyles.radioInner} />}
+                </View>
+                <ThemedText style={detailStyles.paymentLabel}>Thanh toán khi nhận hàng (COD)</ThemedText>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
       {/* Total and Pay Button */}
       <View style={layoutStyles.footer}>
-
-
         <View style={detailStyles.totalContainer}>
           {/* Tạm tính */}
           <View style={detailStyles.totalRow}>
@@ -289,25 +318,22 @@ const Checkout = () => {
               {calculateSubtotal().toLocaleString()}đ
             </Text>
           </View>
-
           {/* Phí vận chuyển */}
           <View style={detailStyles.totalRow}>
             <Text style={detailStyles.totalLabel}>Phí vận chuyển</Text>
             <Text style={detailStyles.totalAmount}>
-              {deliveryFee.toLocaleString()}đ
+              {(deliveryFee + shippingCost).toLocaleString()}đ
             </Text>
           </View>
-
           {/* Giảm giá */}
           <View style={detailStyles.totalRow}>
             <Text style={detailStyles.totalLabel}>Giảm giá</Text>
             <Text style={detailStyles.totalAmount}>
               -{selectedDiscounts
-                .reduce((sum, discount) => sum + (discount.amount || 0), 0)
+                .reduce((sum, d) => sum + calculateDiscountAmount(d), 0)
                 .toLocaleString()}đ
             </Text>
           </View>
-
           {/* Tổng cộng */}
           <View style={detailStyles.summaryContainer}>
             <View style={detailStyles.finalTotalRow}>
@@ -319,18 +345,55 @@ const Checkout = () => {
           </View>
         </View>
 
+        {/* Nút Thanh toán */}
         <TouchableOpacity
           style={[
             layoutStyles.payButton,
             (!userAddress || isCalculatingDistance) && layoutStyles.disabledButton,
           ]}
-          onPress={handleSubmitOrder}
           disabled={!userAddress || isCalculatingDistance}
+          onPress={async () => {
+            if (selectedPaymentMethod === "online") {
+              // Chuẩn bị orderData
+              const orderData = {
+                userEmail: userInfo.email,
+                address: userAddress,
+                itemIdsMap: cartItems.reduce<Record<number, number>>(
+                  (m, i) => ({ ...m, [i.id]: i.quantity }),
+                  {}
+                ),
+                discountIds: selectedDiscounts.map((d) => d.id),
+                summaryOrderPrice: {
+                  itemsTotalPrice: calculateSubtotal(),
+                  discountAmount: selectedDiscounts.reduce(
+                    (s, d) => s + calculateDiscountAmount(d),
+                    0
+                  ),
+                  deliveryAmount: deliveryFee,
+                  finalPrice: calculateFinalPrice(),
+                },
+              };
+              try {
+                // Gọi API khởi tạo VNPay, lấy về paymentUrl
+                const paymentUrl = await initiateVnPay(
+                  orderData.summaryOrderPrice.finalPrice
+                );
+                // Chuyển sang WebView thanh toán
+                router.push({
+                  pathname: "/(tabs)/payment/paymentOnline",
+                  params: { paymentUrl },
+                });
+              } catch (err) {
+                alert("Lỗi khởi tạo thanh toán online: " + (err as Error).message);
+              }
+            } else {
+              // COD
+              handleSubmitOrder();
+            }
+          }}
         >
           <ThemedText style={layoutStyles.payButtonText}>
-            {isCalculatingDistance
-              ? "Đang tính phí vận chuyển..."
-              : "Thanh toán"}
+            {isCalculatingDistance ? "Đang tính phí..." : "Thanh toán"}
           </ThemedText>
         </TouchableOpacity>
       </View>

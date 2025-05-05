@@ -40,6 +40,7 @@ export const useCheckoutLogic = (
   const [availableDiscounts, setAvailableDiscounts] = useState<Discount[]>([]);
   const [selectedDiscounts, setSelectedDiscounts] = useState<Discount[]>([]);
   const [deliveryFee, setDeliveryFee] = useState<number>(0);
+  const [deliveryMethod, selectedDeliveryMethod] = useState<number>(0);
   const [isCalculatingDistance, setIsCalculatingDistance] = useState<boolean>(false);
   const [calculationError, setCalculationError] = useState<string | null>(null);
 
@@ -124,11 +125,10 @@ export const useCheckoutLogic = (
   const calculateFinalPrice = () => {
     const subtotal = calculateSubtotal();
     const discountAmount = selectedDiscounts.reduce(
-      (sum, discount) =>
-        sum + (subtotal * discount.discountPercentage) / 100,
+      (sum, discount) => sum + calculateDiscountAmount(discount),
       0
     );
-    return subtotal + deliveryFee - discountAmount || 0;
+    return subtotal + deliveryFee + shippingCost - discountAmount|| 0;
   };
 
   // Handle discount selection/deselection
@@ -204,6 +204,7 @@ export const useCheckoutLogic = (
     availableDiscounts,
     selectedDiscounts,
     deliveryFee,
+    deliveryMethod,
     isCalculatingDistance,
     calculationError,
     calculateSubtotal,
