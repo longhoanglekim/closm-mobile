@@ -136,14 +136,17 @@ const UserOrderScreen = () => {
           <Text style={{ textAlign: "right" }}>
             Payment Status: {order.paymentStatus}
           </Text>
-          <View style={styles.detailsButton}>
-          
-            <Button
-              title="View Details"
-              onPress={() => {
-                console.log("View Order Details", order.orderCode);
-              }}
-            />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+              marginRight: 10,
+              justifyContent: "flex-end",
+            }}
+          >
+            <Pressable style={styles.detailsButton}>
+              <Text>View details</Text>
+            </Pressable>
           </View>
         </View>
       ))}
@@ -182,6 +185,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
+    borderWidth: 1,
+    borderColor: "#fff",
   },
   orderTitle: {
     fontSize: 18,
@@ -216,9 +221,11 @@ const styles = StyleSheet.create({
   },
   detailsButton: {
     marginTop: 10,
-    borderRadius: 5,
+    borderRadius: 25,
     padding: 10,
     alignItems: "flex-end",
+    backgroundColor: "#007BFF",
+    width: 100,
   },
 });
 
