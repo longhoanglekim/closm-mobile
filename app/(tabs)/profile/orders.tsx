@@ -121,14 +121,11 @@ const UserOrderScreen = () => {
           <Text style={styles.orderStatus}>Status: {order.orderStatus}</Text>
           <Text>Delivery Address: {order.deliverAddress}</Text>
 
-          <Text style={styles.subSection}>Items:</Text>
+          <Text style={styles.subSection}>
+            Items quantity: {order.orderItemList.length}
+          </Text>
 
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.itemsNumber}>
-              Item x {order.orderItemList.length}
-            </Text>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             <Text style={styles.priceSection}>
               Total payment:<Text>{formatCurrency(order.finalPrice)}</Text>
             </Text>
@@ -144,7 +141,14 @@ const UserOrderScreen = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Pressable style={styles.detailsButton}>
+            <Pressable
+              style={styles.detailsButton}
+              onPress={() => {
+                router.push(
+                  "/(tabs)/profile/orderdetails?orderId=" + order.id
+                );
+              }}
+            >
               <Text>View details</Text>
             </Pressable>
           </View>
@@ -201,7 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
-    textAlign: "right",
   },
   orderItem: {
     flexDirection: "row",
@@ -221,6 +224,7 @@ const styles = StyleSheet.create({
   },
   detailsButton: {
     marginTop: 10,
+    marginRight: 30,
     borderRadius: 25,
     padding: 10,
     alignItems: "flex-end",

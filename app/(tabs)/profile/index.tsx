@@ -53,39 +53,7 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
 
-          {/* <View style={styles.achievementContainer}>
-            <View style={styles.achievementBox}>
-              <Text>Collecting Points: 10P</Text>
-            </View>
-            <View style={styles.achievementBox}>
-              <Text>Voucher: 1 available</Text>
-            </View>
-          </View>
-
-          <View style={styles.activityContainer}>
-            <View style={styles.activityBox}>
-              <Text>Orders: 10</Text>
-            </View>
-            <View style={styles.verticalDivider} />
-            <View style={styles.activityBox}>
-              <Text>Favorite: 1 item</Text>
-            </View>
-          </View> */}
-
-          {/* <Text style={styles.sectionTitle}>Recently viewed</Text> */}
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.horizontalScroll}
-          >
-            {[1, 2, 3, 4, 5].map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: "" }}
-                style={styles.recentlyViewed}
-              />
-            ))}
-          </ScrollView> */}
+          
           <View style={styles.orderSection}>
             <Text style={styles.sectionTitle}>My Orders</Text>
             <View style={styles.orderButtonsContainer}>
