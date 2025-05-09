@@ -64,7 +64,7 @@ const UserOrderScreen = () => {
     if (user.isLoggedIn) {
       fetchUserInfo();
     }
-  }, [user.isLoggedIn, user.userInfo.email, status, loading]);
+  }, []);
 
   const handleFilter = (item: string) => {
     const allOrders = orderListData?.flatMap((group) => group.orders);
@@ -144,9 +144,7 @@ const UserOrderScreen = () => {
             <Pressable
               style={styles.detailsButton}
               onPress={() => {
-                router.push(
-                  "/(tabs)/profile/orderdetails?orderId=" + order.id
-                );
+                router.push("/(tabs)/profile/orderdetails?orderId=" + order.id);
               }}
             >
               <Text>View details</Text>
