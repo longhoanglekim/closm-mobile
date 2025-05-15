@@ -54,19 +54,27 @@ const UserOrderScreen = () => {
       setLoading(true);
       try {
         const data = await getOrderList(user.userInfo.email);
-        setOrderListData(data);
-        handleFilter(status);
+        setOrderListData(data); // chỉ set data ở đây
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user orders info:", error);
       }
     };
+
     if (user.isLoggedIn) {
       fetchUserInfo();
     }
-  }, []);
+  }, [user.isLoggedIn]); // đảm bảo chạy lại khi user đăng nhập
+
+  // useEffect thứ hai: xử lý filter sau khi dữ liệu đã được set
+  useEffect(() => {
+    if (orderListData.length > 0 && status) {
+      handleFilter(status.toString()); // đảm bảo status là string
+    }
+  }, [orderListData, status]);
 
   const handleFilter = (item: string) => {
+    console.log(item);
     const allOrders = orderListData?.flatMap((group) => group.orders);
     if (item === "ALL") {
       setSelectedOrderList(allOrders);
