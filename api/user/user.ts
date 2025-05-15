@@ -25,3 +25,21 @@ export const getOrderList = async (email: string) => {
     console.log("Successfully fetched user orders info:");
     return data;
   }
+
+export const cancelOrder = async (orderId: number) => {
+    console.log("Calling API with orderId:", orderId);
+    const response = await fetch(`${apiUrl}/user/cancel-order?orderId=${orderId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error("Lỗi khi hủy đơn hàng");
+    }
+    
+    const data = await response.json();
+    console.log("Successfully canceled order:", data);
+    return data;
+  }
