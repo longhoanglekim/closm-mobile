@@ -54,19 +54,27 @@ const UserOrderScreen = () => {
       setLoading(true);
       try {
         const data = await getOrderList(user.userInfo.email);
-        setOrderListData(data);
-        handleFilter(status);
+        setOrderListData(data); // chỉ set data ở đây
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user orders info:", error);
       }
     };
+
     if (user.isLoggedIn) {
       fetchUserInfo();
     }
-  }, [user.isLoggedIn, user.userInfo.email, status, loading]);
+  }, [user.isLoggedIn]); // đảm bảo chạy lại khi user đăng nhập
+
+  // useEffect thứ hai: xử lý filter sau khi dữ liệu đã được set
+  useEffect(() => {
+    if (orderListData.length > 0 && status) {
+      handleFilter(status.toString()); // đảm bảo status là string
+    }
+  }, [orderListData, status]);
 
   const handleFilter = (item: string) => {
+    console.log(item);
     const allOrders = orderListData?.flatMap((group) => group.orders);
     if (item === "ALL") {
       setSelectedOrderList(allOrders);
@@ -121,14 +129,11 @@ const UserOrderScreen = () => {
           <Text style={styles.orderStatus}>Status: {order.orderStatus}</Text>
           <Text>Delivery Address: {order.deliverAddress}</Text>
 
-          <Text style={styles.subSection}>Items:</Text>
+          <Text style={styles.subSection}>
+            Items quantity: {order.orderItemList.length}
+          </Text>
 
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.itemsNumber}>
-              Item x {order.orderItemList.length}
-            </Text>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             <Text style={styles.priceSection}>
               Total payment:<Text>{formatCurrency(order.finalPrice)}</Text>
             </Text>
@@ -136,14 +141,22 @@ const UserOrderScreen = () => {
           <Text style={{ textAlign: "right" }}>
             Payment Status: {order.paymentStatus}
           </Text>
-          <View style={styles.detailsButton}>
-          
-            <Button
-              title="View Details"
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+              marginRight: 10,
+              justifyContent: "flex-end",
+            }}
+          >
+            <Pressable
+              style={styles.detailsButton}
               onPress={() => {
-                console.log("View Order Details", order.orderCode);
+                router.push("/(tabs)/profile/orderdetails?orderId=" + order.id);
               }}
-            />
+            >
+              <Text>View details</Text>
+            </Pressable>
           </View>
         </View>
       ))}
@@ -182,6 +195,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
+    borderWidth: 1,
+    borderColor: "#fff",
   },
   orderTitle: {
     fontSize: 18,
@@ -196,7 +211,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
-    textAlign: "right",
   },
   orderItem: {
     flexDirection: "row",
@@ -216,9 +230,12 @@ const styles = StyleSheet.create({
   },
   detailsButton: {
     marginTop: 10,
-    borderRadius: 5,
+    marginRight: 30,
+    borderRadius: 25,
     padding: 10,
     alignItems: "flex-end",
+    backgroundColor: "#007BFF",
+    width: 100,
   },
 });
 
