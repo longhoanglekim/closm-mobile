@@ -19,7 +19,8 @@ type OrderConfirmationDTO = {
     deliveryAmount: number;
     finalPrice: number;
   };
-  // paymentStatus: string;
+  paymentStatus: "PENDING" | "PAID";
+  paymentMethod: "COD" | "ONLINE";
 };
 type Discount = {
   id: number;
@@ -128,7 +129,7 @@ export const useCheckoutLogic = (
       (sum, discount) => sum + calculateDiscountAmount(discount),
       0
     );
-    return subtotal + deliveryFee + shippingCost - discountAmount|| 0;
+    return subtotal + deliveryFee + shippingCost - discountAmount || 0;
   };
 
   // Handle discount selection/deselection
@@ -172,6 +173,8 @@ export const useCheckoutLogic = (
         deliveryAmount: deliveryFee,
         finalPrice: calculateFinalPrice(),
       },
+      paymentStatus: "PENDING",      
+      paymentMethod: "COD",
     };
 
     console.log("orderData gửi lên:", JSON.stringify(orderData, null, 2));
