@@ -19,7 +19,7 @@ import layoutStyles from "@/constants/payment/checkout";
 import ShippingAddress from "@/app/(tabs)/payment/ShippingAddress";
 import { useCheckoutLogic } from "./useCheckoutLogic";
 import { initiateVnPay } from "@/api/payment/paymentAPI";
-
+import { confirmOrder } from "@/api/products/products";
 const Checkout = () => {
   const { cartItems } = useStateContext();
   const user = useSelector((state: any) => state.user);
@@ -45,7 +45,7 @@ const Checkout = () => {
     handleSubmitOrder,
     handleSelectDiscount,
     calculateDiscountAmount
-  } = useCheckoutLogic(cartItems, userInfo, userAddress, shippingCost);
+  } = useCheckoutLogic(cartItems, userInfo, userAddress, shippingCost, selectedPaymentMethod );
 
   const closeShippingModal = () => {
     setIsShippingModalVisible(false);
@@ -375,14 +375,19 @@ const Checkout = () => {
               };
               try {
                 // Gọi API khởi tạo VNPay, lấy về paymentUrl
-                const paymentUrl = await initiateVnPay(
-                  orderData.summaryOrderPrice.finalPrice
-                );
-                // Chuyển sang WebView thanh toán
+                const result = await confirmOrder({
+                  ...orderData,
+                  paymentMethod: "VNPAY",
+                  paymentStatus: "PREPAID",
+                });
+                  console.log("🧾 confirmOrder RESULT:", JSON.stringify(result, null, 2)); // ✅ THÊM LOG
+
+                const { paymentUrl } = result;
                 router.push({
                   pathname: "/(tabs)/payment/paymentOnline",
                   params: { paymentUrl },
                 });
+
               } catch (err) {
                 alert("Lỗi khởi tạo thanh toán online: " + (err as Error).message);
               }

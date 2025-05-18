@@ -77,7 +77,7 @@ export const calculateDistance = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': '5b3ce3597851110001cf62485935227e9443429ab33ea720c8b05f6c', 
+          'Authorization': '5b3ce3597851110001cf62485935227e9443429ab33ea720c8b05f6c',
         },
         body: JSON.stringify({
           coordinates: [srcCoords, dstCoords],
@@ -108,13 +108,17 @@ export const getAvailableDiscounts = async () => {
 // submit order
 export const confirmOrder = async (orderData: any) => {
   try {
-    const response = await fetch(`${apiUrl}/order/confirm-order`, {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const amount = orderData.summaryOrderPrice.finalPrice;
+    const bankCode = 'VNPAYQR'; 
+
+    const url = `${apiUrl}/order/confirm-order?amount=${amount}&bankCode=${bankCode}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderData),
     });
+
 
     if (!response.ok) {
       const errorText = await response.text();

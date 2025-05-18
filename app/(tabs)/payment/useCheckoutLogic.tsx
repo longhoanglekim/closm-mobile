@@ -6,6 +6,8 @@ type CartItem = {
   price: number;
   quantity: number;
 };
+type PaymentMethod = "CASH" | "BANK_TRANSFER" | "CREDIT_CARD" | "MOMO" | "VNPAY";
+type PaymentStatus = "PAID" | "UNPAID" | "REFUNDED" | "PREPAID";
 
 
 type OrderConfirmationDTO = {
@@ -19,7 +21,9 @@ type OrderConfirmationDTO = {
     deliveryAmount: number;
     finalPrice: number;
   };
-  // paymentStatus: string;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+
 };
 type Discount = {
   id: number;
@@ -34,7 +38,8 @@ export const useCheckoutLogic = (
   cartItems: CartItem[],
   user: { email: string } | null,
   userAddress: string,
-  shippingCost: number
+  shippingCost: number,
+  selectedPaymentMethod: string
 ) => {
   const [distance, setDistance] = useState<number>(0);
   const [availableDiscounts, setAvailableDiscounts] = useState<Discount[]>([]);
@@ -128,7 +133,7 @@ export const useCheckoutLogic = (
       (sum, discount) => sum + calculateDiscountAmount(discount),
       0
     );
-    return subtotal + deliveryFee + shippingCost - discountAmount|| 0;
+    return subtotal + deliveryFee + shippingCost - discountAmount || 0;
   };
 
   // Handle discount selection/deselection
@@ -157,24 +162,28 @@ export const useCheckoutLogic = (
       itemIdsMap[item.id] = item.quantity;
     });
 
+
     const orderData: OrderConfirmationDTO = {
       userEmail: user.email,
       address: userAddress,
-      itemIdsMap: itemIdsMap,
+      itemIdsMap,
       discountIds: selectedDiscounts.map((d) => d.id),
       summaryOrderPrice: {
         itemsTotalPrice: calculateSubtotal(),
         discountAmount: selectedDiscounts.reduce(
-          (sum, discount) =>
-            sum + (calculateSubtotal() * discount.discountPercentage) / 100,
+          (sum, discount) => sum + calculateDiscountAmount(discount),
           0
         ),
         deliveryAmount: deliveryFee,
         finalPrice: calculateFinalPrice(),
       },
+      paymentMethod: selectedPaymentMethod === "online" ? "VNPAY" : "CASH",
+      paymentStatus: selectedPaymentMethod === "online" ? "PREPAID" : "UNPAID",
     };
 
-    console.log("orderData gửi lên:", JSON.stringify(orderData, null, 2));
+
+    console.log("===== ORDER DATA GỬI LÊN =====");
+    console.log(JSON.stringify(orderData, null, 2));
     try {
       const result = await confirmOrder(orderData);
       alert(`Đơn hàng #${result.orderId} đã được xác nhận thành công!`);

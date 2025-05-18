@@ -26,6 +26,13 @@ export default function Layout() {
           headerShown: false, 
         }}
       />
+      <Tabs.Screen
+        name="paymentOnline"
+        options={{
+          tabBarButton: () => null, 
+          headerShown: false, 
+        }}
+      />
     </Tabs>
   );
 }

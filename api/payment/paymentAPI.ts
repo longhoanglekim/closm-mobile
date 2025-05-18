@@ -7,9 +7,9 @@ export interface VnPayResponse {
     paymentUrl: string;
 }
 
-export async function initiateVnPay(amount: number,bankCode?: string): Promise<string> {
+export async function initiateVnPay(amount: number, bankCode?: string): Promise<string> {
     const params = new URLSearchParams({
-        amount: amount.toString(),    
+        amount: amount.toString(),
     });
     if (bankCode) {
         params.append('bankCode', bankCode);
@@ -25,3 +25,22 @@ export async function initiateVnPay(amount: number,bankCode?: string): Promise<s
     const json = (await res.json()) as { data: VnPayResponse };
     return json.data.paymentUrl;
 }
+
+export const updateOrderPaymentStatus = async (
+    orderId: string,
+    status: "PAID" | "FAILED" | "PENDING" | "UNPAID"
+) => {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/order/${orderId}/update-payment-status`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(status),
+    });
+
+    if (!response.ok) {
+        throw new Error("Cập nhật trạng thái thanh toán thất bại");
+    }
+
+    return await response.json();
+};
