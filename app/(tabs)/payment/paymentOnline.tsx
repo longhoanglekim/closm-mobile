@@ -31,7 +31,7 @@ export default function OnlinePayment() {
       startInLoadingState
       onNavigationStateChange={async (navState) => {
         const url = navState.url;
-        console.log("🌐 NAVIGATED TO:", url); // ✅ Thêm log theo dõi URL
+        console.log("🌐 NAVIGATED TO:", url); 
 
         if (url.includes('/payment/vn-pay-callback')) {
           const ok = url.includes('vnp_ResponseCode=00');
