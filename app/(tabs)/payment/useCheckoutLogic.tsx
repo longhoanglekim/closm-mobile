@@ -157,10 +157,11 @@ export const useCheckoutLogic = (
       return;
     }
 
-    const itemIdsMap: Record<number, number> = {};
+    const itemIdsMap: Record<string, number> = {};
     cartItems.forEach((item: CartItem) => {
-      itemIdsMap[item.id] = item.quantity;
+      itemIdsMap[item.id.toString()] = item.quantity;
     });
+    console.log("Item IDs Map:", itemIdsMap);
 
 
     const orderData: OrderConfirmationDTO = {
@@ -177,8 +178,8 @@ export const useCheckoutLogic = (
         deliveryAmount: deliveryFee,
         finalPrice: calculateFinalPrice(),
       },
-      paymentMethod: selectedPaymentMethod === "online" ? "VNPAY" : "CASH",
-      paymentStatus: selectedPaymentMethod === "online" ? "PREPAID" : "UNPAID",
+      paymentMethod: selectedPaymentMethod === "online" ? "BANK_TRANSFER" : "CASH",
+      paymentStatus: selectedPaymentMethod === "online" ? "PAID" : "UNPAID",
     };
 
 
