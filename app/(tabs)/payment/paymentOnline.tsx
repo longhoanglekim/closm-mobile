@@ -3,11 +3,13 @@ import { View, ActivityIndicator, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams, router } from 'expo-router';
 import { updateOrderPaymentStatus } from '@/api/payment/paymentAPI';
+import { useSelector } from 'react-redux';
 
 export default function OnlinePayment() {
+  const token = useSelector((state: any) => state.user.token);
+
   const { paymentUrl } = useLocalSearchParams<{ paymentUrl: string }>();
 
-  // ✅ Log paymentUrl khi component render
   useEffect(() => {
     console.log("📦 paymentUrl:", paymentUrl);
   }, [paymentUrl]);
@@ -20,10 +22,11 @@ export default function OnlinePayment() {
     );
   }
 
-  function extractOrderIdFromUrl(url: string): string {
-    const params = new URL(url).searchParams;
-    return params.get("orderId") || "";
-  }
+  function extractOrderIdFromUrl(url: string): string | null {
+  const params = new URL(url).searchParams;
+  return params.get("vnp_TxnRef"); 
+}
+
 
   return (
     <WebView
@@ -31,14 +34,20 @@ export default function OnlinePayment() {
       startInLoadingState
       onNavigationStateChange={async (navState) => {
         const url = navState.url;
-        console.log("🌐 NAVIGATED TO:", url); 
+        console.log("🌐 NAVIGATED TO:", url);
 
         if (url.includes('/payment/vn-pay-callback')) {
           const ok = url.includes('vnp_ResponseCode=00');
+          const orderId = extractOrderIdFromUrl(url);
+
+          if (!orderId) {
+            Alert.alert("Không tìm thấy mã đơn hàng trong callback.");
+            return;
+          }
+
           if (ok) {
-            const orderId = extractOrderIdFromUrl(url);
             try {
-              await updateOrderPaymentStatus(orderId, "PAID");
+              await updateOrderPaymentStatus(orderId.toString(), "PAID", token);
               Alert.alert('Thanh toán thành công!');
               router.replace('/');
             } catch (err) {

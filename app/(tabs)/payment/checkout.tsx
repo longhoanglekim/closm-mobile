@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   Image,
   Modal,
-  ActivityIndicator,
+  ActivityIndicator, Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -45,7 +45,7 @@ const Checkout = () => {
     handleSubmitOrder,
     handleSelectDiscount,
     calculateDiscountAmount
-  } = useCheckoutLogic(cartItems, userInfo, userAddress, shippingCost, selectedPaymentMethod );
+  } = useCheckoutLogic(cartItems, userInfo, userAddress, shippingCost, selectedPaymentMethod);
 
   const closeShippingModal = () => {
     setIsShippingModalVisible(false);
@@ -354,49 +354,50 @@ const Checkout = () => {
           disabled={!userAddress || isCalculatingDistance}
           onPress={async () => {
             if (selectedPaymentMethod === "online") {
-              // Chuẩn bị orderData
-              const orderData = {
-                userEmail: userInfo.email,
-                address: userAddress,
-                itemIdsMap: cartItems.reduce<Record<number, number>>(
-                  (m, i) => ({ ...m, [i.id]: i.quantity }),
-                  {}
-                ),
-                discountIds: selectedDiscounts.map((d) => d.id),
-                summaryOrderPrice: {
-                  itemsTotalPrice: calculateSubtotal(),
-                  discountAmount: selectedDiscounts.reduce(
-                    (s, d) => s + calculateDiscountAmount(d),
-                    0
-                  ),
-                  deliveryAmount: deliveryFee,
-                  finalPrice: calculateFinalPrice(),
-                },
-              };
               try {
-                // Gọi API khởi tạo VNPay, lấy về paymentUrl
-                const result = await confirmOrder({
-                  ...orderData,
-                  paymentMethod: "VNPAY",
+                const orderData = {
+                  userEmail: userInfo.email,
+                  address: userAddress,
+                  itemIdsMap: cartItems.reduce<Record<number, number>>(
+                    (map, item) => ({ ...map, [item.id]: item.quantity }),
+                    {}
+                  ),
+                  discountIds: selectedDiscounts.map((d) => d.id),
+                  summaryOrderPrice: {
+                    itemsTotalPrice: calculateSubtotal(),
+                    discountAmount: selectedDiscounts.reduce(
+                      (s, d) => s + calculateDiscountAmount(d),
+                      0
+                    ),
+                    deliveryAmount: deliveryFee,
+                    finalPrice: calculateFinalPrice(),
+                  },
+                  paymentMethod: "BANK_TRANSFER",
                   paymentStatus: "PREPAID",
-                });
-                  console.log("🧾 confirmOrder RESULT:", JSON.stringify(result, null, 2)); // ✅ THÊM LOG
+                };
 
-                const { paymentUrl } = result;
+                // 1. Gửi đơn hàng để tạo orderId
+                const confirmResult = await confirmOrder(orderData);
+                const orderId = confirmResult.orderId;
+                const finalAmount = orderData.summaryOrderPrice.finalPrice;
+
+                // 2. Gọi initiateVnPay với amount + orderId
+                const paymentUrl = await initiateVnPay(finalAmount, orderId);
+
+                // 3. Mở WebView thanh toán
                 router.push({
                   pathname: "/(tabs)/payment/paymentOnline",
-                  params: { paymentUrl },
+                  params: {
+                    paymentUrl,
+                  },
                 });
-
               } catch (err) {
-                alert("Lỗi khởi tạo thanh toán online: " + (err as Error).message);
+                Alert.alert("Lỗi khi thanh toán:", (err as Error).message);
               }
-            } else {
-              // COD
-              handleSubmitOrder();
             }
           }}
         >
+
           <ThemedText style={layoutStyles.payButtonText}>
             {isCalculatingDistance ? "Đang tính phí..." : "Thanh toán"}
           </ThemedText>
