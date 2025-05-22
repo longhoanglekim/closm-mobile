@@ -34,7 +34,9 @@ const Category = (props: Props) => {
         <Text style={styles.headerTitle}>Categories</Text>
         <TouchableOpacity
           style={styles.seeAllButton}
-          onPress={() => router.push("/(tabs)/ProductDP/CategoryOverview")}
+          onPress={() =>
+            router.push(`/(tabs)/ProductDP/CategoryOverview?category=${"All"}`)
+          }
         >
           <Text style={styles.seeAllText}>See All</Text>
           <View style={styles.seeAllIcon}>
@@ -45,7 +47,6 @@ const Category = (props: Props) => {
 
       <View style={styles.categoriesContainer}>
         {productOverview.map((categoryData) => (
-
           <TouchableOpacity
             key={categoryData.category}
             style={styles.categoryGroup}
@@ -73,7 +74,6 @@ const Category = (props: Props) => {
           </TouchableOpacity>
         ))}
       </View>
-
     </View>
   );
 };
