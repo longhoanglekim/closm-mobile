@@ -112,7 +112,7 @@ const CategoryOverview = () => {
               <View style={styles.variantInfo}>
                 <Text style={styles.variantName}>{variant.name}</Text>
                 <Text style={styles.variantPrice}>
-                  {variant.price.toLocaleString()}₫
+                  {variant.price?.toLocaleString()}₫
                 </Text>
                 <Text style={styles.variantDesc} numberOfLines={2}>
                   {variant.description}
@@ -145,11 +145,11 @@ const CategoryOverview = () => {
                       <Text style={styles.variantName}>{variant.tag}</Text>
                       <Text style={styles.variantPrice}>
                         {variant.minPrice != null
-                          ? variant.minPrice.toLocaleString()
+                          ? variant.minPrice?.toLocaleString()
                           : "N/A"}{" "}
                         -
                         {variant.maxPrice != null
-                          ? variant.maxPrice.toLocaleString()
+                          ? variant.maxPrice?.toLocaleString()
                           : "N/A"}{" "}
                         ₫
                       </Text>

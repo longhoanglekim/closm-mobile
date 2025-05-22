@@ -33,7 +33,6 @@ export default function SettingsScreen() {
       <Button
         title="Log out"
         onPress={async () => {
-          // await auth.signOut();
           dispatch(logout());
           router.push("/(tabs)/profile/login");
         }}
