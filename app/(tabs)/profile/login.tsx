@@ -8,12 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Switch,
 } from "react-native";
-import { login } from "../../../api/auth/auth";
+import { login, loginAdmin } from "../../../api/auth/auth"; // 👈 Thêm loginAdmin
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
-import { getUserInfo } from "@/api/user/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // 👈 Chọn chế độ Admin/User
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -30,12 +32,29 @@ const LoginScreen = () => {
 
     setError("");
     try {
-      const response = await login(email, password);
+      const response = isAdmin
+        ? await loginAdmin(email, password)
+        : await login(email, password);
+
       if (response.token) {
-        const userInfo = await getUserInfo(email);
-        if (userInfo) {
-          dispatch(loginSuccess({ token: response.token, userInfo }));
-          await AsyncStorage.setItem("email", email);
+        const decoded: any = jwtDecode(response.token);
+        const role = decoded.role;
+
+        dispatch(
+          loginSuccess({
+            token: response.token,
+            userInfo: {
+              email: response.email,
+              role: role,
+            },
+          })
+        );
+
+        await AsyncStorage.setItem("email", email);
+
+        if (role === "admin" || role === "ROLE_ADMIN") {
+          router.replace("/");
+        } else {
           router.replace("/(tabs)/cart");
         }
       } else {
@@ -77,6 +96,11 @@ const LoginScreen = () => {
           autoCapitalize="none"
           style={styles.input}
         />
+
+        <View style={styles.switchContainer}>
+          <Text style={{ color: "#333" }}>Đăng nhập với tư cách admin?</Text>
+          <Switch value={isAdmin} onValueChange={setIsAdmin} />
+        </View>
 
         {error !== "" && <Text style={styles.error}>{error}</Text>}
 
@@ -134,6 +158,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#fff",
     fontSize: 16,
+  },
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 8,
   },
   error: {
     color: "red",
