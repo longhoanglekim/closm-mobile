@@ -6,7 +6,7 @@ import { faSearch, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 interface Variant {
   id: number;
   imageUrl: string;
-  name: string;
+  tag: string;
 }
 
 interface CategoryData {
@@ -42,7 +42,7 @@ const HomeTaskbar = ({
 
     productOverview.forEach((category) => {
       category.variants.forEach((variant) => {
-        const normalizedName = variant.name.toLowerCase().replace(/-/g, "");
+        const normalizedName = variant.tag.toLowerCase().replace(/-/g, "");
         const words = normalizedName.split(" ");
         if (
           words.some(

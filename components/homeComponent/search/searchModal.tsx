@@ -13,7 +13,7 @@ import {
 interface Variant {
   id: number;
   imageUrl: string;
-  name: string;
+  tag: string;
 }
 
 interface CategoryData {
@@ -31,10 +31,11 @@ interface Props {
 
 const SearchModal = ({ searchResults, setSearchText }: Props) => {
   const router = useRouter(); // Assuming you're using a router for navigation
-  const handleClickItem = (id: number) => {
+  const handleClickItem = (id: number, tag: string) => {
     // Handle the click event for the item
     console.log(`Clicked item with id: ${id}`);
-    router.push(`/view/VariantDetails?id=${id}`); // Navigate to the details page
+    console.log(`Clicked item with tag: ${tag}`);
+    router.push(`/(tabs)/ProductDP/productDetail?id=${id}&tag=${tag}`);
   };
 
   return (
@@ -44,10 +45,10 @@ const SearchModal = ({ searchResults, setSearchText }: Props) => {
           data={searchResults}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <Pressable onPress={() => handleClickItem(item.id)}>
+            <Pressable onPress={() => handleClickItem(item.id, item.tag)}>
               <View style={styles.resultItem}>
                 <Image source={{ uri: item.imageUrl }} style={styles.image} />
-                <Text>{item.name}</Text>
+                <Text>{item.tag}</Text>
               </View>
             </Pressable>
           )}

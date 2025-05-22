@@ -40,7 +40,7 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
-  // lONG TEST
+
   const [tagVariants, setTagVariants] = useState<any[]>([]);
   useEffect(() => {
     const fetchVariantDetails = async () => {
@@ -90,14 +90,6 @@ const ProductDetail = () => {
       </View>
     );
   }
-
-  // if (!tagVariants) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <Text>Product not found</Text>
-  //     </View>
-  //   );
-  // }
 
   return (
     <View style={styles.page}>
