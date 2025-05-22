@@ -101,29 +101,47 @@ const CategoryOverview = () => {
 
       {/* Product Grid */}
       {selectedCategory === "All" ? (
-        <View style={styles.variantsGrid}>
-          {allVariants.map((variant) => (
-            <TouchableOpacity key={variant.id} style={styles.variantCard}>
-              <Image
-                source={{ uri: variant.imgUrl }}
-                style={styles.variantImage}
-                resizeMode="cover"
-              />
-              <View style={styles.variantInfo}>
-                <Text style={styles.variantName}>{variant.name}</Text>
-                <Text style={styles.variantPrice}>
-                  {variant.price?.toLocaleString()}₫
-                </Text>
-                <Text style={styles.variantDesc} numberOfLines={2}>
-                  {variant.description}
-                </Text>
-                <Text style={styles.variantMeta}>
-                  Size: {variant.size} | Color: {variant.color}
-                </Text>
+        <View>
+          {productOverview.map((categoryData) => (
+            <View key={categoryData.category}>
+              <Text style={styles.allItemsTitle}>{categoryData.category}</Text>
+              <View style={styles.variantsGrid}>
+                {categoryData.variants.map((variant) => (
+                  <TouchableOpacity
+                    key={variant.id}
+                    style={styles.variantCard}
+                    onPress={() => handleClickVariant(variant.id, variant.tag)}
+                  >
+                    <Image
+                      source={{ uri: variant.imgUrl }}
+                      style={styles.variantImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.variantInfo}>
+                      <Text style={styles.variantName}>{variant.tag}</Text>
+                      <Text style={styles.variantPrice}>
+                        {variant.minPrice != null
+                          ? variant.minPrice?.toLocaleString()
+                          : "N/A"}{" "}
+                        -
+                        {variant.maxPrice != null
+                          ? variant.maxPrice?.toLocaleString()
+                          : "N/A"}{" "}
+                        ₫
+                      </Text>
+                      <Text style={styles.variantDesc} numberOfLines={2}>
+                        {variant.description}
+                      </Text>
+                      <Text style={styles.variantMeta}>
+                        Size: {variant.size} | Color: {variant.color}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
-        </View>
+        </View> // ✅ bổ sung dòng này
       ) : (
         <View>
           {filteredProducts.map((categoryData) => (
