@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Switch,
 } from "react-native";
-import { login, loginAdmin } from "../../../api/auth/auth"; // 👈 Thêm loginAdmin
+import { login, loginAdmin } from "../../../api/auth/auth";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,7 +22,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false); // 👈 Chọn chế độ Admin/User
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -39,7 +39,8 @@ const LoginScreen = () => {
       if (response.token) {
         const decoded: any = jwtDecode(response.token);
         const role = decoded.role;
-
+        console.log("Decoded JWT:", decoded);
+        console.log("Role:", role);
         dispatch(
           loginSuccess({
             token: response.token,
@@ -52,8 +53,8 @@ const LoginScreen = () => {
 
         await AsyncStorage.setItem("email", email);
 
-        if (role === "admin" || role === "ROLE_ADMIN") {
-          router.replace("/");
+        if (role === "ROLE_ADMIN") {
+          router.replace("/Admin/Dashboard_Admin");
         } else {
           router.replace("/(tabs)/cart");
         }
