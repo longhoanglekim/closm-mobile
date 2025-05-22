@@ -1,122 +1,167 @@
 import { Link, router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   Pressable,
   KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
 } from "react-native";
 import { login } from "../../../api/auth/auth";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  // useEffect(() => {
-  //   dispatch(logout());
-  // }, []);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+
+    setError("");
+    try {
+      const response = await login(email, password);
+      if (response.token) {
+        const userInfo = await getUserInfo(email);
+        if (userInfo) {
+          dispatch(loginSuccess({ token: response.token, userInfo }));
+          await AsyncStorage.setItem("email", email);
+          router.replace("/(tabs)/cart");
+        }
+      } else {
+        setError(response.message || "Đăng nhập thất bại");
+      }
+    } catch (err) {
+      console.error("Login error", err);
+      setError("Có lỗi xảy ra khi đăng nhập");
+    }
+  };
+
   return (
-    <View className="flex-1 items-center">
-      <View>
-        <View style={{ marginTop: 120 }}>
-          <Text style={{ fontSize: 45 }}>Welcome back</Text>
-        </View>
-        <View style={{ marginTop: 80, gap: 10, paddingLeft: 20 }}>
-          <Text>Email</Text>
-          <TextInput
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(value) => setEmail(value)}
-            style={{
-              width: 250,
-              height: 40,
-              borderColor: "black",
-              borderWidth: 1,
-              borderRadius: 30,
-              paddingLeft: 15,
-            }}
-          ></TextInput>
-          <Text>Password</Text>
-          <KeyboardAvoidingView behavior="padding">
-            <TextInput
-              placeholder="*******"
-              value={password}
-              onChangeText={(value) => setPassword(value)}
-              secureTextEntry={true}
-              style={{
-                width: 250,
-                height: 40,
-                borderColor: "black",
-                borderWidth: 1,
-                borderRadius: 30,
-                paddingLeft: 15,
-              }}
-            ></TextInput>
-          </KeyboardAvoidingView>
-          {error !== "" && (
-            <View>
-              <Text>{error}</Text>
-            </View>
-          )}
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <Pressable
-              style={{
-                gap: 10,
-                backgroundColor: "orange",
-                width: 100,
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 20,
-              }}
-              onPress={async () => {
-                console.log("login");
-                const response = await login(email, password);
-                if (response.token) {
-                    console.log("Login successful:", response.token);
-                    const userInfo = await getUserInfo(email);
-                    if (userInfo) {
-                        console.log("User info:", userInfo);
-                        dispatch(
-                            loginSuccess({
-                                token: response.token,
-                                userInfo: userInfo,
-                            })
-                        );
-                        // Lưu email vào AsyncStorage
-                        await AsyncStorage.setItem("email", email);
-                        console.log("Email đã được lưu vào AsyncStorage:", email);
-                    }
-                    router.replace("/(tabs)/cart");
-                } else {
-                    setError(response.message);
-                }
-            }}
-            >
-              <Text>Login</Text>
-            </Pressable>
-            <View style={{ backgroundColor: "lightgray", borderRadius: 10 }}>
-              <Link
-                href={"/(tabs)/profile/register"}
-                style={{
-                  width: "100%",
-                  padding: 13,
-                }}
-              >
-                Don't have an account?
-              </Link>
-            </View>
-          </View>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Welcome Back 👋</Text>
+        <Text style={styles.subtitle}>Sign in to continue</Text>
       </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.form}
+      >
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          placeholder="you@example.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          placeholder="••••••••"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+          style={styles.input}
+        />
+
+        {error !== "" && <Text style={styles.error}>{error}</Text>}
+
+        <Pressable style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </Pressable>
+
+        <Link href="/(tabs)/profile/register">
+          <Text style={styles.registerLink}>
+            Don't have an account? Register
+          </Text>
+        </Link>
+      </KeyboardAvoidingView>
     </View>
   );
 };
 
 export default LoginScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#007AFF",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 8,
+  },
+  form: {
+    gap: 16,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#333",
+    marginBottom: 4,
+  },
+  input: {
+    height: 50,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    backgroundColor: "#fff",
+    fontSize: 16,
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: "#007AFF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+    marginTop: 12,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  registerLink: {
+    marginTop: 16,
+    textAlign: "center",
+    color: "#007AFF",
+    fontSize: 15,
+    textDecorationLine: "underline",
+  },
+});
