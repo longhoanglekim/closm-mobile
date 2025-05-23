@@ -103,20 +103,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="payment"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="ProductDP"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
+    
     </Tabs>
   );
 }
