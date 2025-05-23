@@ -30,7 +30,9 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* Taskbar chứa ô tìm kiếm */}
-      <Text style={{ marginTop: 20 }}>Day la mau admin</Text>
+      <Text style={{ marginTop: 20 }}>
+        Day la mau admin : Dung nhieu vai loz
+      </Text>
     </SafeAreaView>
   );
 }
