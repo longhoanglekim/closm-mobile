@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -32,10 +32,17 @@ SplashScreen.preventAutoHideAsync();
 const AppContent = () => {
   const colorScheme = useColorScheme();
   const user = useSelector((state: any) => state.user);
-
+  const router = useRouter();
+  useEffect(() => {
+    console.log(user.userInfo.role === "ROLE_ADMIN");
+    if (user.userInfo.role === "ROLE_ADMIN") {
+      console.log("Admin");
+      router.replace("/(tabsAdmin)");
+    }
+  }, [user]);
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack screenOptions={{ headerShown: false }}>
         {user?.userInfo?.role === "ROLE_ADMIN" ? (
           <Stack.Screen name="(tabsAdmin)" options={{ headerShown: false }} />
         ) : (
