@@ -1,4 +1,3 @@
-import ProtectedRoute from "@/route/ProtectedRoute";
 import { Stack } from "expo-router";
 
 const StackLayout = () => {

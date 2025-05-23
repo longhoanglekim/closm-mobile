@@ -9,7 +9,7 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
-import { login } from "../../../api/auth/auth";
+import { loginAdmin } from "../../../api/auth/auth";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
@@ -30,13 +30,15 @@ const LoginScreen = () => {
 
     setError("");
     try {
-      const response = await login(email, password);
+      console.log("bat dau dang nhap admin");
+      const response = await loginAdmin(email, password);
       if (response.token) {
         const userInfo = await getUserInfo(email);
         if (userInfo) {
           dispatch(loginSuccess({ token: response.token, userInfo }));
           await AsyncStorage.setItem("email", email);
-          router.replace("/(tabs)/cart");
+          console.log("dang nhap admin thanh cong");
+          router.replace("/(tabsAdmin)");
         }
       } else {
         setError(response.message || "Đăng nhập thất bại");
@@ -84,14 +86,14 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Sign In</Text>
         </Pressable>
 
-        <Link href="/(tabs)/profile/register">
+        <Link href="/(tabsAdmin)/profile/register">
           <Text style={styles.registerLink}>
             Don't have an account? Register
           </Text>
         </Link>
         <Text style={{ textAlign: "center" }}>Or</Text>
-        <Link href="/(tabsAdmin)/profile/login">
-          <Text style={styles.registerLink}>Login as Admin?</Text>
+        <Link href="/(tabs)/profile/login">
+          <Text style={styles.registerLink}>Login as user?</Text>
         </Link>
       </KeyboardAvoidingView>
     </View>

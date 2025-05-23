@@ -13,7 +13,11 @@ import "../global.css";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { StateProvider } from "@/context/StateContext";
 import * as Notification from "expo-notifications";
-import "../global.css";
+
+import { Provider, useSelector } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import store, { persistor } from "@/redux/store";
+
 Notification.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -21,17 +25,30 @@ Notification.setNotificationHandler({
     shouldSetBadge: false,
   }),
 });
-import { Provider } from "react-redux";
-import store from "@/redux/store";
-import { persistor } from "@/redux/store";
-import { PersistGate } from "redux-persist/integration/react";
 
-import ProductDetail from "@/app/(tabs)/ProductDP/CategoryOverview";
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+// ✅ Tách component con để gọi useSelector hợp lệ
+const AppContent = () => {
   const colorScheme = useColorScheme();
+  const user = useSelector((state: any) => state.user);
+
+  return (
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack>
+        {user?.userInfo?.role === "ROLE_ADMIN" ? (
+          <Stack.Screen name="(tabsAdmin)" options={{ headerShown: false }} />
+        ) : (
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        )}
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+};
+
+export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -42,23 +59,13 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
 
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
         <StateProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
+          <AppContent />
         </StateProvider>
       </PersistGate>
     </Provider>
