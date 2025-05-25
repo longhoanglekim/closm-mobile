@@ -34,7 +34,7 @@ export default function SettingsScreen() {
         title="Log out"
         onPress={async () => {
           dispatch(logout());
-          router.push("/(tabs)/profile/login");
+          router.push("/(tabsAdmin)/profile/login");
         }}
       />
 
