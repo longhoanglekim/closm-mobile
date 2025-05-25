@@ -1,5 +1,5 @@
-import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import { Link, router, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { loginAdmin } from "../../../api/auth/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,7 +21,14 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const user = useSelector((state) => state.user);
+  const router = useRouter();
+  useEffect(() => {
+    if (user.isLoggedIn && user.userInfo.role === "ROLE_ADMIN") {
+      console.log("Admin already logged in, redirecting...");
+      router.replace("/(tabsAdmin)/profile");
+    }
+  }, [user]);
   const handleLogin = async () => {
     if (!email || !password) {
       setError("Vui lòng điền đầy đủ thông tin");

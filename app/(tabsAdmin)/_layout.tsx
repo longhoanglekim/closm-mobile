@@ -20,90 +20,64 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarLabel: ({ color }) => (
-            <Text style={{ fontSize: 13, fontWeight: "bold", color: color, fontFamily: "YourCustomFont",  }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "bold",
+                color: color,
+                fontFamily: "YourCustomFont",
+              }}
+            >
               Home
             </Text>
           ),
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={{ uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/home-button_sbyo9y.png" }}
+              source={{
+                uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/home-button_sbyo9y.png",
+              }}
               style={{
                 width: size,
                 height: size,
-                 // Áp dụng màu sắc nếu cần
+                // Áp dụng màu sắc nếu cần
               }}
               resizeMode="contain"
             />
           ),
         }}
       />
-      <Tabs.Screen
-        name="cart"
-        options={{
-          title: "Cart",
-          tabBarLabel: ({ color }) => (
-            <Text style={{ fontSize: 13, fontWeight: "bold", color: color, fontFamily: "YourCustomFont",  }}>
-              Cart
-            </Text>
-          ),
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={{ uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/shopping-cart_kes3ai.png" }}
-              style={{
-                width: size,
-                height: size,
-                
-              }}
-              resizeMode="contain"
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="sales"
-        options={{
-          title: "Sale",
-          tabBarLabel: ({ color }) => (
-            <Text style={{ fontSize: 13, fontWeight: "bold", color: color, fontFamily: "YourCustomFont",  }}>
-              Sale
-            </Text>
-          ),
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={{ uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/sales_g4q09f.png" }}
-              style={{
-                width: size,
-                height: size,
-                
-              }}
-              resizeMode="contain"
-            />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
+          popToTopOnBlur: true,
           tabBarLabel: ({ color }) => (
-            <Text style={{ fontSize: 13, fontWeight: "bold", color: color, fontFamily: "YourCustomFont",  }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "bold",
+                color: color,
+                fontFamily: "YourCustomFont",
+              }}
+            >
               Profile
             </Text>
           ),
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={{ uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/verified_oia5fq.png" }}
+              source={{
+                uri: "https://res.cloudinary.com/dwddrjz3b/image/upload/v1746421333/verified_oia5fq.png",
+              }}
               style={{
                 width: size,
                 height: size,
-                
               }}
               resizeMode="contain"
             />
           ),
         }}
       />
-    
     </Tabs>
   );
 }
