@@ -34,8 +34,8 @@ const AppContent = () => {
   const user = useSelector((state: any) => state.user);
   const router = useRouter();
   useEffect(() => {
-    console.log(user.userInfo.role === "ROLE_ADMIN");
-    if (user.userInfo.role === "ROLE_ADMIN") {
+    console.log(user.userInfo?.role === "ROLE_ADMIN");
+    if (user.userInfo?.role === "ROLE_ADMIN") {
       console.log("Admin");
       router.replace("/(tabsAdmin)");
     }
