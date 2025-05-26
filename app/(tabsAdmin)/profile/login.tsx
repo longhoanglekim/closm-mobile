@@ -1,5 +1,5 @@
-import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import { Link, router, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
-import { login } from "../../../api/auth/auth";
-import { useDispatch } from "react-redux";
+import { loginAdmin } from "../../../api/auth/auth";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,7 +21,14 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const user = useSelector((state) => state.user);
+  const router = useRouter();
+  useEffect(() => {
+    if (user.isLoggedIn && user.userInfo.role === "ROLE_ADMIN") {
+      console.log("Admin already logged in, redirecting...");
+      router.replace("/(tabsAdmin)/profile");
+    }
+  }, [user]);
   const handleLogin = async () => {
     if (!email || !password) {
       setError("Vui lòng điền đầy đủ thông tin");
@@ -30,13 +37,15 @@ const LoginScreen = () => {
 
     setError("");
     try {
-      const response = await login(email, password);
+      console.log("bat dau dang nhap admin");
+      const response = await loginAdmin(email, password);
       if (response.token) {
         const userInfo = await getUserInfo(email);
         if (userInfo) {
           dispatch(loginSuccess({ token: response.token, userInfo }));
           await AsyncStorage.setItem("email", email);
-          router.replace("/(tabs)/cart");
+          console.log("dang nhap admin thanh cong");
+          router.replace("/(tabsAdmin)");
         }
       } else {
         setError(response.message || "Đăng nhập thất bại");
@@ -84,14 +93,14 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Sign In</Text>
         </Pressable>
 
-        <Link href="/(tabs)/profile/register">
+        <Link href="/(tabsAdmin)/profile/register">
           <Text style={styles.registerLink}>
             Don't have an account? Register
           </Text>
         </Link>
         <Text style={{ textAlign: "center" }}>Or</Text>
-        <Link href="/(tabsAdmin)/profile/login">
-          <Text style={styles.registerLink}>Login as Admin?</Text>
+        <Link href="/(tabs)/profile/login">
+          <Text style={styles.registerLink}>Login as user?</Text>
         </Link>
       </KeyboardAvoidingView>
     </View>
