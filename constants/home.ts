@@ -63,6 +63,7 @@ export default StyleSheet.create({
       flexWrap: 'wrap',
       flexDirection: 'row',
       gap: 3,
+      paddingLeft: 10,
     },
     categoryImage: {
       width: 70,

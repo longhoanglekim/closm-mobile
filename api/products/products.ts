@@ -93,18 +93,6 @@ export const calculateDistance = async (
 };
 
 
-export const getAvailableDiscounts = async () => {
-  try {
-    const response = await fetch(`${apiUrl}/discounts/validateList`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch discounts');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching discounts:', error);
-    throw error;
-  }
-};
 // submit order
 export const confirmOrder = async (orderData: any) => {
   try {
@@ -127,3 +115,15 @@ export const confirmOrder = async (orderData: any) => {
     throw error;
   }
 };
+export const getTopItems = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/items/top-items`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch top items');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching top items:', error);
+    throw error;
+  }
+}
