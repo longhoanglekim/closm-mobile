@@ -93,11 +93,7 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Sign In</Text>
         </Pressable>
 
-        <Link href="/(tabsAdmin)/profile/register">
-          <Text style={styles.registerLink}>
-            Don't have an account? Register
-          </Text>
-        </Link>
+
         <Text style={{ textAlign: "center" }}>Or</Text>
         <Link href="/(tabs)/profile/login">
           <Text style={styles.registerLink}>Login as user?</Text>

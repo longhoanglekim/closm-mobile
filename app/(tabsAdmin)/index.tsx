@@ -8,10 +8,27 @@ import {
   Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get('window');
+type StatItem = {
+  title: string;
+  value: string;
+  change: string;
+  color: string;
+};
+
+type MenuItemType = {
+  icon: string;
+  title: string;
+  subtitle: string;
+  color: string;
+  route: any;
+};
 
 const DashboardAdmin = () => {
+
+    const router = useRouter();
   const stats = [
     { title: "Tổng doanh thu", value: "125.5M", change: "+12%", color: "#4CAF50" },
     { title: "Đơn hàng hôm nay", value: "43", change: "+8%", color: "#2196F3" },
@@ -20,14 +37,14 @@ const DashboardAdmin = () => {
   ];
 
   const menuItems = [
-    { icon: "📦", title: "Quản lý sản phẩm", subtitle: "Thêm, sửa, xóa sản phẩm", color: "#FF6B6B" },
-    { icon: "🛍️", title: "Quản lý đơn hàng", subtitle: "Theo dõi đơn hàng", color: "#4ECDC4" },
-    { icon: "👥", title: "Quản lý khách hàng", subtitle: "Thông tin khách hàng", color: "#45B7D1" },
-    { icon: "📊", title: "Báo cáo thống kê", subtitle: "Phân tích doanh số", color: "#96CEB4" },
-    { icon: "🏷️", title: "Quản lý danh mục", subtitle: "Phân loại sản phẩm", color: "#FFEAA7" },
-    { icon: "💰", title: "Quản lý khuyến mãi", subtitle: "Tạo mã giảm giá", color: "#DDA0DD" },
-    { icon: "📱", title: "Quản lý banner", subtitle: "Quảng cáo trang chủ", color: "#98D8C8" },
-    { icon: "⚙️", title: "Cài đặt hệ thống", subtitle: "Cấu hình ứng dụng", color: "#F7DC6F" }
+    { icon: "📦", title: "Quản lý sản phẩm", subtitle: "Thêm, sửa, xóa sản phẩm", color: "#FF6B6B", route: "/(tabsAdmin)/Product/index" },
+    { icon: "🛍️", title: "Quản lý đơn hàng", subtitle: "Theo dõi đơn hàng", color: "#4ECDC4", route: "/admin/products" },
+    { icon: "👥", title: "Quản lý khách hàng", subtitle: "Thông tin khách hàng", color: "#45B7D1" , route: "/admin/products"},
+    { icon: "📊", title: "Báo cáo thống kê", subtitle: "Phân tích doanh số", color: "#96CEB4" , route: "/admin/products"},
+    { icon: "🏷️", title: "Quản lý danh mục", subtitle: "Phân loại sản phẩm", color: "#FFEAA7" , route: "/admin/products"},
+    { icon: "💰", title: "Quản lý khuyến mãi", subtitle: "Tạo mã giảm giá", color: "#DDA0DD" , route: "/admin/products"},
+    { icon: "📱", title: "Quản lý banner", subtitle: "Quảng cáo trang chủ", color: "#98D8C8" , route: "/admin/products"},
+    { icon: "⚙️", title: "Cài đặt hệ thống", subtitle: "Cấu hình ứng dụng", color: "#F7DC6F" , route: "/admin/products"}
   ];
 
   const recentOrders = [
@@ -36,7 +53,7 @@ const DashboardAdmin = () => {
     { id: "#ORD-003", customer: "Lê Văn C", amount: "2,100,000đ", status: "Chờ thanh toán" }
   ];
 
-  const StatCard = ({ item }) => (
+  const StatCard = ({ item }: { item: StatItem }) => (
     <View style={[styles.statCard, { borderLeftColor: item.color }]}>
       <Text style={styles.statValue}>{item.value}</Text>
       <Text style={styles.statTitle}>{item.title}</Text>
@@ -44,8 +61,11 @@ const DashboardAdmin = () => {
     </View>
   );
 
-  const MenuItem = ({ item }) => (
-    <TouchableOpacity style={styles.menuItem}>
+  const MenuItem = ({ item }: { item: MenuItemType }) => (
+    <TouchableOpacity
+      style={styles.menuItem}
+      onPress={() => router.push(item.route)} 
+    >
       <View style={[styles.menuIcon, { backgroundColor: item.color + '20' }]}>
         <Text style={styles.menuIconText}>{item.icon}</Text>
       </View>
