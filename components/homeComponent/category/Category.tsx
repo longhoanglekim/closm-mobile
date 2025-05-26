@@ -5,6 +5,7 @@ import { router } from "expo-router";
 interface Variant {
   id: number;
   imageUrl: string;
+  quantity: number;
 }
 
 interface CategoryData {
@@ -67,7 +68,7 @@ const Category = (props: Props) => {
               <Text style={styles.categoryName}>{categoryData.category}</Text>
               <View style={styles.countBadge}>
                 <Text style={styles.countText}>
-                  {categoryData.variants.length}
+                  {categoryData.quantity} items
                 </Text>
               </View>
             </View>

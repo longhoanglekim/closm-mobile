@@ -1,23 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
+import { getTopItems } from "@/api/products/products";
+
+interface Item {
+  tag: string;
+  imageUrl: string;
+  soldQuantity: number;
+}
+
+interface TopProductGroup {
+  itemList: Item[];
+  category: string;
+}
 
 const TopProduct = () => {
-  const topProducts = [
-    { id: 1, name: "Bag", image: "https://picsum.photos/200" },
-    { id: 2, name: "Watch", image: "https://picsum.photos/200" },
-    { id: 3, name: "Shirt", image: "https://picsum.photos/200" },
-    { id: 4, name: "Shoes", image: "https://picsum.photos/200" },
-    { id: 5, name: "Dress", image: "https://picsum.photos/200" },
-  ];
+  const [topProducts, setTopProducts] = useState<TopProductGroup[]>([]);
+
+  useEffect(() => {
+    const fetchTopProducts = async () => {
+      try {
+        const data = await getTopItems();
+        setTopProducts(data);
+      } catch (error) {
+        console.error("Error fetching top products:", error);
+      }
+    };
+
+    fetchTopProducts();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Top Products</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}
+      >
         {topProducts.map((product) => (
-          <View key={product.id} style={styles.productContainer}>
-            <Image source={{ uri: product.image }} style={styles.image} />
-            <Text style={styles.productName}>{product.name}</Text>
+          <View key={product.category} style={styles.productGroup}>
+            <Text style={styles.categoryName}>{product.category}</Text>
+            <View style={styles.itemRow}>
+              {product.itemList.map((item, index) => (
+                <View key={index} style={styles.itemContainer}>
+                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
+                  <Text style={styles.productName}>{item.tag}</Text>
+                  <Text style={styles.productName}>
+                    {/* Sold: {item.soldQuantity} */}
+                    Sold : 100+
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -26,28 +60,68 @@ const TopProduct = () => {
 };
 
 const styles = StyleSheet.create({
+  // 1. Layout tổng
   container: {
-    marginVertical: 10,
+    marginVertical: 20,
+    paddingHorizontal: 16,
   },
+  scrollContainer: {
+    flexDirection: "row",
+  },
+
+  // 2. Tiêu đề
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: "#333",
+    marginBottom: 16,
+    textAlign: "left",
   },
-  productContainer: {
+
+  // 3. Nhóm sản phẩm theo category
+  productGroup: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginRight: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+    minWidth: 150,
+  },
+  categoryName: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#444",
+    textAlign: "center",
+  },
+  itemRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    backgroundColor: "#f9f9f9",
+  },
+
+  // 4. Sản phẩm đơn lẻ
+  itemContainer: {
     alignItems: "center",
-    marginRight: 15,
+    backgroundColor: "#f9f9f9",
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "#ccc",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 1.5,
+    borderColor: "#ddd",
+    backgroundColor: "#f0f0f0",
+    marginBottom: 6,
   },
   productName: {
-    marginTop: 5,
-    fontSize: 14,
+    fontSize: 13,
+    color: "#555",
+    textAlign: "center",
   },
 });
 
