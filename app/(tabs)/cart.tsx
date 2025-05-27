@@ -15,7 +15,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { useStateContext } from "@/context/StateContext"; // Adjust import path as needed
 import styles from "@/constants/Cart";
 import { useSelector } from "react-redux";
-import LoginScreen from "../view/login";
+import LoginScreen from "@/app/(tabs)/profile/login";
 
 export default function CartScreen() {
   const { cartItems, addToCart, removeFromCart, updateQuantity } =
