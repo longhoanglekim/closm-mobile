@@ -60,7 +60,6 @@ export const getVariantDetails = async (id: number) => {
 
 
 
-// POST /items/create-item
 export const createItem = async (productItemInfo: any, token: string) => {
   const res = await fetch(`${apiUrl}/items/create-item`, {
     method: "POST",
@@ -75,7 +74,7 @@ export const createItem = async (productItemInfo: any, token: string) => {
 };
 
 
-// PUT /items/update-item/{id}
+
 export const updateItem = async (id: number, productItemInfo: any, token: string) => {
   const res = await fetch(`${apiUrl}/items/update-item/${id}`, {
     method: "PUT",
@@ -90,7 +89,7 @@ export const updateItem = async (id: number, productItemInfo: any, token: string
 };
 
 
-// DELETE /items/delete-item/{id}
+
 export const deleteItem = async (id: number, token: string) => {
   const res = await fetch(`${apiUrl}/items/delete-item/${id}`, {
     method: "DELETE",
@@ -101,4 +100,5 @@ export const deleteItem = async (id: number, token: string) => {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 };
+
 

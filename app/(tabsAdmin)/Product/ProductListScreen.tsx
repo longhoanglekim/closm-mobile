@@ -5,21 +5,23 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { 
-    getAllItemsByCategory, 
-    createBaseProduct, 
-    updateBaseProduct, 
-    deleteBaseProduct 
-} from "@/api/admin/admin"; 
-// import { RootState } from '@/store';
-type Product = {
+import {
+    getAllItemsByCategory,
+    createItem,
+    updateItem,
+    deleteItem
+} from "@/api/admin/admin";
+
+type ProductItem = {
     id: number;
-    name: string;
-    description: string;
-    price: number;
-    quantity: number;
-    imageUrl: string;
     category: string;
+    price: number;
+    imageUrl: string;
+    size: string;
+    color: string;
+    quantity: number;
+    tag: string;
+    description: string;
 };
 
 type RouteParams = {
@@ -30,20 +32,22 @@ const ProductListScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { category } = route.params as RouteParams;
-    
-    const [products, setProducts] = useState<Product[]>([]);
+
+    const [products, setProducts] = useState<ProductItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const token = useSelector((state: any) => state.user.token); // Added type annotation
-    
-    // Form states
+    const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
+    const token = useSelector((state: any) => state.user.token);
+
+    // Không khai báo base_product_id ở đây!
     const [formData, setFormData] = useState({
-        name: '',
-        description: '',
         price: '',
+        size: '',
+        color: '',
         quantity: '',
-        imageUrl: ''
+        tag: '',
+        imageUrl: '',
+        description: '',
     });
 
     useEffect(() => {
@@ -53,17 +57,9 @@ const ProductListScreen = () => {
     const loadProducts = async () => {
         try {
             setLoading(true);
-            console.log('Loading products for category:', category);
-            console.log('Token available:', !!token);
-            
             const data = await getAllItemsByCategory(category);
-            console.log('API Response:', data);
-            console.log('Products count:', data?.length || 0);
-            
-            setProducts(data || []); // Ensure it's always an array
+            setProducts(data || []);
         } catch (error) {
-            console.error('Lỗi khi tải sản phẩm:', error);
-            console.error('Error details:', JSON.stringify(error, null, 2));
             Alert.alert('Lỗi', 'Không thể tải danh sách sản phẩm');
         } finally {
             setLoading(false);
@@ -73,31 +69,35 @@ const ProductListScreen = () => {
     const handleCreate = () => {
         setEditingProduct(null);
         setFormData({
-            name: '',
-            description: '',
             price: '',
+            size: '',
+            color: '',
             quantity: '',
-            imageUrl: ''
+            tag: '',
+            imageUrl: '',
+            description: '',
         });
         setModalVisible(true);
     };
 
-    const handleEdit = (product: Product) => {
+    const handleEdit = (product: ProductItem) => {
         setEditingProduct(product);
         setFormData({
-            name: product.name,
-            description: product.description,
-            price: product.price.toString(),
-            quantity: product.quantity.toString(),
-            imageUrl: product.imageUrl
+            price: product.price?.toString() || '',
+            size: product.size || '',
+            color: product.color || '',
+            quantity: product.quantity?.toString() || '',
+            tag: product.tag || '',
+            imageUrl: product.imageUrl || '',
+            description: product.description || '',
         });
         setModalVisible(true);
     };
 
-    const handleDelete = (product: Product) => {
+    const handleDelete = (product: ProductItem) => {
         Alert.alert(
             'Xác nhận xóa',
-            `Bạn có chắc chắn muốn xóa sản phẩm "${product.name}"?`,
+            `Bạn có chắc chắn muốn xóa sản phẩm này?`,
             [
                 { text: 'Hủy', style: 'cancel' },
                 { text: 'Xóa', style: 'destructive', onPress: () => confirmDelete(product.id) }
@@ -107,57 +107,61 @@ const ProductListScreen = () => {
 
     const confirmDelete = async (id: number) => {
         try {
-            await deleteBaseProduct(id, token);
+            await deleteItem(id, token);
             setProducts(products.filter(p => p.id !== id));
             Alert.alert('Thành công', 'Xóa sản phẩm thành công');
         } catch (error) {
-            console.error('Lỗi khi xóa sản phẩm:', error);
             Alert.alert('Lỗi', 'Không thể xóa sản phẩm');
         }
     };
 
     const handleSave = async () => {
-        if (!formData.name || !formData.price) {
+        if (!formData.price || !formData.size || !formData.color) {
             Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
 
-        const productData = {
-            name: formData.name,
-            description: formData.description,
+        // Tạo đúng object không có base_product_id
+        const itemData = {
+            category: category, // category lấy từ route
             price: parseFloat(formData.price),
+            size: formData.size,
+            color: formData.color,
             quantity: parseInt(formData.quantity) || 0,
+            tag: formData.tag,
             imageUrl: formData.imageUrl,
-            category: category
+            description: formData.description,
         };
 
         try {
             if (editingProduct) {
-                const updatedProduct = await updateBaseProduct(editingProduct.id, productData, token);
+                const updated = await updateItem(editingProduct.id, itemData, token);
                 setProducts(products.map(p =>
-                    p.id === editingProduct.id ? { ...updatedProduct, id: editingProduct.id } : p
+                    p.id === editingProduct.id ? { ...updated, id: editingProduct.id } : p
                 ));
                 Alert.alert('Thành công', 'Cập nhật sản phẩm thành công');
             } else {
-                const newProduct = await createBaseProduct(productData, token);
-                setProducts([...products, newProduct]);
+                const created = await createItem(itemData, token);
+                setProducts([...products, created]);
                 Alert.alert('Thành công', 'Thêm sản phẩm thành công');
             }
             setModalVisible(false);
         } catch (error) {
-            console.error('Lỗi khi lưu sản phẩm:', error);
             Alert.alert('Lỗi', 'Không thể lưu sản phẩm');
+            console.error('Lỗi khi lưu sản phẩm:', error);
         }
     };
 
-    const renderProductItem = ({ item }: { item: Product }) => (
+
+    const renderProductItem = ({ item }: { item: ProductItem }) => (
         <View style={styles.productCard}>
             <Image source={{ uri: item.imageUrl || 'https://via.placeholder.com/80' }} style={styles.productImage} />
             <View style={styles.productInfo}>
-                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productName}>{item.tag || item.size}</Text>
                 <Text style={styles.productDescription}>{item.description}</Text>
-                <Text style={styles.productPrice}>${item.price}</Text>
+                <Text style={styles.productPrice}>Giá: {item.price?.toLocaleString()} đ</Text>
                 <Text style={styles.productQuantity}>Số lượng: {item.quantity}</Text>
+                <Text style={styles.productDescSmall}>Màu: {item.color} | Size: {item.size}</Text>
             </View>
             <View style={styles.actionButtons}>
                 <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
@@ -178,50 +182,40 @@ const ProductListScreen = () => {
                         <Text style={styles.modalTitle}>
                             {editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới'}
                         </Text>
-                        
-                        <Text style={styles.inputLabel}>Tên sản phẩm *</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.name}
-                            onChangeText={(text) => setFormData({...formData, name: text})}
-                            placeholder="Nhập tên sản phẩm"
-                        />
-
-                        <Text style={styles.inputLabel}>Mô tả</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea]}
-                            value={formData.description}
-                            onChangeText={(text) => setFormData({...formData, description: text})}
-                            placeholder="Nhập mô tả sản phẩm"
-                            multiline
-                            numberOfLines={3}
-                        />
-
                         <Text style={styles.inputLabel}>Giá *</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.price}
-                            onChangeText={(text) => setFormData({...formData, price: text})}
-                            placeholder="Nhập giá sản phẩm"
-                            keyboardType="numeric"
-                        />
+                        <TextInput style={styles.input} value={formData.price}
+                            onChangeText={text => setFormData({ ...formData, price: text })}
+                            placeholder="Nhập giá sản phẩm" keyboardType="numeric" />
+
+                        <Text style={styles.inputLabel}>Size *</Text>
+                        <TextInput style={styles.input} value={formData.size}
+                            onChangeText={text => setFormData({ ...formData, size: text })}
+                            placeholder="Nhập size sản phẩm" />
+
+                        <Text style={styles.inputLabel}>Màu *</Text>
+                        <TextInput style={styles.input} value={formData.color}
+                            onChangeText={text => setFormData({ ...formData, color: text })}
+                            placeholder="Nhập màu sản phẩm" />
 
                         <Text style={styles.inputLabel}>Số lượng</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.quantity}
-                            onChangeText={(text) => setFormData({...formData, quantity: text})}
-                            placeholder="Nhập số lượng"
-                            keyboardType="numeric"
-                        />
+                        <TextInput style={styles.input} value={formData.quantity}
+                            onChangeText={text => setFormData({ ...formData, quantity: text })}
+                            placeholder="Nhập số lượng" keyboardType="numeric" />
+
+                        <Text style={styles.inputLabel}>Tag</Text>
+                        <TextInput style={styles.input} value={formData.tag}
+                            onChangeText={text => setFormData({ ...formData, tag: text })}
+                            placeholder="Nhập tag (nếu có)" />
 
                         <Text style={styles.inputLabel}>URL hình ảnh</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.imageUrl}
-                            onChangeText={(text) => setFormData({...formData, imageUrl: text})}
-                            placeholder="Nhập URL hình ảnh"
-                        />
+                        <TextInput style={styles.input} value={formData.imageUrl}
+                            onChangeText={text => setFormData({ ...formData, imageUrl: text })}
+                            placeholder="Nhập URL hình ảnh" />
+
+                        <Text style={styles.inputLabel}>Mô tả</Text>
+                        <TextInput style={[styles.input, styles.textArea]} value={formData.description}
+                            onChangeText={text => setFormData({ ...formData, description: text })}
+                            placeholder="Nhập mô tả sản phẩm" multiline numberOfLines={3} />
 
                         <View style={styles.modalButtons}>
                             <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
@@ -236,9 +230,6 @@ const ProductListScreen = () => {
             </View>
         </Modal>
     );
-
-    // Debug render - show what's happening
-    console.log('Render - Loading:', loading, 'Products:', products.length);
 
     return (
         <View style={styles.container}>
@@ -288,7 +279,8 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0'
+        borderBottomColor: '#e0e0e0',
+        marginTop:50,
     },
     backButton: {
         fontSize: 16,
@@ -393,7 +385,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20
     },
-        emptyContainer: {
+    emptyContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -432,7 +424,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 6
-    }
+    },
+    productDescSmall: {
+        fontSize: 12,
+        color: '#888'
+    },
 });
 
 export default ProductListScreen;
