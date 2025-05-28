@@ -24,5 +24,7 @@ const store = configureStore({
         }),
 
 })
+
+
 export default store;
 export const persistor = persistStore(store); // kích hoạt việc lưu trữ state và tải lại khi khởi động

@@ -28,6 +28,7 @@ export const loginAdmin = async (email : string, password : string) => {
   }
   return response.json();
 };
+
 export const register = async (fullName : string, email : string, password : string, phone : string) => {
   const response = await fetch(`${apiUrl}/auth/register`, {
     method: "POST",
@@ -41,3 +42,4 @@ export const register = async (fullName : string, email : string, password : str
   }
   return response.json();
 };
+
