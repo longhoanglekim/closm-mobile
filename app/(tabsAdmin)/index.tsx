@@ -37,7 +37,7 @@ const DashboardAdmin = () => {
   ];
 
   const menuItems = [
-    { icon: "📦", title: "Quản lý sản phẩm", subtitle: "Thêm, sửa, xóa sản phẩm", color: "#FF6B6B", route: "/(tabsAdmin)/Product" },
+    { icon: "📦", title: "Quản lý sản phẩm", subtitle: "Thêm, sửa, xóa sản phẩm", color: "#FF6B6B", route: "/(tabsAdmin)/Product/ProductManagement" },
     { icon: "🛍️", title: "Quản lý đơn hàng", subtitle: "Theo dõi đơn hàng", color: "#4ECDC4", route: "/admin/products" },
     { icon: "👥", title: "Quản lý khách hàng", subtitle: "Thông tin khách hàng", color: "#45B7D1" , route: "/admin/products"},
     { icon: "📊", title: "Báo cáo thống kê", subtitle: "Phân tích doanh số", color: "#96CEB4" , route: "/admin/products"},

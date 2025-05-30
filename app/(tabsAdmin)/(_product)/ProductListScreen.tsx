@@ -428,6 +428,14 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#888'
     },
+    emptyText: {
+        fontSize: 18,
+        color: "#64748b",
+        textAlign: "center",
+        marginBottom: 18,
+        fontWeight: "500",
+        opacity: 0.95,
+      },
 });
 
 export default ProductListScreen;

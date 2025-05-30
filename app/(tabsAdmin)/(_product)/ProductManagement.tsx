@@ -73,7 +73,7 @@ const ProductCategoryScreen = () => {
                 }
             ]}
             onPress={() => router.push({ 
-                pathname: "/(tabsAdmin)/Product/ProductListScreen", 
+                pathname: "/(tabsAdmin)/(_product)/ProductListScreen", 
                 params: { category: item } 
             })}
             activeOpacity={0.92}
