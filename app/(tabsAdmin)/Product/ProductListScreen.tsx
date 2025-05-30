@@ -121,9 +121,8 @@ const ProductListScreen = () => {
             return;
         }
 
-        // Tạo đúng object không có base_product_id
         const itemData = {
-            category: category, // category lấy từ route
+            category: category, 
             price: parseFloat(formData.price),
             size: formData.size,
             color: formData.color,
@@ -155,7 +154,7 @@ const ProductListScreen = () => {
 
     const renderProductItem = ({ item }: { item: ProductItem }) => (
         <View style={styles.productCard}>
-            <Image source={{ uri: item.imageUrl || 'https://via.placeholder.com/80' }} style={styles.productImage} />
+            <Image source={{ uri: item.imageUrl}} style={styles.productImage} />
             <View style={styles.productInfo}>
                 <Text style={styles.productName}>{item.tag || item.size}</Text>
                 <Text style={styles.productDescription}>{item.description}</Text>
