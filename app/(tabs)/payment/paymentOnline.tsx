@@ -2,12 +2,8 @@ import React, { useEffect } from 'react';
 import { View, ActivityIndicator, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams, router } from 'expo-router';
-import { updateOrderPaymentStatus } from '@/api/payment/paymentAPI';
-import { useSelector } from 'react-redux';
 
 export default function OnlinePayment() {
-  const token = useSelector((state: any) => state.user.token);
-
   const { paymentUrl } = useLocalSearchParams<{ paymentUrl: string }>();
 
   useEffect(() => {
@@ -23,10 +19,9 @@ export default function OnlinePayment() {
   }
 
   function extractOrderIdFromUrl(url: string): string | null {
-  const params = new URL(url).searchParams;
-  return params.get("vnp_TxnRef"); 
-}
-
+    const params = new URL(url).searchParams;
+    return params.get("vnp_TxnRef"); 
+  }
 
   return (
     <WebView
@@ -46,13 +41,8 @@ export default function OnlinePayment() {
           }
 
           if (ok) {
-            try {
-              await updateOrderPaymentStatus(orderId.toString(), "PAID", token);
-              Alert.alert('Thanh toán thành công!');
-              router.replace('/');
-            } catch (err) {
-              Alert.alert('Lỗi cập nhật trạng thái đơn hàng:', (err as Error).message);
-            }
+            Alert.alert('Thanh toán thành công!');
+            router.replace('/');
           } else {
             Alert.alert('Thanh toán thất bại.');
           }
