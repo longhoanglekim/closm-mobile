@@ -13,19 +13,22 @@ export const getOrderInfo = async (orderId: number) => {
     return response.json();
     }
     
-export const getAllOrders = async (token: any) => {
-    const response = await fetch(`${apiUrl}/order/get-all-orders`, {
-        method: "GET",
+export const getAllOrders = async (token: string) => {
+    console.log("TOKEN GỬI LÊN:", token);
+    const res = await fetch(`${apiUrl}/order/get-all-orders`, {
         headers: {
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
-        },
+            "Accept": "application/json"
+        }
     });
-    if (!response.ok) {
+    console.log("RES STATUS", res.status);
+    const text = await res.text();
+    if (!res.ok) {
         throw new Error("Lỗi khi lấy danh sách đơn hàng");
     }
-    return response.json();
-}
+    return JSON.parse(text);
+};
+
 
 export const updateOrder = async (id:any, updateOrderInfoDTO:any, token:any) => {
     const response = await fetch(`${apiUrl}/order/update-order/${id}`, {

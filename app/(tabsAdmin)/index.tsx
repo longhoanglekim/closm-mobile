@@ -38,7 +38,7 @@ const DashboardAdmin = () => {
 
   const menuItems = [
     { icon: "📦", title: "Quản lý sản phẩm", subtitle: "Thêm, sửa, xóa sản phẩm", color: "#FF6B6B", route: "/(tabsAdmin)/Product/ProductManagement" },
-    { icon: "🛍️", title: "Quản lý đơn hàng", subtitle: "Theo dõi đơn hàng", color: "#4ECDC4", route: "/admin/products" },
+    { icon: "🛍️", title: "Quản lý đơn hàng", subtitle: "Theo dõi đơn hàng", color: "#4ECDC4", route: "/(tabsAdmin)/OrderManagement/OrderManagement" },
     { icon: "👥", title: "Quản lý khách hàng", subtitle: "Thông tin khách hàng", color: "#45B7D1" , route: "/admin/products"},
     { icon: "📊", title: "Báo cáo thống kê", subtitle: "Phân tích doanh số", color: "#96CEB4" , route: "/admin/products"},
     { icon: "🏷️", title: "Quản lý danh mục", subtitle: "Phân loại sản phẩm", color: "#FFEAA7" , route: "/admin/products"},
@@ -64,8 +64,7 @@ const DashboardAdmin = () => {
   const MenuItem = ({ item }: { item: MenuItemType }) => (
     <TouchableOpacity
       style={styles.menuItem}
-      // onPress={() => router.push(item.route)} 
-      onPress={() => router.push("/(tabsAdmin)/Product/ProductManagement")} 
+      onPress={() => router.push(item.route)} 
 
     >
       <View style={[styles.menuIcon, { backgroundColor: item.color + '20' }]}>
