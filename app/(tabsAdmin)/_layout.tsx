@@ -39,7 +39,6 @@ export default function TabLayout() {
               style={{
                 width: size,
                 height: size,
-                // Áp dụng màu sắc nếu cần
               }}
               resizeMode="contain"
             />
