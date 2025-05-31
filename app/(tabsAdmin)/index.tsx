@@ -64,7 +64,8 @@ const DashboardAdmin = () => {
   const MenuItem = ({ item }: { item: MenuItemType }) => (
     <TouchableOpacity
       style={styles.menuItem}
-      onPress={() => router.push(item.route)} 
+      // onPress={() => router.push(item.route)} 
+      onPress={() => router.push("/(tabsAdmin)/Product/ProductManagement")} 
 
     >
       <View style={[styles.menuIcon, { backgroundColor: item.color + '20' }]}>
