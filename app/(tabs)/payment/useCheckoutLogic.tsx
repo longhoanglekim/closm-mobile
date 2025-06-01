@@ -86,23 +86,34 @@ export const useCheckoutLogic = (
 
     try {
       // Get coordinates for shop address
-      const shopLocation = await getLocationFromAddress(shopAddress);
-      console.log("Shop Location:", shopLocation);
+      const shopLocationArr = await getLocationFromAddress(shopAddress);
+      console.log("Shop Location:", shopLocationArr);
 
       // Get coordinates for user address
-      const userLocation = await getLocationFromAddress(userAddress);
-      console.log("User Location:", userLocation);
+      const userLocationArr = await getLocationFromAddress(userAddress);
+      console.log("User Location:", userLocationArr);
+
+      const shopLocation = Array.isArray(shopLocationArr) && shopLocationArr.length > 0 ? shopLocationArr[0] : null;
+      const userLocation = Array.isArray(userLocationArr) && userLocationArr.length > 0 ? userLocationArr[0] : null;
 
       if (!shopLocation || !userLocation) {
+        console.error("Không tìm thấy tọa độ:", { shopLocationArr, userLocationArr });
         throw new Error(
           "Không thể tìm thấy tọa độ cho một hoặc cả hai địa chỉ."
         );
       }
+      if (!shopLocation.lon || !shopLocation.lat || !userLocation.lon || !userLocation.lat) {
+        console.error("Thiếu trường lat/lon:", { shopLocation, userLocation });
+        throw new Error("Thiếu thông tin tọa độ lat/lon.");
+      }
 
+      // Ép kiểu về số và truyền đúng thứ tự [lon, lat]
+      const shopCoords = [parseFloat(shopLocation.lon), parseFloat(shopLocation.lat)];
+      const userCoords = [parseFloat(userLocation.lon), parseFloat(userLocation.lat)];
       // Calculate distance between coordinates
       const distanceInMeters = await calculateDistance(
-        [shopLocation.lon, shopLocation.lat],
-        [userLocation.lon, userLocation.lat]
+        shopCoords,
+        userCoords
       );
 
       const distanceInKm = distanceInMeters / 1000;
