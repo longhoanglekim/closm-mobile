@@ -132,13 +132,14 @@ return (
     {loading && <ActivityIndicator />}
 
     {/* Dropdown tỉnh */}
-    <View style={{ zIndex: 3000, marginBottom: 18 }}>
+    <View style={{ marginBottom: 18 }}>
       <Text style={simpleStyles.label}>Tỉnh/Thành phố *</Text>
       <DropDownPicker
         open={provinceOpen}
         value={selectedProvince}
         items={provinceItems}
         setOpen={setProvinceOpen}
+        setValue={setSelectedProvince}
         onOpen={onProvinceOpen}
         placeholder="Chọn tỉnh/thành phố"
         listMode="MODAL"
@@ -153,60 +154,48 @@ return (
     </View>
 
     {/* Dropdown huyện */}
-    <View style={{ zIndex: 2000, marginBottom: 18 }}>
+    <View style={{ marginBottom: 18 }}>
       <Text style={simpleStyles.label}>Quận/Huyện *</Text>
       <DropDownPicker
         open={districtOpen}
         value={selectedDistrict}
         items={districtItems}
-        setOpen={onDistrictOpen}
+        setOpen={setDistrictOpen}
         setValue={setSelectedDistrict}
+        onOpen={onDistrictOpen}
         placeholder="Chọn quận/huyện"
         disabled={!selectedProvince}
-        zIndex={2000}
-        zIndexInverse={1000}
-        listMode="SCROLLVIEW"
-        maxHeight={150}
+        listMode="MODAL"
+        maxHeight={400}
         searchable={true}
         searchPlaceholder="Tìm kiếm quận/huyện..."
         dropDownContainerStyle={simpleStyles.dropDownContainer}
         style={simpleStyles.dropdownStyle}
         textStyle={simpleStyles.dropdownText}
         placeholderStyle={simpleStyles.placeholderStyle}
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-          showsVerticalScrollIndicator: true,
-          keyboardShouldPersistTaps: 'handled',
-        }}
       />
     </View>
 
     {/* Dropdown xã */}
-    <View style={{ zIndex: 1000, marginBottom: 18 }}>
+    <View style={{ marginBottom: 18 }}>
       <Text style={simpleStyles.label}>Phường/Xã *</Text>
       <DropDownPicker
         open={wardOpen}
         value={selectedWard}
         items={wardItems}
-        setOpen={onWardOpen}
+        setOpen={setWardOpen}
         setValue={setSelectedWard}
+        onOpen={onWardOpen}
         placeholder="Chọn phường/xã"
         disabled={!selectedDistrict}
-        zIndex={1000}
-        zIndexInverse={1000}
-        listMode="SCROLLVIEW"
-        maxHeight={150}
+        listMode="MODAL"
+        maxHeight={400}
         searchable={true}
         searchPlaceholder="Tìm kiếm phường/xã..."
         dropDownContainerStyle={simpleStyles.dropDownContainer}
         style={simpleStyles.dropdownStyle}
         textStyle={simpleStyles.dropdownText}
         placeholderStyle={simpleStyles.placeholderStyle}
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-          showsVerticalScrollIndicator: true,
-          keyboardShouldPersistTaps: 'handled',
-        }}
       />
     </View>
 
