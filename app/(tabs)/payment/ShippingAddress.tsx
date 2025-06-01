@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, ActivityIndicator, Text, StyleSheet, ScrollView } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getProvinces, getDistrictsOfProvince, getWardsOfDistrict } from "@/api/Location/Location";
 
@@ -122,101 +122,211 @@ const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressPro
   const districtItems = districts.map(d => ({ label: d.name, value: d.code }));
   const wardItems = wards.map(w => ({ label: w.name, value: w.code }));
 
-  return (
-    <View style={simpleStyles.container}>
-      <Text style={simpleStyles.header}>Thêm địa chỉ mới</Text>
-      {loading && <ActivityIndicator />}
-      {/* Dropdown tỉnh */}
-      <View style={{ marginBottom: 18, zIndex: 3 }}>
-        <Text style={simpleStyles.label}>Tỉnh/Thành phố *</Text>
-        <DropDownPicker
-          open={provinceOpen}
-          value={selectedProvince}
-          items={provinceItems}
-          setOpen={setProvinceOpen}
-          setValue={(val) => {
-            setSelectedProvince(val);
-            setProvinceOpen(false);
-          }}
-          placeholder="Chọn tỉnh/thành phố"
-          zIndex={3000}
-          zIndexInverse={1000}
-          listMode="SCROLLVIEW"
-          maxHeight={200}
-        />
+return (
+  <ScrollView
+    keyboardShouldPersistTaps="handled"
+    style={{ flex: 1, backgroundColor: '#fff', borderRadius: 14 }}
+    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}
+  >
+    <Text style={simpleStyles.header}>Thêm địa chỉ mới</Text>
+    {loading && <ActivityIndicator />}
 
-      </View>
-      {/* Dropdown huyện */}
-      <View style={{ marginBottom: 18, zIndex: 2 }}>
-        <Text style={simpleStyles.label}>Quận/Huyện *</Text>
-        <DropDownPicker
-          open={districtOpen}
-          value={selectedDistrict}
-          items={districtItems}
-          setOpen={setDistrictOpen}
-          setValue={(val) => {
-            setSelectedDistrict(val);
-            setDistrictOpen(false);
-          }}
-          placeholder="Chọn quận/huyện"
-          disabled={!selectedProvince}
-          zIndex={2000}
-          zIndexInverse={2000}
-          listMode="SCROLLVIEW"
-          maxHeight={200}
-        />
-      </View>
-      {/* Dropdown xã */}
-      <View style={{ marginBottom: 18, zIndex: 1 }}>
-        <Text style={simpleStyles.label}>Phường/Xã *</Text>
-        <DropDownPicker
-          open={wardOpen}
-          value={selectedWard}
-          items={wardItems}
-          setOpen={setWardOpen}
-          setValue={(val) => {
-            setSelectedWard(val);
-            setWardOpen(false);
-          }}
-          placeholder="Chọn phường/xã"
-          disabled={!selectedDistrict}
-          zIndex={1000}
-          zIndexInverse={3000}
-          listMode="SCROLLVIEW"
-          maxHeight={200}
-        />
-
-
-      </View>
-      {/* Input số nhà */}
-      <Text style={simpleStyles.label}>Số nhà, Tên đường *</Text>
-      <TextInput
-        style={simpleStyles.input}
-        value={formData.streetAddress}
-        onChangeText={(value) => handleChange('streetAddress', value)}
-        placeholder="Nhập số nhà, tên đường"
-        placeholderTextColor="#999"
+    {/* Dropdown tỉnh */}
+    <View style={{ zIndex: 3000, marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Tỉnh/Thành phố *</Text>
+      <DropDownPicker
+        open={provinceOpen}
+        value={selectedProvince}
+        items={provinceItems}
+        setOpen={onProvinceOpen}
+        setValue={setSelectedProvince}
+        placeholder="Chọn tỉnh/thành phố"
+        zIndex={3000}
+        zIndexInverse={1000}
+        listMode="SCROLLVIEW"
+        maxHeight={150}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+        scrollViewProps={{
+          nestedScrollEnabled: true,
+          showsVerticalScrollIndicator: true,
+          keyboardShouldPersistTaps: 'handled',
+        }}
       />
-      {/* Nút */}
-      <TouchableOpacity style={simpleStyles.saveButton} onPress={handleSave}>
-        <Text style={simpleStyles.saveButtonText}>Thêm địa chỉ</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={simpleStyles.cancelButton} onPress={onClose}>
-        <Text style={simpleStyles.cancelButtonText}>Hủy</Text>
-      </TouchableOpacity>
     </View>
-  );
+
+    {/* Dropdown huyện */}
+    <View style={{ zIndex: 2000, marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Quận/Huyện *</Text>
+      <DropDownPicker
+        open={districtOpen}
+        value={selectedDistrict}
+        items={districtItems}
+        setOpen={onDistrictOpen}
+        setValue={setSelectedDistrict}
+        placeholder="Chọn quận/huyện"
+        disabled={!selectedProvince}
+        zIndex={2000}
+        zIndexInverse={1000}
+        listMode="SCROLLVIEW"
+        maxHeight={150}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm quận/huyện..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+        scrollViewProps={{
+          nestedScrollEnabled: true,
+          showsVerticalScrollIndicator: true,
+          keyboardShouldPersistTaps: 'handled',
+        }}
+      />
+    </View>
+
+    {/* Dropdown xã */}
+    <View style={{ zIndex: 1000, marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Phường/Xã *</Text>
+      <DropDownPicker
+        open={wardOpen}
+        value={selectedWard}
+        items={wardItems}
+        setOpen={onWardOpen}
+        setValue={setSelectedWard}
+        placeholder="Chọn phường/xã"
+        disabled={!selectedDistrict}
+        zIndex={1000}
+        zIndexInverse={1000}
+        listMode="SCROLLVIEW"
+        maxHeight={150}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm phường/xã..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+        scrollViewProps={{
+          nestedScrollEnabled: true,
+          showsVerticalScrollIndicator: true,
+          keyboardShouldPersistTaps: 'handled',
+        }}
+      />
+    </View>
+
+    {/* Input số nhà */}
+    <Text style={simpleStyles.label}>Số nhà, Tên đường *</Text>
+    <TextInput
+      style={simpleStyles.input}
+      value={formData.streetAddress}
+      onChangeText={(value) => handleChange('streetAddress', value)}
+      placeholder="Nhập số nhà, tên đường"
+      placeholderTextColor="#999"
+    />
+
+    {/* Nút */}
+    <TouchableOpacity style={simpleStyles.saveButton} onPress={handleSave}>
+      <Text style={simpleStyles.saveButtonText}>Thêm địa chỉ</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={simpleStyles.cancelButton} onPress={onClose}>
+      <Text style={simpleStyles.cancelButtonText}>Hủy</Text>
+    </TouchableOpacity>
+  </ScrollView>
+);
+
+
 };
 
 const simpleStyles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff', borderRadius: 14 },
-  header: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 16 },
-  label: { fontSize: 14, marginBottom: 6 },
-  input: { borderWidth: 1, borderColor: '#e3e3e3', borderRadius: 10, padding: 12, marginBottom: 16 },
-  saveButton: { backgroundColor: '#1976d2', borderRadius: 10, alignItems: 'center', padding: 14, marginTop: 10 },
-  saveButtonText: { color: '#fff', fontWeight: 'bold' },
-  cancelButton: { backgroundColor: '#f2f2f2', borderRadius: 10, alignItems: 'center', padding: 14, marginTop: 10 },
-  cancelButtonText: { color: '#333' },
+  container: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    // padding: 20,    // <-- KHÔNG set padding lớn nếu đang trong ScrollView!
+    // flex: 1,        // <-- Bỏ nếu không muốn full height
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#333',
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 6,
+    color: '#333',
+    fontWeight: '500',
+  },
+  dropdownContainer: {
+    marginBottom: 18,   // Chỉ margin, không position/relative
+  },
+  dropdownStyle: {
+    borderColor: '#e3e3e3',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    minHeight: 48,
+    // height: undefined, // Không set height cứng
+  },
+  dropDownContainer: {
+    backgroundColor: '#fff',
+    borderColor: '#e3e3e3',
+    borderWidth: 1.2,
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.13,
+    shadowRadius: 2.5,
+  },
+  dropdownText: {
+    fontSize: 15,
+    color: '#333',
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: '#999',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e3e3e3',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    fontSize: 15,
+    color: '#333',
+  },
+  saveButton: {
+    backgroundColor: '#1976d2',
+    borderRadius: 10,
+    alignItems: 'center',
+    padding: 14,
+    marginTop: 10,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 10,
+    alignItems: 'center',
+    padding: 14,
+    marginTop: 10,
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontSize: 16,
+  },
 });
+
 
 export default ShippingAddress;
