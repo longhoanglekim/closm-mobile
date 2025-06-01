@@ -125,8 +125,8 @@ const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressPro
 return (
   <ScrollView
     keyboardShouldPersistTaps="handled"
-    style={{ flex: 1, backgroundColor: '#fff', borderRadius: 14 }}
-    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}
+    style={{ flex: 1, backgroundColor: '#fff' }}
+    contentContainerStyle={{ padding: 20 }}
   >
     <Text style={simpleStyles.header}>Thêm địa chỉ mới</Text>
     {loading && <ActivityIndicator />}
@@ -138,24 +138,17 @@ return (
         open={provinceOpen}
         value={selectedProvince}
         items={provinceItems}
-        setOpen={onProvinceOpen}
-        setValue={setSelectedProvince}
+        setOpen={setProvinceOpen}
+        onOpen={onProvinceOpen}
         placeholder="Chọn tỉnh/thành phố"
-        zIndex={3000}
-        zIndexInverse={1000}
-        listMode="SCROLLVIEW"
-        maxHeight={150}
+        listMode="MODAL"
+        maxHeight={400}
         searchable={true}
         searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
         dropDownContainerStyle={simpleStyles.dropDownContainer}
         style={simpleStyles.dropdownStyle}
         textStyle={simpleStyles.dropdownText}
         placeholderStyle={simpleStyles.placeholderStyle}
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-          showsVerticalScrollIndicator: true,
-          keyboardShouldPersistTaps: 'handled',
-        }}
       />
     </View>
 
