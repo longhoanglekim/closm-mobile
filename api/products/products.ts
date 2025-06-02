@@ -47,50 +47,41 @@ export const getVariantListByName = async (name: string) => {
 
 
 //new
-export const getLocationFromAddress = async (address: string) => {
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`
-    );
-    const data = await response.json();
-    if (data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-      };
-    }
-    throw new Error('Location not found');
-  } catch (error) {
-    console.error('Error getting location:', error);
-    throw error;
+export async function getLocationFromAddress(address) {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`
+  );
+  const contentType = res.headers.get('content-type');
+  if (!res.ok) throw new Error("Không thể lấy địa chỉ");
+  if (contentType && contentType.includes('application/json')) {
+    return res.json();
+  } else {
+    const text = await res.text();
+    throw new Error('API không trả về JSON: ' + text);
   }
-};
+}
 
-export const calculateDistance = async (
-  srcCoords: [number, number],
-  dstCoords: [number, number]
-) => {
-  try {
-    const response = await fetch(
-      'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': '5b3ce3597851110001cf62485935227e9443429ab33ea720c8b05f6c',
-        },
-        body: JSON.stringify({
-          coordinates: [srcCoords, dstCoords],
-        }),
-      }
-    );
-    const data = await response.json();
-    return data.features[0].properties.segments[0].distance;
-  } catch (error) {
-    console.error('Error calculating distance:', error);
-    throw error;
+export async function calculateDistance(srcCoords, dstCoords) {
+  const res = await fetch(
+    'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '5b3ce3597851110001cf62485935227e9443429ab33ea720c8b05f6c',
+      },
+      body: JSON.stringify({
+        coordinates: [srcCoords, dstCoords],
+      }),
+    }
+  );
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error('Không thể tính khoảng cách: ' + text);
   }
-};
+  const data = await res.json();
+  return data.features[0].properties.segments[0].distance;
+}
 
 
 // submit order
@@ -125,5 +116,17 @@ export const getTopItems = async () => {
   } catch (error) {
     console.error('Error fetching top items:', error);
     throw error;
+  }
+}
+
+export async function getProvinces() {
+  const res = await fetch(`${apiUrl}/p/`);
+  const contentType = res.headers.get('content-type');
+  if (!res.ok) throw new Error("Không thể lấy danh sách tỉnh thành");
+  if (contentType && contentType.includes('application/json')) {
+    return res.json();
+  } else {
+    const text = await res.text();
+    throw new Error('API không trả về JSON: ' + text);
   }
 }

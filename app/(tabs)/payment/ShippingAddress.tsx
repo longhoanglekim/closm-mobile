@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { ThemedText } from "@/components/ThemedText";
-import styles from '@/constants/payment/shippingAddress';
+import { View, TextInput, TouchableOpacity, ActivityIndicator, Text, StyleSheet, ScrollView } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { getProvinces, getDistrictsOfProvince, getWardsOfDistrict } from "@/api/Location/Location";
 
 interface ShippingAddressProps {
   currentAddress?: string;
@@ -9,28 +9,97 @@ interface ShippingAddressProps {
   onClose: () => void;
 }
 
-const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressProps) =>{
-  // Tách địa chỉ hiện tại thành các phần
-  const parseAddress = (fullAddress: string = '') => {
+const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressProps) => {
+  // Helper tách địa chỉ
+  const parseAddress = (fullAddress = '') => {
     const parts = fullAddress.split(', ');
     return {
       streetAddress: parts[0] || '',
       ward: parts[1] || '',
       district: parts[2] || '',
-      city: parts[3] || ''
+      city: parts[3] || '',
     };
   };
 
   const [formData, setFormData] = useState(parseAddress(currentAddress));
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [wards, setWards] = useState<any[]>([]);
 
-  // Cập nhật form khi currentAddress thay đổi
+  // Dropdown state
+  const [provinceOpen, setProvinceOpen] = useState(false);
+  const [districtOpen, setDistrictOpen] = useState(false);
+  const [wardOpen, setWardOpen] = useState(false);
+
+  // Giá trị chọn
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedWard, setSelectedWard] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Lấy tỉnh/thành phố
+  useEffect(() => {
+    setLoading(true);
+    getProvinces().then(data => {
+      setProvinces(data);
+      setLoading(false);
+    });
+  }, []);
+
+  // Lấy giá trị khi edit
   useEffect(() => {
     if (currentAddress) {
       setFormData(parseAddress(currentAddress));
+      const provinceObj = provinces.find(p => p.name === parseAddress(currentAddress).city);
+      if (provinceObj) setSelectedProvince(provinceObj.code);
     }
-  }, [currentAddress]);
+  }, [currentAddress, provinces]);
 
-  // Cập nhật từng trường trong form
+  // Khi chọn tỉnh
+  useEffect(() => {
+    if (selectedProvince) {
+      setLoading(true);
+      getDistrictsOfProvince(selectedProvince).then(data => {
+        setDistricts(data);
+        setSelectedDistrict('');
+        setWards([]);
+        setSelectedWard('');
+        setLoading(false);
+      });
+    } else {
+      setDistricts([]); setSelectedDistrict(''); setWards([]); setSelectedWard('');
+    }
+  }, [selectedProvince]);
+
+  // Khi chọn huyện
+  useEffect(() => {
+    if (selectedDistrict) {
+      setLoading(true);
+      getWardsOfDistrict(selectedDistrict).then(data => {
+        setWards(data);
+        setSelectedWard('');
+        setLoading(false);
+      });
+    } else {
+      setWards([]); setSelectedWard('');
+    }
+  }, [selectedDistrict]);
+
+  // Auto update formData khi chọn dropdown
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      city: provinces.find(p => p.code === selectedProvince)?.name || '',
+      district: districts.find(d => d.code === selectedDistrict)?.name || '',
+      ward: wards.find(w => w.code === selectedWard)?.name || '',
+    }));
+  }, [selectedProvince, selectedDistrict, selectedWard]);
+
+  // Đảm bảo chỉ mở 1 dropdown
+  const onProvinceOpen = () => { setProvinceOpen(true); setDistrictOpen(false); setWardOpen(false); };
+  const onDistrictOpen = () => { setDistrictOpen(true); setProvinceOpen(false); setWardOpen(false); };
+  const onWardOpen = () => { setWardOpen(true); setProvinceOpen(false); setDistrictOpen(false); };
+
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -38,88 +107,208 @@ const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressPro
     }));
   };
 
-  // Xử lý khi nhấn nút lưu
   const handleSave = () => {
     const { streetAddress, ward, district, city } = formData;
-    // Kiểm tra các trường bắt buộc
     if (!streetAddress || !ward || !district || !city) {
       alert('Vui lòng điền đầy đủ thông tin địa chỉ');
       return;
     }
-    // Ghép các phần thành địa chỉ đầy đủ
     const fullAddress = `${streetAddress}, ${ward}, ${district}, ${city}`;
     onSave(fullAddress);
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText style={styles.headerTitle}>
-          {currentAddress ? 'Chỉnh sửa địa chỉ' : 'Thêm địa chỉ mới'}
-        </ThemedText>
-      </View>
-      <View style={styles.formGroup}>
-        <ThemedText style={styles.label}>Tỉnh/Thành phố *</ThemedText>
-        <TextInput
-          style={styles.input}
-          value={formData.city}
-          onChangeText={(value) => handleChange('city', value)}
-          placeholder="Nhập tỉnh/thành phố"
-          placeholderTextColor="#999"
-        />
-      </View>
-      <View style={styles.formGroup}>
-        <ThemedText style={styles.label}>Quận/Huyện *</ThemedText>
-        <TextInput
-          style={styles.input}
-          value={formData.district}
-          onChangeText={(value) => handleChange('district', value)}
-          placeholder="Nhập quận/huyện"
-          placeholderTextColor="#999"
-        />
-      </View>
-      <View style={styles.formGroup}>
-        <ThemedText style={styles.label}>Phường/Xã *</ThemedText>
-        <TextInput
-          style={styles.input}
-          value={formData.ward}
-          onChangeText={(value) => handleChange('ward', value)}
-          placeholder="Nhập phường/xã"
-          placeholderTextColor="#999"
-        />
-      </View>
-      <View style={styles.form}>
-        <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>Số nhà, Tên đường *</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.streetAddress}
-            onChangeText={(value) => handleChange('streetAddress', value)}
-            placeholder="Nhập số nhà, tên đường"
-            placeholderTextColor="#999"
-          />
-        </View>
-      </View>
+  // Chuẩn hóa data cho dropdown
+  const provinceItems = provinces.map(p => ({ label: p.name, value: p.code }));
+  const districtItems = districts.map(d => ({ label: d.name, value: d.code }));
+  const wardItems = wards.map(w => ({ label: w.name, value: w.code }));
 
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
-          onPress={handleSave}
-        >
-          <ThemedText style={styles.buttonText}>
-            {currentAddress ? 'Cập nhật' : 'Thêm địa chỉ'}
-          </ThemedText>
-        </TouchableOpacity>
+return (
+  <ScrollView
+    keyboardShouldPersistTaps="handled"
+    style={{ flex: 1, backgroundColor: '#fff' }}
+    contentContainerStyle={{ padding: 20 }}
+  >
+    <Text style={simpleStyles.header}>Thêm địa chỉ mới</Text>
+    {loading && <ActivityIndicator />}
 
-        <TouchableOpacity
-          style={[styles.button, styles.cancelButton]}
-          onPress={onClose}
-        >
-          <ThemedText style={styles.cancelButtonText}>Hủy</ThemedText>
-        </TouchableOpacity>
-      </View>
+    {/* Dropdown tỉnh */}
+    <View style={{ marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Tỉnh/Thành phố *</Text>
+      <DropDownPicker
+        open={provinceOpen}
+        value={selectedProvince}
+        items={provinceItems}
+        setOpen={setProvinceOpen}
+        setValue={setSelectedProvince}
+        onOpen={onProvinceOpen}
+        placeholder="Chọn tỉnh/thành phố"
+        listMode="MODAL"
+        maxHeight={400}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm tỉnh/thành phố..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+      />
     </View>
-  );
-}
+
+    {/* Dropdown huyện */}
+    <View style={{ marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Quận/Huyện *</Text>
+      <DropDownPicker
+        open={districtOpen}
+        value={selectedDistrict}
+        items={districtItems}
+        setOpen={setDistrictOpen}
+        setValue={setSelectedDistrict}
+        onOpen={onDistrictOpen}
+        placeholder="Chọn quận/huyện"
+        disabled={!selectedProvince}
+        listMode="MODAL"
+        maxHeight={400}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm quận/huyện..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+      />
+    </View>
+
+    {/* Dropdown xã */}
+    <View style={{ marginBottom: 18 }}>
+      <Text style={simpleStyles.label}>Phường/Xã *</Text>
+      <DropDownPicker
+        open={wardOpen}
+        value={selectedWard}
+        items={wardItems}
+        setOpen={setWardOpen}
+        setValue={setSelectedWard}
+        onOpen={onWardOpen}
+        placeholder="Chọn phường/xã"
+        disabled={!selectedDistrict}
+        listMode="MODAL"
+        maxHeight={400}
+        searchable={true}
+        searchPlaceholder="Tìm kiếm phường/xã..."
+        dropDownContainerStyle={simpleStyles.dropDownContainer}
+        style={simpleStyles.dropdownStyle}
+        textStyle={simpleStyles.dropdownText}
+        placeholderStyle={simpleStyles.placeholderStyle}
+      />
+    </View>
+
+    {/* Input số nhà */}
+    <Text style={simpleStyles.label}>Số nhà, Tên đường *</Text>
+    <TextInput
+      style={simpleStyles.input}
+      value={formData.streetAddress}
+      onChangeText={(value) => handleChange('streetAddress', value)}
+      placeholder="Nhập số nhà, tên đường"
+      placeholderTextColor="#999"
+    />
+
+    {/* Nút */}
+    <TouchableOpacity style={simpleStyles.saveButton} onPress={handleSave}>
+      <Text style={simpleStyles.saveButtonText}>Thêm địa chỉ</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={simpleStyles.cancelButton} onPress={onClose}>
+      <Text style={simpleStyles.cancelButtonText}>Hủy</Text>
+    </TouchableOpacity>
+  </ScrollView>
+);
+
+
+};
+
+const simpleStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    // padding: 20,    // <-- KHÔNG set padding lớn nếu đang trong ScrollView!
+    // flex: 1,        // <-- Bỏ nếu không muốn full height
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#333',
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 6,
+    color: '#333',
+    fontWeight: '500',
+  },
+  dropdownContainer: {
+    marginBottom: 18,   // Chỉ margin, không position/relative
+  },
+  dropdownStyle: {
+    borderColor: '#e3e3e3',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    minHeight: 48,
+    // height: undefined, // Không set height cứng
+  },
+  dropDownContainer: {
+    backgroundColor: '#fff',
+    borderColor: '#e3e3e3',
+    borderWidth: 1.2,
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.13,
+    shadowRadius: 2.5,
+  },
+  dropdownText: {
+    fontSize: 15,
+    color: '#333',
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: '#999',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e3e3e3',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    fontSize: 15,
+    color: '#333',
+  },
+  saveButton: {
+    backgroundColor: '#1976d2',
+    borderRadius: 10,
+    alignItems: 'center',
+    padding: 14,
+    marginTop: 10,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 10,
+    alignItems: 'center',
+    padding: 14,
+    marginTop: 10,
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontSize: 16,
+  },
+});
+
 
 export default ShippingAddress;

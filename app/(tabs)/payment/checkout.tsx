@@ -411,12 +411,11 @@ const Checkout = () => {
         transparent={true}
         onRequestClose={closeShippingModal}
       >
-        <View style={detailStyles.modalContainer}>
-          <View style={detailStyles.modalContent}>
+        <View style={[detailStyles.modalContainer, { flex: 1 }]}>
+          <View style={[detailStyles.modalContent, { flex: 1, marginTop: 50 }]}>
             <ShippingAddress
               key={userAddress}
               currentAddress={userAddress}
-
               onSave={(address) => {
                 console.log("Địa chỉ vừa lưu:", address);
                 setUserAddress(address);
