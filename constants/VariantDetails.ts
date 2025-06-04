@@ -57,7 +57,7 @@ export default StyleSheet.create({
   // ====== ẢNH SẢN PHẨM ======
   imageWrapper: {
     width: "100%",
-    aspectRatio: 1, // hình vuông, tỉ lệ 1:1
+    aspectRatio: 1, 
     backgroundColor: "#EFEFEF",
   },
   productImage: {
