@@ -226,8 +226,7 @@ const simpleStyles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     borderRadius: 14,
-    // padding: 20,    // <-- KHÔNG set padding lớn nếu đang trong ScrollView!
-    // flex: 1,        // <-- Bỏ nếu không muốn full height
+    
   },
   header: {
     fontSize: 20,
@@ -243,7 +242,7 @@ const simpleStyles = StyleSheet.create({
     fontWeight: '500',
   },
   dropdownContainer: {
-    marginBottom: 18,   // Chỉ margin, không position/relative
+    marginBottom: 18,   
   },
   dropdownStyle: {
     borderColor: '#e3e3e3',
@@ -251,7 +250,6 @@ const simpleStyles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     minHeight: 48,
-    // height: undefined, // Không set height cứng
   },
   dropDownContainer: {
     backgroundColor: '#fff',

@@ -395,6 +395,13 @@ const Checkout = () => {
                 Alert.alert("Lỗi khi thanh toán:", (err as Error).message);
               }
             }
+            else {
+              try {
+                handleSubmitOrder();
+              } catch (error) {
+                Alert.alert("Lỗi khi đặt hàng:", (error as Error).message);
+              }
+            }
           }}
         >
 
