@@ -6,247 +6,247 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
-  Dimensions,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { getVariantListByName } from "@/api/products/products";
-import ProductDetailModal from "./ProductDetailModal";
 import styles from "@/constants/VariantDetails";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-type VariantItem = {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  imageUrl: string;
-  size: string;
-  color: string;
-  quantity: number;
-};
-
-type TagVariantsData = {
-  name: string;
-  variantList: VariantItem[];
-};
+import ProductDetailModal from "./ProductDetailModal";
+import { getVariantListByName } from "@/api/products/products";
 
 const ProductDetail = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const tabBarHeight = useBottomTabBarHeight();
-
-  const { tag } = route.params as { tag: string };
+  const { id, tag } = route.params as { id: number; tag: string };
 
   const [loading, setLoading] = useState(true);
-  const [tagVariants, setTagVariants] = useState<TagVariantsData | null>(null);
-  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<VariantItem | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+  const [tagVariants, setTagVariants] = useState<any>(null);
 
   useEffect(() => {
     const fetchVariantDetails = async () => {
       try {
         setLoading(true);
-        const data: TagVariantsData = await getVariantListByName(tag);
-        setTagVariants(data);
-
-        const sizes = data.variantList.map((v) => v.size);
-        const uniq = Array.from(new Set(sizes));
-        setAvailableSizes(uniq);
-
-        if (uniq.length > 0) {
-          setSelectedSize(uniq[0]);
-          const firstVar = data.variantList.find((v) => v.size === uniq[0]);
-          if (firstVar) setSelectedVariant(firstVar);
-        }
+        const tagData = await getVariantListByName(tag);
+        setTagVariants(tagData);
+        // Nếu API trả về mảng variants và mỗi phần tử có trường size,
+        // bạn có thể import availableSizes từ đó, ví dụ:
+        // const sizes = tagData.variantList.map((v: any) => v.size);
+        // setAvailableSizes(sizes);
       } catch (err) {
         console.error("Error fetching variant details:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchVariantDetails();
   }, [tag]);
 
-  useEffect(() => {
-    if (!tagVariants || !selectedSize) return;
-    const found = tagVariants.variantList.find((v) => v.size === selectedSize);
-    if (found) setSelectedVariant(found);
-  }, [selectedSize, tagVariants]);
-
-  const handleBack = () => navigation.goBack();
-  const handleAddToCart = (item: any) => {
-    console.log("Added to cart:", item);
+  const handleAddToCart = (cartItem: any) => {
+    console.log("Added to cart:", cartItem);
     setModalVisible(false);
   };
+
   const handleBuyNow = () => {
     console.log("Buy now:", {
-      id: selectedVariant?.id,
-      name: selectedVariant?.name,
+      id: tagVariants?.id,
+      name: tagVariants?.name,
       quantity,
       size: selectedSize,
-      price: selectedVariant?.price,
+      price: tagVariants?.variantList[0]?.price,
     });
   };
 
-  const formatPrice = (p?: number) => (p != null ? p.toLocaleString() : "N/A");
+  const handleBack = () => {
+    navigation.goBack();
+  };
 
-  if (loading || !tagVariants || !selectedVariant) {
+  const formatPrice = (price?: number) => {
+    return price != null ? price.toLocaleString() : "N/A";
+  };
+
+  if (loading || !tagVariants) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6F61" />
+        <ActivityIndicator size="large" color="#FF5500" />
       </View>
     );
   }
 
-  const current = selectedVariant;
-  const productName = tagVariants.name;
+  // Giả sử API trả về: tagVariants = { id, name, variantList: [ { id, name, price, imageUrl, size, color, quantity }, ... ] }
+  const firstVariant = tagVariants.variantList[0];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* === ẢNH & NÚT BACK === */}
-      <View style={styles.topImageContainer}>
-        <Image
-          source={{ uri: current.imageUrl }}
-          style={styles.productImage}
-          resizeMode="cover"
-        />
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.container}>
+      <ScrollView>
+        {/* ======= HEADER ======= */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleBack} activeOpacity={0.7}>
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <View style={styles.headerSpacer} />
+          <TouchableOpacity activeOpacity={0.7}>
+            <Text style={styles.headerIcon}>🛒</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerMore} activeOpacity={0.7}>
+            <Text style={styles.headerIcon}>⋮</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Nội dung chính */}
-      <View style={styles.cardContainer}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Tên & Giá */}
-          <View style={styles.headerContainer}>
-            <View style={styles.nameRow}>
-              <Text style={styles.productName}>{productName}</Text>
-              <TouchableOpacity>
-                <Text style={styles.heartIcon}>♡</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.priceTag}>₫{formatPrice(current.price)}</Text>
+        {/* ======= ẢNH SẢN PHẨM ======= */}
+        <View style={styles.imageWrapper}>
+          <Image
+            source={{ uri: firstVariant.imageUrl }}
+            style={styles.productImage}
+            resizeMode="cover"
+          />
+          <View style={styles.imageNavigation}>
+            <Text style={styles.imageNavText}>1/1</Text>
           </View>
+        </View>
 
-          {/* Rating giả (ví dụ 4.5) */}
-          <View style={styles.ratingRow}>
-            <Text style={styles.ratingText}>⭐</Text>
-            <Text style={styles.ratingText}>4.5</Text>
-            <Text style={styles.ratingCount}>(128 đánh giá)</Text>
+        {/* ======= PHẦN GIÁ & KHUYẾN MÃI ======= */}
+        <View style={styles.priceSection}>
+          <View style={styles.priceRow}>
+            <Text style={styles.price}>
+              ₫{formatPrice(firstVariant.price)}
+            </Text>
+            <Text style={styles.originalPrice}>
+              ₫{formatPrice(firstVariant.price * 1.5)}
+            </Text>
           </View>
+          <View style={styles.installment}>
+            <Text style={styles.installmentText}>
+              Chỉ từ ₫{formatPrice(firstVariant.price)} x 1 kỳ với Closm Pay
+            </Text>
+            <Text style={styles.installmentText}>▶</Text>
+          </View>
+        </View>
 
-          {/* Chọn Size */}
-          <View style={styles.sectionTitle}>
-            <Text style={styles.sectionTitleText}>Chọn Size</Text>
+        <View style={styles.promoContainer}>
+          <View style={styles.promoBox}>
+            <Text style={styles.promoText}>Giảm 10% khi mua từ 2 sản phẩm</Text>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.sizeScroll}
-          >
-            {availableSizes.map((sz) => {
-              const selected = sz === selectedSize;
-              return (
-                <TouchableOpacity
-                  key={sz}
-                  style={[
-                    styles.sizePill,
-                    selected && styles.sizePillSelected,
-                  ]}
-                  onPress={() => setSelectedSize(sz)}
-                >
-                  <Text
+          <View style={styles.promoBox}>
+            <Text style={styles.promoText}>Free ship toàn quốc</Text>
+          </View>
+        </View>
+
+        {/* ======= TIÊU ĐỀ SẢN PHẨM & YÊU THÍCH ======= */}
+        <View style={styles.titleSection}>
+          <Text style={styles.titleText}>{tagVariants.name}</Text>
+          <TouchableOpacity activeOpacity={0.7}>
+            <Text style={styles.heartIcon}>♡</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ======= THÔNG TIN VẬN CHUYỂN ======= */}
+        <View style={styles.shippingSection}>
+          <View style={styles.shippingCard}>
+            <Text style={styles.shippingIcon}>🚚</Text>
+            <Text style={styles.shippingText}>
+              Nhận hàng nhanh chóng, tiện lợi
+            </Text>
+            <Text style={styles.shippingArrow}>▶</Text>
+          </View>
+          <View style={styles.shippingCard}>
+            <Text style={styles.shippingIcon}>🛡️</Text>
+            <Text style={styles.shippingText}>
+              Trả hàng miễn phí 10 ngày | Bảo hiểm Thời trang
+            </Text>
+            <Text style={styles.shippingArrow}>▶</Text>
+          </View>
+        </View>
+
+        {/* ======= CHỌN SIZE & COLOR & STOCK ======= */}
+        <View style={styles.sizeSection}>
+          <View style={styles.sizeHeader}>
+            <Text style={styles.sizeHeaderText}>
+              Chọn loại hàng (Size: {firstVariant.size})
+            </Text>
+            <Text style={styles.sizeArrow}>▶</Text>
+          </View>
+          <View style={styles.sizeList}>
+            {availableSizes.length > 0
+              ? availableSizes.map((size) => (
+                  <TouchableOpacity
+                    key={size}
+                    activeOpacity={0.7}
                     style={[
-                      styles.sizePillText,
-                      selected && styles.sizePillTextSelected,
+                      styles.sizeBox,
+                      selectedSize === size && styles.sizeBoxSelected,
                     ]}
+                    onPress={() => setSelectedSize(size)}
                   >
-                    {sz}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+                    <Text
+                      style={[
+                        styles.sizeText,
+                        selectedSize === size && styles.sizeTextSelected,
+                      ]}
+                    >
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              : null}
 
-          {/* Màu & Tồn kho */}
-          <View style={styles.attributeRow}>
-            <Text style={styles.attrLabel}>Màu:</Text>
-            <Text style={styles.attrValue}>{current.color}</Text>
-            <Text style={styles.attrSpacer}>|</Text>
-            <Text style={styles.attrLabel}>Còn:</Text>
-            <Text style={styles.attrValue}>{current.quantity}</Text>
-          </View>
-
-          {/* Mô tả ngắn */}
-          <View style={styles.sectionTitle}>
-            <Text style={styles.sectionTitleText}>Mô Tả</Text>
-          </View>
-          <Text style={styles.descriptionText} numberOfLines={4}>
-            {current.description || "Sản phẩm chất lượng cao, vải mềm mại, form ôm dáng. Thoáng mát và không nhăn."}
-          </Text>
-
-          {/* Shipping & Bảo hành */}
-          <View style={styles.infoCardsRow}>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoIcon}>🚚</Text>
-              <Text style={styles.infoText}>Giao nhanh 2h</Text>
-            </View>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoIcon}>🛡️</Text>
-              <Text style={styles.infoText}>Đổi trả 10 ngày</Text>
+            {/* Dòng hiển thị color + stock */}
+            <View style={styles.colorStockRow}>
+              <Text style={styles.colorText}>
+                Color: {firstVariant.color || "N/A"}
+              </Text>
+              <Text style={styles.stockText}>| Số lượng: {firstVariant.quantity || 0}</Text>
             </View>
           </View>
+        </View>
 
-          {/* Thêm khoảng trống dưới cùng để scroll không dính bottomBar */}
-          <View style={{ height: 80 }} />
-        </ScrollView>
-      </View>
+        {/* ======= ĐÁNH GIÁ SẢN PHẨM ======= */}
+        <View style={styles.ratingSection}>
+          <View style={styles.ratingHeader}>
+            <Text style={styles.ratingIcon}>⭐</Text>
+            <Text style={styles.ratingText}>Đánh Giá Sản Phẩm</Text>
+            <Text style={styles.ratingAll}>Tất cả ▶</Text>
+          </View>
+        </View>
+      </ScrollView>
 
-      {/* === BOTTOM BAR NỔI === */}
-      <View style={[styles.bottomBar, { bottom: tabBarHeight }]}>
-        <TouchableOpacity
-          style={styles.chatButton}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.chatIcon}>💬</Text>
+      {/* ======= BOTTOM BAR ======= */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7}>
+          <Text style={{ fontSize: 20, color: "#333333", marginRight: 6 }}>💬</Text>
+          <Text style={styles.bottomBtnText}>Chat ngay</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
-          style={styles.cartButton}
+          style={styles.bottomBtn}
+          activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
-          activeOpacity={0.8}
         >
-          <Text style={styles.cartIcon}>🛒</Text>
-          <Text style={styles.cartText}>Thêm giỏ</Text>
+          <Text style={{ fontSize: 20, color: "#333333", marginRight: 6 }}>🛒</Text>
+          <Text style={styles.bottomBtnText}>Thêm giỏ hàng</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buyButton}
+
+        {/* <TouchableOpacity
+          style={styles.buyBtn}
+          activeOpacity={0.7}
           onPress={handleBuyNow}
-          activeOpacity={0.8}
         >
-          <Text style={styles.buyText}>Mua ngay</Text>
-        </TouchableOpacity>
+          <Text style={styles.buyBtnText}>
+            Mua với voucher ₫{formatPrice(firstVariant.price)}
+          </Text>
+        </TouchableOpacity> */}
       </View>
 
-      {/* === MODAL === */}
+      {/* ======= MODAL CHỌN SIZE/THÊM GIỎ HÀNG ======= */}
       <ProductDetailModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        tagVariants={tagVariants.variantList}
+        tagVariants={tagVariants}
         onAddToCart={handleAddToCart}
         availableSizes={availableSizes}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

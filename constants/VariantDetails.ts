@@ -1,271 +1,359 @@
-import { StyleSheet, Dimensions } from "react-native";
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+// File: @/constants/VariantDetails.js
+import { StyleSheet, Dimensions, Platform } from "react-native";
+
+const { width, height } = Dimensions.get("window");
+const PRIMARY_COLOR = "#FF5500";         // Màu cam chủ đạo
+const TEXT_COLOR = "#333333";            // Màu chữ chính
+const SUBTEXT_COLOR = "#777777";         // Màu chữ phụ
+const BACKGROUND = "#FFFFFF";            // Màu nền chung
+const CARD_BACKGROUND = "#F9F9F9";       // Màu nền card, section
 
 export default StyleSheet.create({
+  // ======== Container chính ========
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F6",
+    backgroundColor: BACKGROUND,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F4F4F6",
+    backgroundColor: BACKGROUND,
   },
 
-  // ===== ẢNH TRÊN CÙNG & BACK BUTTON =====
-  topImageContainer: {
-    width: "100%",
-    height: SCREEN_WIDTH, // làm vuông (1:1) hoặc bạn có thể tăng chiều cao
-    backgroundColor: "#eee",
-  },
-  productImage: {
-    width: "100%",
-    height: "100%",
-  },
-  backButton: {
-    position: "absolute",
-    top: 40,
-    left: 20,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  backIcon: {
-    fontSize: 20,
-    color: "#333",
-  },
-
-  // ===== CARD CHỨA NỘI DUNG =====
-  cardContainer: {
-    position: "absolute",
-    top: SCREEN_WIDTH - 30, // kéo card chồng lên ảnh (overlap 30px)
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  scrollContent: {
-    paddingBottom: 20,
-  },
-
-  // Header: tên & giá
-  headerContainer: {
-    marginBottom: 16,
-  },
-  nameRow: {
+  // ======== Header ========
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: BACKGROUND,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+    zIndex: 10,
   },
-  productName: {
+  backIcon: {
+    fontSize: 24,
+    color: TEXT_COLOR,
+  },
+  headerIcon: {
     fontSize: 22,
-    fontWeight: "700",
-    color: "#1C1C1C",
+    color: TEXT_COLOR,
+    marginHorizontal: 12,
+  },
+  headerMore: {
+    marginLeft: 8,
+  },
+  headerSpacer: {
     flex: 1,
-    marginRight: 10,
-  },
-  heartIcon: {
-    fontSize: 22,
-    color: "#FF6F61",
-  },
-  priceTag: {
-    marginTop: 6,
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#FF6F61",
   },
 
-  // Rating
-  ratingRow: {
+  // ======== Ảnh sản phẩm ========
+  productImage: {
+    width: width,
+    height: width * 0.9, // Tỷ lệ 1:0.9 để bớt lấn chỗ, vẫn to và rõ
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  imageWrapper: {
+    backgroundColor: BACKGROUND,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: "hidden",
+  },
+  imageNavigation: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  imageNavText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+  },
+
+  // ======== Phần giá & khuyến mãi ========
+  priceSection: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: BACKGROUND,
+  },
+  priceRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+  },
+  price: {
+    fontSize: 30,
+    fontWeight: "700",
+    color: PRIMARY_COLOR,
+  },
+  originalPrice: {
+    fontSize: 16,
+    color: SUBTEXT_COLOR,
+    textDecorationLine: "line-through",
+    marginLeft: 12,
+    marginBottom: 2,
+  },
+  installment: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 8,
-    marginBottom: 16,
   },
-  ratingText: {
-    color: "#FFA500",
-    fontSize: 16,
-    marginRight: 6,
-  },
-  ratingCount: {
+  installmentText: {
+    color: PRIMARY_COLOR,
     fontSize: 14,
-    color: "#888",
+    fontWeight: "500",
+    marginRight: 4,
+  },
+  promoContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    marginTop: 12,
+  },
+  promoBox: {
+    backgroundColor: "#FFF2F0",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  promoText: {
+    color: PRIMARY_COLOR,
+    fontSize: 13,
+    fontWeight: "600",
   },
 
-  // Section title (ví dụ: Chọn Size, Mô Tả, ...)
-  sectionTitle: {
+  // ======== Tiêu đề & yêu thích ========
+  titleSection: {
+    paddingHorizontal: 20,
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: TEXT_COLOR,
+    flex: 1,
+    marginRight: 12,
+  },
+  heartIcon: {
+    fontSize: 24,
+    color: "#DD3333",
+  },
+
+  // ======== Thông tin vận chuyển ========
+  shippingSection: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+  },
+  shippingCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: CARD_BACKGROUND,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  shippingIcon: {
+    fontSize: 18,
+  },
+  shippingText: {
+    marginLeft: 12,
+    flex: 1,
+    fontSize: 14,
+    color: TEXT_COLOR,
+  },
+  shippingArrow: {
+    fontSize: 16,
+    color: SUBTEXT_COLOR,
+  },
+
+  // ======== Chọn SIZE & COLOR & STOCK ========
+  sizeSection: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+  },
+  sizeHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
-  sectionTitleText: {
+  sizeHeaderText: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: TEXT_COLOR,
+  },
+  sizeArrow: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    color: SUBTEXT_COLOR,
   },
-
-  // Size pills
-  sizeScroll: {
+  sizeList: {
     flexDirection: "row",
-    paddingVertical: 8,
+    flexWrap: "wrap",
+    marginTop: 8,
   },
-  sizePill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+  sizeBox: {
     borderWidth: 1,
-    borderColor: "#CCC",
-    marginRight: 12,
-    backgroundColor: "#FFF",
-  },
-  sizePillSelected: {
-    backgroundColor: "#FFEBE8",
-    borderColor: "#FF6F61",
-  },
-  sizePillText: {
-    fontSize: 14,
-    color: "#333",
-  },
-  sizePillTextSelected: {
-    color: "#FF6F61",
-    fontWeight: "600",
-  },
-
-  // Thuộc tính (Màu, Số lượng)
-  attributeRow: {
-    flexDirection: "row",
+    borderColor: "#CCCCCC",
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     alignItems: "center",
-    marginTop: 12,
-    marginBottom: 16,
-  },
-  attrLabel: {
-    fontSize: 14,
-    color: "#555",
-  },
-  attrValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-    marginHorizontal: 4,
-  },
-  attrSpacer: {
-    fontSize: 14,
-    color: "#CCC",
-    marginHorizontal: 4,
-  },
-
-  // Mô tả
-  descriptionText: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-  },
-
-  // Thông tin shipping & bảo hành
-  infoCardsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  infoCard: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "#FFFAF9",
-    borderRadius: 12,
-    padding: 12,
-    alignItems: "center",
+    justifyContent: "center",
     marginRight: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 5,
+    marginBottom: 10,
   },
-  infoIcon: {
-    fontSize: 20,
-    marginRight: 8,
+  sizeBoxSelected: {
+    borderColor: PRIMARY_COLOR,
+    backgroundColor: "#FFF2F0",
   },
-  infoText: {
+  sizeText: {
     fontSize: 14,
-    color: "#333",
-    flexShrink: 1,
+    color: TEXT_COLOR,
+  },
+  sizeTextSelected: {
+    fontSize: 14,
+    color: PRIMARY_COLOR,
+    fontWeight: "600",
+  },
+  colorStockRow: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  colorText: {
+    fontSize: 14,
+    color: TEXT_COLOR,
+    fontWeight: "500",
+  },
+  stockText: {
+    fontSize: 14,
+    color: SUBTEXT_COLOR,
+    marginLeft: 6,
   },
 
-  // ===== BOTTOM BAR =====
+  // ======== Đánh giá sản phẩm ========
+  ratingSection: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    backgroundColor: BACKGROUND,
+    paddingBottom: 8,
+  },
+  ratingHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ratingIcon: {
+    fontSize: 18,
+    color: PRIMARY_COLOR,
+    marginRight: 6,
+  },
+  ratingText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: TEXT_COLOR,
+  },
+  ratingAll: {
+    fontSize: 14,
+    color: PRIMARY_COLOR,
+    marginLeft: "auto",
+  },
+
+  // ======== Bottom Bar ========
   bottomBar: {
     position: "absolute",
-    left: 20,
-    right: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    padding: 10,
+    backgroundColor: BACKGROUND,
+    borderTopWidth: 1,
+    borderTopColor: "#EEEEEE",
+  },
+  bottomBtn: {
+    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    backgroundColor: CARD_BACKGROUND,
+    borderRadius: 8,
+    marginHorizontal: 4,
+  },
+  bottomBtnText: {
+    color: TEXT_COLOR,
+    fontSize: 15,
+    fontWeight: "500",
+    marginLeft: 6,
+  },
+  buyBtn: {
+    flex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: PRIMARY_COLOR,
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginHorizontal: 4,
+  },
+  buyBtnText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  // ======== Ví dụ bổ sung: số lượng (Quantity) ========
+  // Nếu bạn muốn thêm phần chọn số lượng trong modal hoặc dưới size:
+  quantityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 16,
+    paddingHorizontal: 20,
+  },
+  quantityBtn: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: PRIMARY_COLOR,
+    borderWidth: 1,
+    borderColor: PRIMARY_COLOR,
+    borderRadius: 6,
+    paddingVertical: 6,
     paddingHorizontal: 12,
   },
-  chatButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#F4F4F6",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  chatIcon: {
-    fontSize: 20,
-  },
-  cartButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFEFF0",
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 5,
-    marginRight: 12,
-  },
-  cartIcon: {
-    fontSize: 18,
-    marginRight: 6,
-    color: "#FF6F61",
-  },
-  cartText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FF6F61",
-  },
-  buyButton: {
-    flex: 1,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#FF6F61",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buyText: {
+  quantityText: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "#FFF",
+    fontWeight: "500",
+    color: TEXT_COLOR,
+    marginHorizontal: 16,
   },
 });

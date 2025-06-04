@@ -72,7 +72,7 @@ export default StyleSheet.create({
   productItem: {
     width: '100%',
     height: '100%',
-    marginBottom: 15,
+    marginBottom: 20,
     aspectRatio: 1,
   },
   productImage: {
