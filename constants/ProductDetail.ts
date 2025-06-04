@@ -121,10 +121,7 @@ export default StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#f5f5f5',
   },
-  // variantImage: {
-  //   width: '100%',
-  //   height: '100%',
-  // },
+
   selectedCategoryInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -190,6 +187,18 @@ export default StyleSheet.create({
     fontSize: 12,
     color: '#777',
   },
-  
+  categorySectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    marginVertical: 12,
+    paddingLeft: 16,
+  },
+  noDataText: {
+    fontSize: 16,
+    color:  "#888",
+    textAlign: "center",
+    marginTop: 24,
+  },
   
 });

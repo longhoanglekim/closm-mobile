@@ -4,37 +4,54 @@ import { router, useLocalSearchParams } from "expo-router";
 import styles from "@/constants/ProductDetail";
 import { getProductDetails } from "@/api/products/products";
 import { useFocusEffect } from "expo-router";
+export interface Variant {
+  id: number;
+  tag: string;
+  imgUrl: string;
+  minPrice: number;
+  maxPrice: number;
+  description: string;
+  size: string;
+  color: string;
+}
 
+export interface ProductCategory {
+  category: string;
+  variants: Variant[];
+}
 const CategoryOverview = () => {
-  const { category } = useLocalSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  useEffect(() => {
-    if (category && category !== selectedCategory) {
-      console.log("Category:", category);
-      setSelectedCategory(category.toString());
-    }
-  }, [category]); // Chỉ chạy khi category thay đổi
-  const [productOverview, setProductOverview] = useState([]);
 
-  const [availableCategories, setAvailableCategories] = useState(["All"]);
-  //random mỗi khi render
-  const allVariants = productOverview
-    .flatMap((category) => category.variants)
+  const { category } = useLocalSearchParams<{ category?: string }>();
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+
+  useEffect(() => {
+    if (typeof category === "string" && category !== selectedCategory) {
+      console.log("Category:", category);
+      setSelectedCategory(category);
+    }
+  }, [category, selectedCategory]);
+
+
+  const [productOverview, setProductOverview] = useState<ProductCategory[]>([]);
+
+
+  const [availableCategories, setAvailableCategories] = useState<string[]>(["All"]);
+
+
+  const allVariants: Variant[] = productOverview
+    .flatMap((cat: ProductCategory) => cat.variants)
     .sort(() => Math.random() - 0.5);
 
   useFocusEffect(
     useCallback(() => {
       const fetchProductOverview = async () => {
         try {
-          const result = await getProductDetails();
+          const result: ProductCategory[] = await getProductDetails();
           setProductOverview(result);
 
-          // Extract unique categories from the data
-          const categories = [
-            "All",
-            ...new Set(result.map((item) => item.category)),
-          ];
-          setAvailableCategories(categories);
+          // Lấy ra danh sách category (unique) + "All"
+          const uniqueCats = Array.from(new Set(result.map((item) => item.category)));
+          setAvailableCategories(["All", ...uniqueCats]);
         } catch (err) {
           console.error("Lỗi khi fetch product overview:", err);
         }
@@ -43,17 +60,20 @@ const CategoryOverview = () => {
       fetchProductOverview();
     }, [])
   );
+
+  // Khi người dùng bấm vào 1 variant, chuyển sang màn hình detail
   const handleClickVariant = (variantId: number, tag: string) => {
     console.log("Variant ID :", variantId);
     router.push(`/(tabs)/ProductDP/productDetail?id=${variantId}&tag=${tag}`);
   };
 
-  const handleCategoryPress = (category: string) => {
-    setSelectedCategory(category);
+  // Khi bấm chọn category tab
+  const handleCategoryPress = (cat: string) => {
+    setSelectedCategory(cat);
   };
 
-  // Filter products based on selected category
-  const filteredProducts =
+  // Lọc productOverview theo category hiện tại
+  const filteredProducts: ProductCategory[] =
     selectedCategory === "All"
       ? productOverview
       : productOverview.filter((item) => item.category === selectedCategory);
@@ -66,51 +86,57 @@ const CategoryOverview = () => {
           showsHorizontalScrollIndicator={false}
           style={styles.categoryTabsScroll}
         >
-          {availableCategories.map((category) => (
+          {availableCategories.map((cat) => (
             <TouchableOpacity
-              key={category}
+              key={cat}
               style={[
                 styles.categoryTab,
-                selectedCategory === category && styles.selectedCategoryTab,
+                selectedCategory === cat && styles.selectedCategoryTab,
               ]}
-              onPress={() => handleCategoryPress(category)}
+              onPress={() => handleCategoryPress(cat)}
+              activeOpacity={0.7}
             >
               <Text
                 style={[
                   styles.categoryTabText,
-                  selectedCategory === category &&
-                    styles.selectedCategoryTabText,
+                  selectedCategory === cat && styles.selectedCategoryTabText,
                 ]}
               >
-                {category}
+                {cat}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-      {/* Category Title */}
+      {/* ====== Title + Filter Button ======= */}
       <View style={styles.allItemsHeader}>
         <Text style={styles.allItemsTitle}>
           {selectedCategory === "All" ? "All Items" : selectedCategory}
         </Text>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity style={styles.filterButton} activeOpacity={0.7}>
           <Text style={styles.filterButtonText}>⚙️</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Product Grid */}
+      {/* ====== Product Grid ======= */}
       {selectedCategory === "All" ? (
+        // Khi chọn “All”, hiển thị theo từng category
         <View>
           {productOverview.map((categoryData) => (
-            <View key={categoryData.category}>
-              <Text style={styles.allItemsTitle}>{categoryData.category}</Text>
+            <View key={categoryData.category} style={{ marginBottom: 24 }}>
+              <Text style={styles.categorySectionTitle}>
+                {categoryData.category}
+              </Text>
               <View style={styles.variantsGrid}>
-                {categoryData.variants.map((variant) => (
+                {categoryData.variants.map((variant: Variant) => (
                   <TouchableOpacity
                     key={variant.id}
                     style={styles.variantCard}
-                    onPress={() => handleClickVariant(variant.id, variant.tag)}
+                    onPress={() =>
+                      handleClickVariant(variant.id, variant.tag)
+                    }
+                    activeOpacity={0.7}
                   >
                     <Image
                       source={{ uri: variant.imgUrl }}
@@ -121,11 +147,11 @@ const CategoryOverview = () => {
                       <Text style={styles.variantName}>{variant.tag}</Text>
                       <Text style={styles.variantPrice}>
                         {variant.minPrice != null
-                          ? variant.minPrice?.toLocaleString()
+                          ? variant.minPrice.toLocaleString()
                           : "N/A"}{" "}
-                        -
+                        -{" "}
                         {variant.maxPrice != null
-                          ? variant.maxPrice?.toLocaleString()
+                          ? variant.maxPrice.toLocaleString()
                           : "N/A"}{" "}
                         ₫
                       </Text>
@@ -141,49 +167,55 @@ const CategoryOverview = () => {
               </View>
             </View>
           ))}
-        </View> // ✅ bổ sung dòng này
+        </View>
       ) : (
+        // Khi chọn 1 category cụ thể
         <View>
-          {filteredProducts.map((categoryData) => (
-            <View key={categoryData.category}>
-              {/* Display all variants in a grid */}
-              <View style={styles.variantsGrid}>
-                {categoryData.variants.map((variant) => (
-                  <TouchableOpacity
-                    key={variant.id}
-                    style={styles.variantCard}
-                    onPress={() => handleClickVariant(variant.id, variant.tag)}
-                  >
-                    <Image
-                      source={{ uri: variant.imgUrl }}
-                      style={styles.variantImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.variantInfo}>
-                      <Text style={styles.variantName}>{variant.tag}</Text>
-                      <Text style={styles.variantPrice}>
-                        {variant.minPrice != null
-                          ? variant.minPrice?.toLocaleString()
-                          : "N/A"}{" "}
-                        -
-                        {variant.maxPrice != null
-                          ? variant.maxPrice?.toLocaleString()
-                          : "N/A"}{" "}
-                        ₫
-                      </Text>
-
-                      <Text style={styles.variantDesc} numberOfLines={2}>
-                        {variant.description}
-                      </Text>
-                      <Text style={styles.variantMeta}>
-                        Size: {variant.size} | Color: {variant.color}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+          {filteredProducts.length === 0 ? (
+            <Text style={styles.noDataText}>Không có sản phẩm</Text>
+          ) : (
+            filteredProducts.map((categoryData) => (
+              <View key={categoryData.category}>
+                <View style={styles.variantsGrid}>
+                  {categoryData.variants.map((variant: Variant) => (
+                    <TouchableOpacity
+                      key={variant.id}
+                      style={styles.variantCard}
+                      onPress={() =>
+                        handleClickVariant(variant.id, variant.tag)
+                      }
+                      activeOpacity={0.7}
+                    >
+                      <Image
+                        source={{ uri: variant.imgUrl }}
+                        style={styles.variantImage}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.variantInfo}>
+                        <Text style={styles.variantName}>{variant.tag}</Text>
+                        <Text style={styles.variantPrice}>
+                          {variant.minPrice != null
+                            ? variant.minPrice.toLocaleString()
+                            : "N/A"}{" "}
+                          -{" "}
+                          {variant.maxPrice != null
+                            ? variant.maxPrice.toLocaleString()
+                            : "N/A"}{" "}
+                          ₫
+                        </Text>
+                        <Text style={styles.variantDesc} numberOfLines={2}>
+                          {variant.description}
+                        </Text>
+                        <Text style={styles.variantMeta}>
+                          Size: {variant.size} | Color: {variant.color}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
+            ))
+          )}
         </View>
       )}
     </ScrollView>

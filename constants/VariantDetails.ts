@@ -1,272 +1,288 @@
-// File: @/constants/VariantDetails.js
-import { StyleSheet, Dimensions, Platform } from "react-native";
-
-const { width, height } = Dimensions.get("window");
-const PRIMARY_COLOR = "#FF5500";         // Màu cam chủ đạo
-const TEXT_COLOR = "#333333";            // Màu chữ chính
-const SUBTEXT_COLOR = "#777777";         // Màu chữ phụ
-const BACKGROUND = "#FFFFFF";            // Màu nền chung
-const CARD_BACKGROUND = "#F9F9F9";       // Màu nền card, section
+// VariantDetails.ts
+import { StyleSheet, Platform } from "react-native";
 
 export default StyleSheet.create({
-  // ======== Container chính ========
+  // ====== Container chính ======
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND,
+    backgroundColor: "#F5F5F8", // xám rất nhạt để nền không quá chói
   },
+
+  // ====== Loading ======
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: BACKGROUND,
+    backgroundColor: "#F5F5F8",
   },
 
-  // ======== Header ========
+  // ====== HEADER ======
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 12,
-    backgroundColor: BACKGROUND,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E0E0E0",
+    // Đổ bóng nhẹ ở Android
     ...Platform.select({
+      android: {
+        elevation: 2,
+      },
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
+        shadowRadius: 2,
       },
     }),
-    zIndex: 10,
   },
   backIcon: {
-    fontSize: 24,
-    color: TEXT_COLOR,
-  },
-  headerIcon: {
     fontSize: 22,
-    color: TEXT_COLOR,
-    marginHorizontal: 12,
-  },
-  headerMore: {
-    marginLeft: 8,
+    color: "#333333",
   },
   headerSpacer: {
     flex: 1,
   },
-
-  // ======== Ảnh sản phẩm ========
-  productImage: {
-    width: width,
-    height: width * 0.9, // Tỷ lệ 1:0.9 để bớt lấn chỗ, vẫn to và rõ
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+  headerIcon: {
+    fontSize: 22,
+    color: "#333333",
+    marginHorizontal: 12,
   },
+  headerMore: {
+    paddingLeft: 8,
+  },
+
+  // ====== ẢNH SẢN PHẨM ======
   imageWrapper: {
-    backgroundColor: BACKGROUND,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    overflow: "hidden",
+    width: "100%",
+    aspectRatio: 1, // hình vuông, tỉ lệ 1:1
+    backgroundColor: "#EFEFEF",
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
   },
   imageNavigation: {
     position: "absolute",
-    bottom: 16,
+    bottom: 12,
     right: 16,
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
-    paddingHorizontal: 10,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   imageNavText: {
     color: "#FFFFFF",
     fontSize: 12,
+    fontWeight: "500",
   },
 
-  // ======== Phần giá & khuyến mãi ========
-  priceSection: {
+  // ====== TIÊU ĐỀ SẢN PHẨM & MÔ TẢ & YÊU THÍCH ======
+  titleSection: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 8,
-    backgroundColor: BACKGROUND,
+    paddingBottom: 12,
+    backgroundColor: "#FFFFFF",
+  },
+  titleText: {
+    flex: 1,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#222222",
+    lineHeight: 28,
+  },
+  descriptionText: {
+    fontSize: 15,
+    color: "#666666",
+    marginTop: 4,
+    lineHeight: 22,
+  },
+  heartIcon: {
+    fontSize: 24,
+    color: "#FF4D4F", // đỏ nổi bật
+    marginLeft: 12,
+    marginTop: 2,
+  },
+
+  // ====== PHẦN GIÁ & KHUYẾN MÃI ======
+  priceSection: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    backgroundColor: "#FFFFFF",
   },
   priceRow: {
     flexDirection: "row",
     alignItems: "flex-end",
   },
   price: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: PRIMARY_COLOR,
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#FF5500",
   },
   originalPrice: {
     fontSize: 16,
-    color: SUBTEXT_COLOR,
+    color: "#999999",
     textDecorationLine: "line-through",
     marginLeft: 12,
-    marginBottom: 2,
   },
   installment: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 6,
   },
   installmentText: {
-    color: PRIMARY_COLOR,
-    fontSize: 14,
-    fontWeight: "500",
-    marginRight: 4,
+    fontSize: 13,
+    color: "#FF5500",
+    fontWeight: "600",
   },
+
   promoContainer: {
     flexDirection: "row",
-    paddingHorizontal: 20,
     marginTop: 12,
+    marginBottom: 16,
+    paddingHorizontal: 20,
   },
   promoBox: {
-    backgroundColor: "#FFF2F0",
+    flex: 1,
+    backgroundColor: "#FFF5E6",
+    borderRadius: 8,
     paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    marginRight: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingHorizontal: 12,
+    marginRight: 12,
+    // Đổ bóng nhẹ
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 1,
+      },
+    }),
   },
   promoText: {
-    color: PRIMARY_COLOR,
     fontSize: 13,
+    color: "#FF7733",
     fontWeight: "600",
   },
-
-  // ======== Tiêu đề & yêu thích ========
-  titleSection: {
-    paddingHorizontal: 20,
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: TEXT_COLOR,
-    flex: 1,
-    marginRight: 12,
-  },
-  heartIcon: {
-    fontSize: 24,
-    color: "#DD3333",
+  // Xóa marginRight của promoBox cuối cùng
+  promoBoxLast: {
+    marginRight: 0,
   },
 
-  // ======== Thông tin vận chuyển ========
+  // ====== THÔNG TIN VẬN CHUYỂN ======
   shippingSection: {
-    marginTop: 16,
-    paddingHorizontal: 20,
+    marginTop: 4,
+    backgroundColor: "#FFFFFF",
   },
   shippingCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: CARD_BACKGROUND,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 10,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E0E0E0",
   },
   shippingIcon: {
     fontSize: 18,
+    marginRight: 10,
+    color: "#555555",
   },
   shippingText: {
-    marginLeft: 12,
     flex: 1,
     fontSize: 14,
-    color: TEXT_COLOR,
+    color: "#333333",
+    lineHeight: 20,
   },
   shippingArrow: {
-    fontSize: 16,
-    color: SUBTEXT_COLOR,
+    fontSize: 14,
+    color: "#AAAAAA",
   },
 
-  // ======== Chọn SIZE & COLOR & STOCK ========
+  // ====== CHỌN SIZE & COLOR & STOCK ======
   sizeSection: {
-    marginTop: 16,
-    paddingHorizontal: 20,
+    marginTop: 8,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E0E0E0",
   },
   sizeHeader: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
   },
   sizeHeaderText: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: TEXT_COLOR,
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333333",
   },
   sizeArrow: {
-    fontSize: 16,
-    color: SUBTEXT_COLOR,
+    fontSize: 14,
+    color: "#AAAAAA",
   },
   sizeList: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 8,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   sizeBox: {
     borderWidth: 1,
     borderColor: "#CCCCCC",
     borderRadius: 6,
     paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
-    marginBottom: 10,
+    paddingHorizontal: 14,
+    marginRight: 12,
+    marginBottom: 12,
+    backgroundColor: "#FAFAFA",
   },
   sizeBoxSelected: {
-    borderColor: PRIMARY_COLOR,
-    backgroundColor: "#FFF2F0",
+    borderColor: "#1183ED",
+    backgroundColor: "#E6F2FF",
   },
   sizeText: {
     fontSize: 14,
-    color: TEXT_COLOR,
+    color: "#444444",
+    fontWeight: "500",
   },
   sizeTextSelected: {
-    fontSize: 14,
-    color: PRIMARY_COLOR,
-    fontWeight: "600",
+    color: "#1183ED",
+    fontWeight: "700",
   },
   colorStockRow: {
     flexDirection: "row",
-    marginTop: 10,
+    alignItems: "center",
+    marginTop: 6,
+    paddingHorizontal: 20,
   },
   colorText: {
     fontSize: 14,
-    color: TEXT_COLOR,
+    color: "#333333",
     fontWeight: "500",
   },
   stockText: {
     fontSize: 14,
-    color: SUBTEXT_COLOR,
-    marginLeft: 6,
+    color: "#333333",
+    marginLeft: 12,
+    fontWeight: "500",
   },
 
-  // ======== Đánh giá sản phẩm ========
+  // ====== ĐÁNH GIÁ SẢN PHẨM ======
   ratingSection: {
-    marginTop: 20,
+    marginTop: 8,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E0E0E0",
     paddingHorizontal: 20,
-    backgroundColor: BACKGROUND,
-    paddingBottom: 8,
+    paddingVertical: 14,
   },
   ratingHeader: {
     flexDirection: "row",
@@ -274,86 +290,73 @@ export default StyleSheet.create({
   },
   ratingIcon: {
     fontSize: 18,
-    color: PRIMARY_COLOR,
-    marginRight: 6,
+    marginRight: 8,
+    color: "#FFC107", // màu vàng cho icon sao
   },
   ratingText: {
+    flex: 1,
     fontSize: 16,
-    fontWeight: "500",
-    color: TEXT_COLOR,
+    fontWeight: "600",
+    color: "#333333",
   },
   ratingAll: {
     fontSize: 14,
-    color: PRIMARY_COLOR,
-    marginLeft: "auto",
+    color: "#1183ED",
+    fontWeight: "500",
   },
 
-  // ======== Bottom Bar ========
+  // ====== BOTTOM BAR ======
   bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     flexDirection: "row",
-    padding: 10,
-    backgroundColor: BACKGROUND,
-    borderTopWidth: 1,
-    borderTopColor: "#EEEEEE",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E0E0E0",
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 12,
+    justifyContent: "space-around",
+    // Đổ bóng nhẹ
+    ...Platform.select({
+      android: {
+        elevation: 4,
+      },
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+      },
+    }),
   },
   bottomBtn: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    backgroundColor: CARD_BACKGROUND,
-    borderRadius: 8,
-    marginHorizontal: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+    backgroundColor: "#F5F5F8",
+    // Đổ bóng
+    ...Platform.select({
+      android: {
+        elevation: 2,
+      },
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 1,
+      },
+    }),
   },
   bottomBtnText: {
-    color: TEXT_COLOR,
     fontSize: 15,
-    fontWeight: "500",
-    marginLeft: 6,
-  },
-  buyBtn: {
-    flex: 2,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: PRIMARY_COLOR,
-    borderRadius: 8,
-    paddingVertical: 12,
-    marginHorizontal: 4,
-  },
-  buyBtnText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: "#333333",
     fontWeight: "600",
   },
 
-  // ======== Ví dụ bổ sung: số lượng (Quantity) ========
-  // Nếu bạn muốn thêm phần chọn số lượng trong modal hoặc dưới size:
-  quantityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 16,
-    paddingHorizontal: 20,
+  // Nếu bạn muốn nút Buy Now riêng màu
+  bottomBtnPrimary: {
+    backgroundColor: "#1183ED",
   },
-  quantityBtn: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: PRIMARY_COLOR,
-    borderWidth: 1,
-    borderColor: PRIMARY_COLOR,
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  quantityText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: TEXT_COLOR,
-    marginHorizontal: 16,
+  bottomBtnPrimaryText: {
+    color: "#FFFFFF",
   },
 });
