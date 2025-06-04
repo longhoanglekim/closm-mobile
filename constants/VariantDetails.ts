@@ -1,205 +1,271 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F4F4F6",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#F4F4F6",
   },
-  page: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    flexDirection: "row",
-    padding: 15,
-    alignItems: "center",
-  },
-  backIcon: {
-    fontSize: 24,
-  },
-  headerIcon: {
-    fontSize: 22,
-  },
-  headerMore: {
-    marginLeft: 15,
+
+  // ===== ẢNH TRÊN CÙNG & BACK BUTTON =====
+  topImageContainer: {
+    width: "100%",
+    height: SCREEN_WIDTH, // làm vuông (1:1) hoặc bạn có thể tăng chiều cao
+    backgroundColor: "#eee",
   },
   productImage: {
     width: "100%",
-    height: 400,
+    height: "100%",
   },
-  imageNavigation: {
+  backButton: {
     position: "absolute",
-    top: 380,
-    right: 20,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    padding: 5,
-    borderRadius: 15,
+    top: 40,
+    left: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
-  priceSection: {
-    padding: 15,
+  backIcon: {
+    fontSize: 20,
+    color: "#333",
   },
-  price: {
-    fontSize: 24,
-    color: "#33CCFF",
-    fontWeight: "bold",
+
+  // ===== CARD CHỨA NỘI DUNG =====
+  cardContainer: {
+    position: "absolute",
+    top: SCREEN_WIDTH - 30, // kéo card chồng lên ảnh (overlap 30px)
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  originalPrice: {
-    fontSize: 14,
-    color: "#999",
-    textDecorationLine: "line-through",
+  scrollContent: {
+    paddingBottom: 20,
   },
-  installment: {
+
+  // Header: tên & giá
+  headerContainer: {
+    marginBottom: 16,
+  },
+  nameRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 5,
+    justifyContent: "space-between",
   },
-  installmentText: {
-    fontSize: 14,
-  },
-  promotionContainer: {
-    flexDirection: "row",
-    padding: 10,
-  },
-  promoBox: {
+  productName: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1C1C1C",
     flex: 1,
-    backgroundColor: "#FFE8E8",
-    padding: 8,
-    borderRadius: 4,
-    marginHorizontal: 5,
-  },
-  promoText: {
-    fontSize: 12,
-    color: "#33CCFF",
-  },
-  titleSection: {
-    padding: 15,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  titleText: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: "500",
+    marginRight: 10,
   },
   heartIcon: {
     fontSize: 22,
-    color: "#33CCFF",
+    color: "#FF6F61",
   },
-  shippingSection: {
-    padding: 15,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#F0F0F0",
+  priceTag: {
+    marginTop: 6,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#FF6F61",
   },
-  shippingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  shippingText: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  sizeSection: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: "#F0F0F0",
-  },
-  sizeHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  sizeList: {
-    flexDirection: "row",
-    marginTop: 15,
-  },
-  sizeBox: {
-    width: 60,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-    backgroundColor: "#FFFFFF",
-  },
-  sizeBoxSelected: {
-    borderColor: "#33CCFF",
-    backgroundColor: "#FFF0E8",
-  },
-  sizeText: {
-    color: "#000000",
-  },
-  sizeTextSelected: {
-    color: "#33CCFF",
-  },
-  ratingSection: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: "#F0F0F0",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
+
+  // Rating
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  ratingNumber: {
-    fontSize: 18,
-    fontWeight: "bold",
+    marginTop: 8,
+    marginBottom: 16,
   },
   ratingText: {
+    color: "#FFA500",
     fontSize: 16,
-    marginLeft: 5,
+    marginRight: 6,
   },
-  bottomBar: {
+  ratingCount: {
+    fontSize: 14,
+    color: "#888",
+  },
+
+  // Section title (ví dụ: Chọn Size, Mô Tả, ...)
+  sectionTitle: {
+    marginBottom: 8,
+  },
+  sectionTitleText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+
+  // Size pills
+  sizeScroll: {
     flexDirection: "row",
-    height: 50,
-    borderTopWidth: 1,
-    borderColor: "#F0F0F0",
+    paddingVertical: 8,
   },
-  bottomBtn: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRightWidth: 1,
-    borderColor: "#F0F0F0",
+  sizePill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#CCC",
+    marginRight: 12,
+    backgroundColor: "#FFF",
   },
-  bottomBtnText: {
-    fontSize: 12,
+  sizePillSelected: {
+    backgroundColor: "#FFEBE8",
+    borderColor: "#FF6F61",
   },
-  buyBtn: {
-    flex: 1,
-    backgroundColor: "#33CCFF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buyBtnText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-  },
-  colorInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 12,
-    paddingHorizontal: 12,
-  },
-  colorText: {
+  sizePillText: {
     fontSize: 14,
     color: "#333",
-    fontWeight: "500",
   },
-  stockText: {
+  sizePillTextSelected: {
+    color: "#FF6F61",
+    fontWeight: "600",
+  },
+
+  // Thuộc tính (Màu, Số lượng)
+  attributeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  attrLabel: {
     fontSize: 14,
-    color: "#33CCFF",
-    fontWeight: "500",
+    color: "#555",
+  },
+  attrValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    marginHorizontal: 4,
+  },
+  attrSpacer: {
+    fontSize: 14,
+    color: "#CCC",
+    marginHorizontal: 4,
+  },
+
+  // Mô tả
+  descriptionText: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
+  },
+
+  // Thông tin shipping & bảo hành
+  infoCardsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  infoCard: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#FFFAF9",
+    borderRadius: 12,
+    padding: 12,
+    alignItems: "center",
+    marginRight: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    color: "#333",
+    flexShrink: 1,
+  },
+
+  // ===== BOTTOM BAR =====
+  bottomBar: {
+    position: "absolute",
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
+    alignItems: "center",
+    paddingHorizontal: 12,
+  },
+  chatButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#F4F4F6",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  chatIcon: {
+    fontSize: 20,
+  },
+  cartButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFEFF0",
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 5,
+    marginRight: 12,
+  },
+  cartIcon: {
+    fontSize: 18,
+    marginRight: 6,
+    color: "#FF6F61",
+  },
+  cartText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FF6F61",
+  },
+  buyButton: {
+    flex: 1,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#FF6F61",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buyText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFF",
   },
 });
