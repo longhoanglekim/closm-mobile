@@ -50,7 +50,7 @@ interface OrderType {
 const ORDER_STATUSES = [
   { value: "PENDING",   label: "Chờ xử lý" },
   { value: "CONFIRMED", label: "Đã xác nhận" },
-  { value: "SHIPPING",  label: "Đang giao" },
+  { value: "IN_TRANSIT",  label: "Đang giao" },
   { value: "DELIVERED", label: "Đã giao" },
   { value: "CANCELLED", label: "Đã hủy" },
 ];
@@ -117,7 +117,7 @@ export default function OrderManagementScreen() {
         return "#FF9500";
       case "confirmed":
         return "#007AFF";
-      case "shipping":
+      case "in_transit":
         return "#5856D6";
       case "delivered":
         return "#34C759";
@@ -134,7 +134,7 @@ export default function OrderManagementScreen() {
         return "Chờ xử lý";
       case "confirmed":
         return "Đã xác nhận";
-      case "shipping":
+      case "in_transit":
         return "Đang giao";
       case "delivered":
         return "Đã giao";
@@ -167,34 +167,56 @@ const handleUpdateStatus = async () => {
   }
 
   setUpdatingStatus(true);
+
   try {
 
+    const asUTC = new Date(selectedOrder.orderDate).toISOString();
+    const orderDateFormatted = asUTC.slice(0, 19);
+
+    const cd = new Date(selectedOrder.cancelableDate);
+    const yyyy = cd.getUTCFullYear();
+    const mm   = String(cd.getUTCMonth() + 1).padStart(2, "0");
+    const dd   = String(cd.getUTCDate()).padStart(2, "0");
+    const cancelableDateFormatted = `${yyyy}-${mm}-${dd}`;
+
+    const items =
+      (selectedOrder.orderItemList || []).map(it => ({
+        id: it.id,
+        price: it.price,
+        imageUrl: it.imageUrl,
+        tag: it.tag,
+        size: it.size,
+        color: it.color,
+        description: it.description,
+        orderedQuantity: it.orderedQuantity,
+      }));
+
     const updateOrderInfoDTO = {
-
-      id: selectedOrder.id,
-
+      id: selectedOrder.id,                     
 
       userEmail: selectedOrder.userEmail,
-      orderDate: selectedOrder.orderDate,
-      orderStatus: newStatus,               
+      orderDate: orderDateFormatted,              
+      orderStatus: newStatus,                    
       orderCode: selectedOrder.orderCode,
+
       discountAmount: selectedOrder.discountAmount ?? 0,
       deliverPayment: selectedOrder.deliverPayment ?? 0,
       finalPrice: selectedOrder.finalPrice ?? 0,
+
       paymentStatus: selectedOrder.paymentStatus ?? "UNPAID",
       paymentMethod: selectedOrder.paymentMethod ?? "CASH",
       deliverAddress: selectedOrder.deliverAddress ?? "",
-      cancelableDate: selectedOrder.cancelableDate ?? "",
 
+      cancelableDate: cancelableDateFormatted,  
 
-      orderItemList: selectedOrder.orderItemList || [],
+      orderItemList: items,                     
     };
 
- 
+  
     await updateOrder(
-      selectedOrder.id!,      
-      updateOrderInfoDTO,     
-      token                    
+      selectedOrder.id!,
+      updateOrderInfoDTO,
+      token
     );
 
     setOrders(prev =>
@@ -211,8 +233,10 @@ const handleUpdateStatus = async () => {
     console.error("Lỗi khi cập nhật trạng thái:", err.message);
     Alert.alert("Lỗi", err.message || "Không thể cập nhật trạng thái.");
   }
+
   setUpdatingStatus(false);
 };
+
 
 
   const renderOrderItem = ({ item }: { item: OrderType }) => (
