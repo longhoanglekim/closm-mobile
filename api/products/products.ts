@@ -47,7 +47,7 @@ export const getVariantListByName = async (name: string) => {
 
 
 //new
-export async function getLocationFromAddress(address) {
+export async function getLocationFromAddress(address: any) {
   const res = await fetch(
     `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`
   );
@@ -61,7 +61,7 @@ export async function getLocationFromAddress(address) {
   }
 }
 
-export async function calculateDistance(srcCoords, dstCoords) {
+export async function calculateDistance(srcCoords: any, dstCoords: any) {
   const res = await fetch(
     'https://api.openrouteservice.org/v2/directions/driving-car/geojson',
     {

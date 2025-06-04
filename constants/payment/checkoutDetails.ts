@@ -184,6 +184,20 @@ const detailStyles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  discountImage: {
+    width: "100%",
+    height: 80,
+    borderRadius: 6,
+    marginBottom: 8,
+  },
+  discountName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#333333",
+    marginBottom: 4,
+  },
+
+
 });
   
   export default detailStyles;

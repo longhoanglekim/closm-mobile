@@ -30,11 +30,13 @@ export default StyleSheet.create({
       marginTop: 8,
       paddingHorizontal: 16,
       paddingVertical: 12,
+      justifyContent: "center",
     },
     sectionTitle: {
       fontSize: 16,
       fontWeight: "500",
       marginBottom: 8,
+      
     },
     addressContent: {
       flexDirection: "row",

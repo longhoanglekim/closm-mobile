@@ -59,19 +59,21 @@ export const useCheckoutLogic = (
   const [calculationError, setCalculationError] = useState<string | null>(null);
 
   // Fetch available discounts when component mounts or user changes
-  useEffect(() => {
-    const fetchDiscounts = async () => {
-      if (user?.email) {
-        try {
-          const discounts = await getAvailableDiscounts();
-          setAvailableDiscounts(discounts);
-        } catch (error) {
-          console.error("Error fetching discounts:", error);
-        }
+useEffect(() => {
+  const fetchDiscounts = async () => {
+    if (user?.email) {
+      try {
+        const discounts = await getAvailableDiscounts();
+        console.log(">>> Discounts từ server:", discounts);
+        setAvailableDiscounts(discounts);
+      } catch (error) {
+        console.error("Error fetching discounts:", error);
       }
-    };
-    fetchDiscounts();
-  }, [user?.email]);
+    }
+  };
+  fetchDiscounts();
+}, [user?.email]);
+
 
   // Calculate delivery fee based on distance
   const calculateDeliveryFee = async (shopAddress: any, userAddress: any) => {

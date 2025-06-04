@@ -86,6 +86,7 @@ const Checkout = () => {
               </ThemedText>
             )}
           </View>
+
           {availableDiscounts.length > 0 && (
             <ScrollView
               horizontal
@@ -102,13 +103,22 @@ const Checkout = () => {
                   ]}
                   onPress={() => handleSelectDiscount(discount)}
                 >
-                  <ThemedText style={detailStyles.discountCode}>
-                    {discount.description}
+                  {discount.imageUrl ? (
+                    <Image
+                      source={{ uri: discount.imageUrl }}
+                      style={detailStyles.discountImage}
+                    />
+                  ) : null}
+
+                  <ThemedText style={detailStyles.discountName}>
+                    {discount.name}
                   </ThemedText>
+
                   <ThemedText style={detailStyles.discountDescription}>
-                    Giảm {discount.discountPercentage}% - Hết hạn:{" "}
+                    Giảm {discount.discountPercentage}% — Hết hạn:{" "}
                     {new Date(discount.endDate).toLocaleDateString()}
                   </ThemedText>
+
                   <ThemedText style={detailStyles.discountAmount}>
                     -{calculateDiscountAmount(discount).toLocaleString()}đ
                   </ThemedText>
@@ -116,6 +126,7 @@ const Checkout = () => {
               ))}
             </ScrollView>
           )}
+
         </View>
         {/* Distance and Delivery Information */}
         {userAddress ? (
