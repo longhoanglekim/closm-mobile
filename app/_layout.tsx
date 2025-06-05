@@ -17,6 +17,7 @@ import * as Notification from "expo-notifications";
 import { Provider, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "@/redux/store";
+import { registerForPushNotificationsAsync } from "@/utils/registerForPushNotificationAsync";
 
 Notification.setNotificationHandler({
   handleNotification: async () => ({
@@ -59,6 +60,14 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  useEffect(() => {
+    async function initPushToken() {
+      const token = await registerForPushNotificationsAsync();
+      console.log("Push notification token:", token);
+    }
+
+    initPushToken();
+  }, []);
 
   useEffect(() => {
     if (loaded) {

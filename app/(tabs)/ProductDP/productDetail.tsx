@@ -11,6 +11,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import styles from "@/constants/VariantDetails";
 import ProductDetailModal from "./ProductDetailModal";
 import { getVariantListByName } from "@/api/products/products";
+import { useRouter } from "expo-router";
 
 type Variant = {
   color: string;
@@ -29,6 +30,8 @@ type TagData = {
 
 const ProductDetail = () => {
   const route = useRoute();
+  const router = useRouter();
+
   const navigation = useNavigation();
   const { id, tag } = route.params as { id: number; tag: string };
 
@@ -152,13 +155,14 @@ const ProductDetail = () => {
         {/* ======= PHẦN GIÁ & KHUYẾN MÃI ======= */}
         <View style={styles.priceSection}>
           <View style={styles.priceRow}>
-            <Text style={styles.price}>₫{formatPrice(displayedVariant.price)}</Text>
+            <Text style={styles.price}>
+              ₫{formatPrice(displayedVariant.price)}
+            </Text>
             {/* Giả sử giá gốc là 1.5 lần giá hiện tại (bạn có thể điều chỉnh theo API thật) */}
             <Text style={styles.originalPrice}>
               ₫{formatPrice(displayedVariant.price * 1.5)}
             </Text>
           </View>
-
         </View>
 
         <View style={styles.promoContainer}>
@@ -169,8 +173,6 @@ const ProductDetail = () => {
             <Text style={styles.promoText}>Free ship toàn quốc</Text>
           </View>
         </View>
-
-
 
         {/* ======= THÔNG TIN VẬN CHUYỂN ======= */}
         <View style={styles.shippingSection}>
@@ -247,8 +249,16 @@ const ProductDetail = () => {
 
       {/* ======= BOTTOM BAR ======= */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7}>
-          <Text style={{ fontSize: 20, color: "#333333", marginRight: 6 }}>💬</Text>
+        <TouchableOpacity
+          style={styles.bottomBtn}
+          activeOpacity={0.7}
+          onPress={() => {
+            router.push("/view/ChatRoom");
+          }}
+        >
+          <Text style={{ fontSize: 20, color: "#333333", marginRight: 6 }}>
+            💬
+          </Text>
           <Text style={styles.bottomBtnText}>Chat ngay</Text>
         </TouchableOpacity>
 
@@ -256,7 +266,8 @@ const ProductDetail = () => {
         <TouchableOpacity
           style={[styles.bottomBtn, { backgroundColor: "#1183ed" }]}
           activeOpacity={0.7}
-          onPress={() => setModalVisible(true)}        >
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={[styles.bottomBtnText, { color: "#FFFFFF" }]}>
             Mua ngay
           </Text>
@@ -268,7 +279,9 @@ const ProductDetail = () => {
           activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={{ fontSize: 18, color: "#333333", marginRight: 6 }}>➕</Text>
+          <Text style={{ fontSize: 18, color: "#333333", marginRight: 6 }}>
+            ➕
+          </Text>
           <Text style={styles.bottomBtnText}>Thêm giỏ hàng</Text>
         </TouchableOpacity>
       </View>
@@ -280,7 +293,7 @@ const ProductDetail = () => {
         tagVariants={tagVariants}
         onAddToCart={handleAddToCart}
         availableSizes={availableSizes}
-      // Bạn có thể truyền thêm selectedSize, quantity, displayedVariant,... nếu modal cần dùng
+        // Bạn có thể truyền thêm selectedSize, quantity, displayedVariant,... nếu modal cần dùng
       />
     </View>
   );
