@@ -1,112 +1,124 @@
-// screens/CategoryManagementScreen.tsx
+// src/screens/CategoryManagementScreen.js
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Button,
+  StyleSheet,
+  Alert,
   FlatList,
   ActivityIndicator,
-  Alert,
-  StyleSheet,
-} from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-
-// Giả sử bạn đã định nghĩa sẵn trong api/categoryApi.ts
-// import các hàm call API category ở đây:
+} from 'react-native';
 import {
-  getAllCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "@/api/admin/admin";
+  getAllItemsByCategory,
+  createBaseProduct,
+  updateBaseProduct,
+  deleteBaseProduct,
+} from '@/api/admin/admin'; 
 
-// Nếu bạn dùng TypeScript, định nghĩa interface cho Category:
-interface Category {
-  id: number;
-  name: string;
-}
+const CategoryManagementScreen = () => {
+  const [newName, setNewName] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newCategory, setNewCategory] = useState('');
 
-interface Props {
-  navigation: any;
-  route: any;
-}
+  const [editId, setEditId] = useState(''); 
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editCategory, setEditCategory] = useState('');
 
-const CategoryManagementScreen: React.FC<Props> = ({ navigation }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [token, setToken] = useState<string>(""); // Lấy từ AsyncStorage/Redux/Context tùy dự án
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingName, setEditingName] = useState<string>("");
+  const [deleteId, setDeleteId] = useState('');
 
-  // Dùng useIsFocused để refetch mỗi khi quay trở lại màn hình này
-  const isFocused = useIsFocused();
+  const [queryCategory, setQueryCategory] = useState('');
+  const [items, setItems] = useState([]);
+  const [loadingItems, setLoadingItems] = useState(false);
 
-  useEffect(() => {
-    // TODO: Lấy token từ AsyncStorage hoặc Context nếu cần
-    // Ví dụ giả định: AsyncStorage.getItem("userToken").then((t) => t && setToken(t));
-    if (isFocused) {
-      fetchCategories();
-    }
-  }, [isFocused]);
-
-  // 1. Hàm load tất cả category
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const data = await getAllCategories();
-      setCategories(data);
-    } catch (error: any) {
-      console.log("Lỗi khi tải category:", error);
-      Alert.alert("Lỗi", error.message || "Không thể tải danh mục");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 2. Tạo mới một category
-  const handleCreateCategory = async () => {
-    if (!newCategoryName.trim()) {
-      Alert.alert("Cảnh báo", "Tên danh mục không được để trống.");
+  const handleCreateBaseProduct = async () => {
+    if (!newName.trim() || !newCategory.trim()) {
+      Alert.alert('Lỗi', 'Bạn cần nhập ít nhất tên và category.');
       return;
     }
-    setLoading(true);
+
     try {
-      await createCategory(newCategoryName.trim(), token);
-      setNewCategoryName("");
-      await fetchCategories();
-      Alert.alert("Thành công", "Đã tạo danh mục mới.");
-    } catch (error: any) {
-      console.log("Lỗi tạo category:", error);
-      Alert.alert("Lỗi", error.message || "Tạo danh mục thất bại");
-    } finally {
-      setLoading(false);
+      const payload = {
+        name: newName,
+        description: newDescription,
+        category: newCategory,
+      };
+
+      const result = await createBaseProduct(payload, '<YOUR_ADMIN_TOKEN>');
+      Alert.alert('Thành công', `Đã tạo base product với ID: ${result.id}`);
+      setNewName('');
+      setNewDescription('');
+      setNewCategory('');
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Lỗi khi tạo base product', err.message || 'Unknown error');
     }
   };
 
-  // 3. Xóa một category
-  const handleDeleteCategory = (id: number) => {
+  const handleUpdateBaseProduct = async () => {
+    if (!editId.trim()) {
+      Alert.alert('Lỗi', 'Bạn cần nhập ID để cập nhật.');
+      return;
+    }
+    const id = parseInt(editId, 10);
+    if (isNaN(id)) {
+      Alert.alert('Lỗi', 'ID phải là một số nguyên hợp lệ.');
+      return;
+    }
+
+    try {
+      const payload = {
+        ...(editName.trim() !== '' && { name: editName }),
+        ...(editDescription.trim() !== '' && { description: editDescription }),
+        ...(editCategory.trim() !== '' && { category: editCategory }),
+      };
+      if (Object.keys(payload).length === 0) {
+        Alert.alert('Lỗi', 'Bạn cần nhập ít nhất một trường để cập nhật.');
+        return;
+      }
+
+      const result = await updateBaseProduct(id, payload, '<YOUR_ADMIN_TOKEN>');
+      Alert.alert('Thành công', `Đã cập nhật base product ID ${id}`);
+      setEditId('');
+      setEditName('');
+      setEditDescription('');
+      setEditCategory('');
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Lỗi khi cập nhật base product', err.message || 'Unknown error');
+    }
+  };
+
+  const handleDeleteBaseProduct = async () => {
+    if (!deleteId.trim()) {
+      Alert.alert('Lỗi', 'Bạn cần nhập ID để xóa.');
+      return;
+    }
+    const id = parseInt(deleteId, 10);
+    if (isNaN(id)) {
+      Alert.alert('Lỗi', 'ID phải là một số nguyên hợp lệ.');
+      return;
+    }
+
     Alert.alert(
-      "Xác nhận xóa",
-      "Bạn có chắc chắn muốn xóa danh mục này không?",
+      'Xác nhận',
+      `Bạn có chắc chắn muốn xóa base product ID ${id}?`,
       [
-        { text: "Hủy", style: "cancel" },
+        { text: 'Huỷ', style: 'cancel' },
         {
-          text: "Xóa",
-          style: "destructive",
+          text: 'Xóa',
+          style: 'destructive',
           onPress: async () => {
-            setLoading(true);
             try {
-              await deleteCategory(id, token);
-              await fetchCategories();
-              Alert.alert("Thành công", "Đã xóa danh mục.");
-            } catch (error: any) {
-              console.log("Lỗi xóa category:", error);
-              Alert.alert("Lỗi", error.message || "Xóa danh mục thất bại");
-            } finally {
-              setLoading(false);
+              await deleteBaseProduct(id, '<YOUR_ADMIN_TOKEN>');
+              Alert.alert('Thành công', `Đã xóa base product ID ${id}`);
+              setDeleteId('');
+            } catch (err) {
+              console.error(err);
+              Alert.alert('Lỗi khi xóa base product', err.message || 'Unknown error');
             }
           },
         },
@@ -114,127 +126,129 @@ const CategoryManagementScreen: React.FC<Props> = ({ navigation }) => {
     );
   };
 
-  // 4. Bắt đầu sửa một category: cho hiển thị TextInput lên
-  const startEditing = (category: Category) => {
-    setEditingId(category.id);
-    setEditingName(category.name);
-  };
-
-  // 5. Hủy sửa (trả về trạng thái bình thường)
-  const cancelEditing = () => {
-    setEditingId(null);
-    setEditingName("");
-  };
-
-  // 6. Gửi request cập nhật category lên server
-  const submitUpdateCategory = async () => {
-    if (editingId === null) return;
-    if (!editingName.trim()) {
-      Alert.alert("Cảnh báo", "Tên danh mục không được để trống.");
+  const handleFetchItems = async () => {
+    if (!queryCategory.trim()) {
+      Alert.alert('Lỗi', 'Bạn cần nhập tên category để tìm.');
       return;
     }
-    setLoading(true);
+    setLoadingItems(true);
+    setItems([]);
     try {
-      await updateCategory(editingId, editingName.trim(), token);
-      setEditingId(null);
-      setEditingName("");
-      await fetchCategories();
-      Alert.alert("Thành công", "Đã cập nhật danh mục.");
-    } catch (error: any) {
-      console.log("Lỗi cập nhật category:", error);
-      Alert.alert("Lỗi", error.message || "Cập nhật danh mục thất bại");
+      const data = await getAllItemsByCategory(queryCategory.trim());
+      setItems(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Lỗi khi lấy items', err.message || 'Unknown error');
     } finally {
-      setLoading(false);
+      setLoadingItems(false);
     }
   };
 
-  // 7. Render mỗi dòng của FlatList (mỗi category)
-  const renderItem = ({ item }: { item: Category }) => {
-    const isEditing = editingId === item.id;
+  const renderItem = ({ item }) => {
     return (
-      <View style={styles.categoryRow}>
-        {isEditing ? (
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            value={editingName}
-            onChangeText={setEditingName}
-            placeholder="Nhập tên mới..."
-            autoFocus
-          />
-        ) : (
-          <Text style={styles.categoryText}>{item.name}</Text>
-        )}
-
-        {isEditing ? (
-          <>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnSave]}
-              onPress={submitUpdateCategory}
-            >
-              <Text style={styles.btnText}>Lưu</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnCancel]}
-              onPress={cancelEditing}
-            >
-              <Text style={styles.btnText}>Hủy</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnEdit]}
-              onPress={() => startEditing(item)}
-            >
-              <Text style={styles.btnText}>Sửa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnDelete]}
-              onPress={() => handleDeleteCategory(item.id)}
-            >
-              <Text style={styles.btnText}>Xóa</Text>
-            </TouchableOpacity>
-          </>
-        )}
+      <View style={styles.itemContainer}>
+        <Text style={styles.itemText}>ID: {item.id}  •  Name: {item.name}</Text>
+        <Text style={styles.itemText}>Price: {item.price}  •  Color: {item.color}</Text>
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Quản lý danh mục</Text>
+      <Text style={styles.title}>Quản lý danh mục (Base Product)</Text>
 
-      {/* Phần form thêm mới category */}
-      <View style={styles.inputContainer}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>1. Tạo mới Base Product</Text>
         <TextInput
           style={styles.input}
-          placeholder="Nhập tên danh mục mới..."
-          value={newCategoryName}
-          onChangeText={setNewCategoryName}
+          placeholder="Tên sản phẩm"
+          value={newName}
+          onChangeText={setNewName}
         />
-        <TouchableOpacity
-          style={[styles.btn, styles.btnAdd]}
-          onPress={handleCreateCategory}
-        >
-          <Text style={styles.btnText}>Thêm</Text>
-        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Mô tả"
+          value={newDescription}
+          onChangeText={setNewDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Category"
+          value={newCategory}
+          onChangeText={setNewCategory}
+        />
+        <Button title="Tạo mới" onPress={handleCreateBaseProduct} />
       </View>
 
-      {/* Danh sách category */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
-      ) : (
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          style={{ marginTop: 12 }}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          ListEmptyComponent={() => (
-            <Text style={styles.emptyText}>Chưa có danh mục nào</Text>
-          )}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>2. Cập nhật Base Product</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập ID cần cập nhật"
+          value={editId}
+          onChangeText={setEditId}
+          keyboardType="numeric"
         />
-      )}
+        <TextInput
+          style={styles.input}
+          placeholder="Tên mới (bỏ trống nếu không đổi)"
+          value={editName}
+          onChangeText={setEditName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Mô tả mới (bỏ trống nếu không đổi)"
+          value={editDescription}
+          onChangeText={setEditDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Category mới (bỏ trống nếu không đổi)"
+          value={editCategory}
+          onChangeText={setEditCategory}
+        />
+        <Button title="Cập nhật" onPress={handleUpdateBaseProduct} />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>3. Xóa Base Product</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập ID cần xóa"
+          value={deleteId}
+          onChangeText={setDeleteId}
+          keyboardType="numeric"
+        />
+        <Button title="Xóa" color="red" onPress={handleDeleteBaseProduct} />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>4. Xem Items theo Category</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập tên category"
+          value={queryCategory}
+          onChangeText={setQueryCategory}
+        />
+        <Button title="Tìm Items" onPress={handleFetchItems} />
+
+        {loadingItems && <ActivityIndicator style={{ marginTop: 10 }} />}
+
+        {items.length > 0 && (
+          <FlatList
+            style={{ marginTop: 10, maxHeight: 200 }}
+            data={items}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={renderItem}
+          />
+        )}
+
+        {!loadingItems && items.length === 0 && queryCategory.trim() !== '' && (
+          <Text style={{ marginTop: 10, fontStyle: 'italic', color: '#555' }}>
+            Chưa có item nào hoặc chưa tìm thấy kết quả.
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -245,74 +259,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: '#fff',
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    color: "#333",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 12,
+    textAlign: 'center',
+  },
+  section: {
+    marginVertical: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    backgroundColor: '#f9f9f9',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
   },
   input: {
-    flex: 1,
     borderWidth: 1,
-    borderColor: "#CCC",
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#FFF",
+    borderColor: '#bbb',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginBottom: 8,
   },
-  btn: {
-    marginLeft: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
+  itemContainer: {
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  btnAdd: {
-    backgroundColor: "#28A745",
-  },
-  btnEdit: {
-    backgroundColor: "#FFC107",
-  },
-  btnDelete: {
-    backgroundColor: "#DC3545",
-  },
-  btnSave: {
-    backgroundColor: "#007AFF",
-  },
-  btnCancel: {
-    backgroundColor: "#6C757D",
-  },
-  btnText: {
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  categoryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    backgroundColor: "#FFF",
-    borderRadius: 6,
-  },
-  categoryText: {
-    flex: 1,
-    fontSize: 16,
-    color: "#333",
-  },
-  separator: {
-    height: 8,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 30,
-    color: "#666",
+  itemText: {
+    fontSize: 14,
+    color: '#333',
   },
 });

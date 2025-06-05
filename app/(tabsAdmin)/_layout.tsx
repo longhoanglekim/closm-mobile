@@ -77,6 +77,27 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="Product"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="CategoryManagement"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="OrderManagement"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
 
     </Tabs>
   );
