@@ -101,14 +101,14 @@ const DashboardAdmin = () => {
         </View>
 
         {/* Stats Cards */}
-        {/* <View style={styles.statsContainer}>
+        <View style={styles.statsContainer}>
           <Text style={styles.sectionTitle}>Thống kê tổng quan</Text>
           <View style={styles.statsGrid}>
             {stats.map((item, index) => (
               <StatCard key={index} item={item} />
             ))}
           </View>
-        </View> */}
+        </View>
 
         {/* Quick Actions */}
         <View style={styles.section}>

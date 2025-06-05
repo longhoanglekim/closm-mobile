@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c7a3401-3ba3-46b3-85f5-85d46dc393aa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/cart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/cart.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabsAdmin)/Product/ProductListScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabsAdmin)/Product/ProductListScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/Cart.ts" beforeDir="false" afterPath="$PROJECT_DIR$/constants/Cart.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants/VariantDetails.ts" beforeDir="false" afterPath="$PROJECT_DIR$/constants/VariantDetails.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabsAdmin)/CategoryManagement/CategoryManagement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabsAdmin)/CategoryManagement/CategoryManagement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabsAdmin)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabsAdmin)/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

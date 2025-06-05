@@ -50,6 +50,7 @@ export const createBaseProduct = async (
     throw new Error(text || "Lỗi khi tạo Base Product");
   }
   return res.json();
+  
 };
 
 export const updateBaseProduct = async (
