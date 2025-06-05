@@ -108,7 +108,7 @@ const UserOrderScreen = () => {
         {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
           (item, index) => (
             <Pressable
-              key={index}
+              key={item}
               style={styles.orderButton}
               onPress={() => handleFilter(item)}
             >
@@ -124,7 +124,7 @@ const UserOrderScreen = () => {
       </ScrollView>
 
       {selectedOrderList?.map((order, index) => (
-        <View key={index} style={styles.orderListItem}>
+        <View key={order.orderCode} style={styles.orderListItem}>
           <Text style={styles.orderTitle}>Order #{order.orderCode}</Text>
           <Text style={styles.orderStatus}>Status: {order.orderStatus}</Text>
           <Text>Delivery Address: {order.deliverAddress}</Text>
