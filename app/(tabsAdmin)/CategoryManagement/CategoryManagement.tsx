@@ -1,3 +1,4 @@
+// app/CategoryManagementScreen.tsx
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,6 +11,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
+// Xuất Expo Router
+import { useRouter } from "expo-router";
+
 import {
   getAllItemsByCategory,
   createBaseProduct,
@@ -18,6 +22,7 @@ import {
 } from "@/api/admin/admin";
 
 const CategoryManagementScreen = () => {
+  const router = useRouter();
   const token = useSelector((state: any) => state.user.token);
   const userInfo = useSelector((state: any) => state.user.userInfo);
 
@@ -27,19 +32,26 @@ const CategoryManagementScreen = () => {
     }
   }, [token, userInfo]);
 
+  // Form Tạo mới Base Product
   const [newCategory, setNewCategory] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
 
+  // Form Cập nhật Base Product
   const [editId, setEditId] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
 
+  // Form Xóa Base Product
   const [deleteId, setDeleteId] = useState("");
 
+  // Lấy Items theo Category (phần hiển thị danh sách Items)
   const [queryCategory, setQueryCategory] = useState("");
   const [items, setItems] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
 
+  //
+  // 1. Tạo mới Base Product
+  //
   const handleCreateBaseProduct = async () => {
     if (!newCategory.trim() || !newImageUrl.trim()) {
       Alert.alert("Lỗi", "Bạn cần nhập category và imageUrl.");
@@ -49,20 +61,42 @@ const CategoryManagementScreen = () => {
       Alert.alert("Lỗi", "Chưa có token. Vui lòng đăng nhập.");
       return;
     }
+
     try {
       const payload = {
         category: newCategory,
         imageUrl: newImageUrl,
       };
-      const result = await createBaseProduct(payload, token);
-      Alert.alert("Thành công", `Đã tạo base product với ID: ${result.id}`);
+
+      // Gọi API tạo category, API sẽ trả về ID mới (số)
+      const newId: number = await createBaseProduct(payload, token);
+
+      // Hiển thị alert thành công (có thể bỏ qua, hoặc giữ tùy bạn)
+      Alert.alert("Thành công", `Đã tạo base product với ID: ${newId}`);
+
+      // Reset form
       setNewCategory("");
       setNewImageUrl("");
+
+      // --- Điểm chính: tự động chuyển hướng sang màn hình ProductListScreen
+      // để bắt người dùng tạo sản phẩm đầu tiên cho category mới
+      //
+      // Ở đây giả sử đường dẫn màn hình ProductListScreen là:
+      // /(tabsAdmin)/Product/ProductListScreen
+      // và nó nhận param là { category: string }
+      //
+      router.push({
+        pathname: "/(tabsAdmin)/Product/ProductListScreen",
+        params: { category: payload.category },
+      });
     } catch (err: any) {
       Alert.alert("Lỗi khi tạo base product", err.message || "Unknown error");
     }
   };
 
+  //
+  // 2. Cập nhật Base Product
+  //
   const handleUpdateBaseProduct = async () => {
     if (!editId.trim()) {
       Alert.alert("Lỗi", "Bạn cần nhập ID để cập nhật.");
@@ -81,21 +115,38 @@ const CategoryManagementScreen = () => {
       Alert.alert("Lỗi", "Bạn cần nhập category và imageUrl.");
       return;
     }
+
     try {
       const payload = {
         category: editCategory,
         imageUrl: editImageUrl,
       };
-      await updateBaseProduct(id, payload, token);
-      Alert.alert("Thành công", `Đã cập nhật base product ID ${id}`);
+
+      // updateBaseProduct trả về ID (number)
+      const updatedId: number = await updateBaseProduct(id, payload, token);
+
+      Alert.alert("Thành công", `Đã cập nhật base product ID: ${updatedId}`);
+
+      // Reset form
       setEditId("");
       setEditCategory("");
       setEditImageUrl("");
+
+      // Nếu category đang query trùng với editCategory, ta có thể refetch Items
+      if (queryCategory.trim() === payload.category) {
+        handleFetchItems();
+      }
     } catch (err: any) {
-      Alert.alert("Lỗi khi cập nhật base product", err.message || "Unknown error");
+      Alert.alert(
+        "Lỗi khi cập nhật base product",
+        err.message || "Unknown error"
+      );
     }
   };
 
+  //
+  // 3. Xóa Base Product
+  //
   const handleDeleteBaseProduct = async () => {
     if (!deleteId.trim()) {
       Alert.alert("Lỗi", "Bạn cần nhập ID để xóa.");
@@ -110,6 +161,7 @@ const CategoryManagementScreen = () => {
       Alert.alert("Lỗi", "ID phải là một số nguyên hợp lệ.");
       return;
     }
+
     Alert.alert(
       "Xác nhận",
       `Bạn có chắc chắn muốn xóa base product ID ${id}?`,
@@ -120,11 +172,22 @@ const CategoryManagementScreen = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteBaseProduct(id, token);
-              Alert.alert("Thành công", `Đã xóa base product ID ${id}`);
+              const deletedId: number = await deleteBaseProduct(id, token);
+              Alert.alert(
+                "Thành công",
+                `Đã xóa base product ID: ${deletedId}`
+              );
               setDeleteId("");
+
+              // Nếu category hiện tại đang query, refetch Items
+              if (queryCategory.trim() !== "") {
+                handleFetchItems();
+              }
             } catch (err: any) {
-              Alert.alert("Lỗi khi xóa base product", err.message || "Unknown error");
+              Alert.alert(
+                "Lỗi khi xóa base product",
+                err.message || "Unknown error"
+              );
             }
           },
         },
@@ -132,6 +195,9 @@ const CategoryManagementScreen = () => {
     );
   };
 
+  //
+  // 4. Lấy items theo category
+  //
   const handleFetchItems = async () => {
     if (!queryCategory.trim()) {
       Alert.alert("Lỗi", "Bạn cần nhập tên category để tìm.");
@@ -140,7 +206,7 @@ const CategoryManagementScreen = () => {
     setLoadingItems(true);
     setItems([]);
     try {
-      const data = await getAllItemsByCategory(queryCategory.trim());
+      const data: any[] = await getAllItemsByCategory(queryCategory.trim());
       setItems(Array.isArray(data) ? data : []);
     } catch (err: any) {
       Alert.alert("Lỗi khi lấy items", err.message || "Unknown error");
@@ -150,8 +216,12 @@ const CategoryManagementScreen = () => {
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>ID: {item.id}  •  Name: {item.name}</Text>
-      <Text style={styles.itemText}>Price: {item.price}  •  Color: {item.color}</Text>
+      <Text style={styles.itemText}>
+        ID: {item.id} • Name: {item.name}
+      </Text>
+      <Text style={styles.itemText}>
+        Price: {item.price} • Color: {item.color}
+      </Text>
     </View>
   );
 
@@ -159,6 +229,7 @@ const CategoryManagementScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Quản lý danh mục (Base Product)</Text>
 
+      {/* 1. Tạo mới Base Product */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>1. Tạo mới Base Product</Text>
         <TextInput
@@ -176,6 +247,7 @@ const CategoryManagementScreen = () => {
         <Button title="Tạo mới" onPress={handleCreateBaseProduct} />
       </View>
 
+      {/* 2. Cập nhật Base Product */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>2. Cập nhật Base Product</Text>
         <TextInput
@@ -200,6 +272,7 @@ const CategoryManagementScreen = () => {
         <Button title="Cập nhật" onPress={handleUpdateBaseProduct} />
       </View>
 
+      {/* 3. Xóa Base Product */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>3. Xóa Base Product</Text>
         <TextInput
@@ -212,6 +285,7 @@ const CategoryManagementScreen = () => {
         <Button title="Xóa" color="red" onPress={handleDeleteBaseProduct} />
       </View>
 
+      {/* 4. Xem Items theo Category */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>4. Xem Items theo Category</Text>
         <TextInput

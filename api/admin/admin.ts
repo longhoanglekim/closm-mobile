@@ -5,13 +5,11 @@ const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 export const getAllCategories = async (): Promise<string[]> => {
   const res = await fetch(`${apiUrl}/products/categories`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || "Lỗi khi lấy danh sách categories");
+    throw new Error(text || "Lỗi khi lấy danh sách category");
   }
   return res.json();
 };
@@ -34,9 +32,9 @@ export const getAllItemsByCategory = async (category: string): Promise<any[]> =>
 };
 
 export const createBaseProduct = async (
-  baseProductInput: any,
+  baseProductInput: { category: string; imageUrl: string },
   token: string
-): Promise<any> => {
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/create-base-product`, {
     method: "POST",
     headers: {
@@ -45,19 +43,21 @@ export const createBaseProduct = async (
     },
     body: JSON.stringify(baseProductInput),
   });
+
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text || "Lỗi khi tạo Base Product");
   }
-  return res.json();
-  
+
+  const newId: number = await res.json();
+  return newId;
 };
 
 export const updateBaseProduct = async (
   id: number,
-  baseProductInput: any,
+  baseProductInput: { category?: string; imageUrl?: string },
   token: string
-): Promise<any> => {
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/update-base-product/${id}`, {
     method: "PUT",
     headers: {
@@ -70,13 +70,14 @@ export const updateBaseProduct = async (
     const text = await res.text();
     throw new Error(text || `Lỗi khi cập nhật Base Product với ID = ${id}`);
   }
-  return res.json();
+  const updatedId: number = await res.json();
+  return updatedId;
 };
 
 export const deleteBaseProduct = async (
   id: number,
   token: string
-): Promise<any> => {
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/delete-base-product/${id}`, {
     method: "DELETE",
     headers: {
@@ -87,8 +88,10 @@ export const deleteBaseProduct = async (
     const text = await res.text();
     throw new Error(text || `Lỗi khi xóa Base Product với ID = ${id}`);
   }
-  return res.json();
+  const deletedId: number = await res.json();
+  return deletedId;
 };
+
 
 
 // 2. ----------- PRODUCT ITEM (VARIANT) CONTROLLER -----------
