@@ -21,6 +21,18 @@ import {
   deleteBaseProduct,
 } from "@/api/admin/admin";
 
+
+type ProductItem = {
+  id: number;
+  category: string;
+  price: number;
+  imageUrl: string;
+  size: string;
+  color: string;
+  quantity: number;
+  tag: string;
+  description: string;
+};
 const CategoryManagementScreen = () => {
   const router = useRouter();
   const token = useSelector((state: any) => state.user.token);
