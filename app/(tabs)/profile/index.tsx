@@ -1,4 +1,3 @@
-// ProfileScreen.tsx
 import React, { useRef, useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -30,7 +29,6 @@ import LoginScreen from "./login";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-// Thay YOUR_MAPTILER_API_KEY bằng key của bạn
 const MAPTILER_TILE_URL =
   "https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.jpg?key=JuPN71U2EkJ43IuG7rM2";
 
@@ -42,7 +40,6 @@ export default function ProfileScreen() {
   const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
   const cameraRef = useRef<CameraRef>(null);
 
-  // Tọa độ Shop (cố định)
   const shopLat = 21.0177002;
   const shopLng = 105.7807554;
 
@@ -50,7 +47,6 @@ export default function ProfileScreen() {
     router.push({ pathname: "/(tabs)/profile/orders", params: { status: item } });
   };
 
-  // Lấy tọa độ từ địa chỉ người dùng trong Redux
   useEffect(() => {
     const fetchLocation = async () => {
       if (!user.shippingAddress) {
@@ -83,7 +79,6 @@ export default function ProfileScreen() {
     fetchLocation();
   }, [user.shippingAddress]);
 
-  // Lấy route từ OSRM public API
   useEffect(() => {
     if (!customerLocation) return;
 
@@ -107,7 +102,6 @@ export default function ProfileScreen() {
       });
   }, [customerLocation]);
 
-  // Khi routeCoords thay đổi, fitBounds bằng Camera
   useEffect(() => {
     if (routeCoords.length > 0 && cameraRef.current) {
       const lats = routeCoords.map((c) => c[1]);
