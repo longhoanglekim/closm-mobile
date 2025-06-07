@@ -47,16 +47,16 @@ const ChatScreen = ({ role, usernameProp }: ChatScreenProps) => {
           setMessages((prev) => [...prev, receivedMessage]);
         });
 
-        // Optional: notify server about join event
-        // stompClient.publish({
-        //   destination: "/app/chat.send",
-        //   body: JSON.stringify({
-        //     sender: usernameProp,
-        //     content: `${usernameProp} đã tham gia.`,
-        //     type: "JOIN",
-        //     role: role,
-        //   }),
-        // });
+        // Gửi thông báo khi tham gia
+        stompClient.publish({
+          destination: "/app/chat.send",
+          body: JSON.stringify({
+            sender: usernameProp,
+            content: `${usernameProp} đã tham gia.`,
+            type: "JOIN",
+            role: role,
+          }),
+        });
 
         console.log(`${usernameProp} đã tham gia.`);
       },
@@ -74,15 +74,16 @@ const ChatScreen = ({ role, usernameProp }: ChatScreenProps) => {
 
   const sendMessage = () => {
     if (input.trim() && stompClientRef.current?.connected) {
-      //   stompClientRef.current.publish({
-      //     destination: "/app/chat.send",
-      //     body: JSON.stringify({
-      //       sender: usernameProp,
-      //       content: input.trim(),
-      //       type: "CHAT",
-      //       role,
-      //     }),
-      //   });
+      console.log("Sending message:", input.trim());
+      stompClientRef.current.publish({
+        destination: "/app/chat.send",
+        body: JSON.stringify({
+          sender: usernameProp,
+          content: input.trim(),
+          type: "CHAT",
+          role,
+        }),
+      });
       setInput("");
     }
   };
