@@ -283,7 +283,7 @@ const DashboardAdmin = () => {
               <Text style={styles.welcomeText}>Xin chào Admin! 👋</Text>
               <Text style={styles.headerTitle}>Bảng điều khiển</Text>
             </View>
-            <TouchableOpacity style={styles.profileButton}>
+            <TouchableOpacity style={styles.profileButton} onPress={() => router.push("/view/ChatRoom")}>
               <Text style={styles.profileText}>📨</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.profileButton}>

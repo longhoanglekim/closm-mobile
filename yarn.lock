@@ -2219,10 +2219,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@maplibre/maplibre-react-native@^10.1.5":
-  version "10.1.5"
-  resolved "https://registry.yarnpkg.com/@maplibre/maplibre-react-native/-/maplibre-react-native-10.1.5.tgz#d6bbb4213ec7343fa26ec52008f7f80a7c7ec699"
-  integrity sha512-1mGgB5e1PB5RBAEgJ6tlGmG9LMhK/hOXwcKx2UGYe4G6VDebjzKPxlsJqvfKQ8GlFHSlyR6hvKCC6MWSkRkdGg==
+"@maplibre/maplibre-react-native@^10.1.6":
+  version "10.1.6"
+  resolved "https://registry.yarnpkg.com/@maplibre/maplibre-react-native/-/maplibre-react-native-10.1.6.tgz#9eb23f40294c80ae95bc2ef48a40c78bebfba806"
+  integrity sha512-81mfLTr5CR5Taz3VTM2+8KtqHxHwxmsET6DeB0D/DjhmjR9D+/ALi8R/FwaGpnNiy8yhCG0j2qfNAie3YN0SZA==
   dependencies:
     "@turf/distance" "^7.1.0"
     "@turf/helpers" "^7.1.0"
