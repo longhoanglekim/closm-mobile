@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, ActivityIndicator, Text, StyleSheet, ScrollView } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getProvinces, getDistrictsOfProvince, getWardsOfDistrict } from "@/api/Location/Location";
+import { useDispatch } from 'react-redux';
+import { setShippingAddress } from '@/redux/reducers/User';
 
 interface ShippingAddressProps {
   currentAddress?: string;
@@ -35,6 +37,8 @@ const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressPro
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedWard, setSelectedWard] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   // Lấy tỉnh/thành phố
   useEffect(() => {
@@ -113,6 +117,7 @@ const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressPro
       return;
     }
     const fullAddress = `${streetAddress}, ${ward}, ${district}, ${city}`;
+    dispatch(setShippingAddress(fullAddress));
     onSave(fullAddress);
   };
 

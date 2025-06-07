@@ -21,16 +21,19 @@ const LoginScreen = () => {
   const user = useSelector((state) => state.user);
   const router = useRouter();
 
-  useEffect(() => {
-    if (user.isLoggedIn) {
-      router.replace("/(tabs)/profile");
-    }
-  }, [user.isLoggedIn]);
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      router.replace("/(tabs)/profile");
+    }
+  }, [user.isLoggedIn]);
+  
   const handleLogin = async () => {
     if (!email || !password) {
       setError("Vui lòng điền đầy đủ thông tin");

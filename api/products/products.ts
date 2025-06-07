@@ -49,10 +49,19 @@ export const getVariantListByName = async (name: string) => {
 //new
 export async function getLocationFromAddress(address: any) {
   const res = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`,
+    {
+      headers: {
+        'User-Agent': 'Closm Mobile App',
+        'Referer': 'https://closm.com',
+      }
+    }
   );
   const contentType = res.headers.get('content-type');
-  if (!res.ok) throw new Error("Không thể lấy địa chỉ");
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Không thể lấy địa chỉ: ${res.status} ${res.statusText} - ${errorText}`);
+  }
   if (contentType && contentType.includes('application/json')) {
     return res.json();
   } else {
@@ -130,3 +139,16 @@ export async function getProvinces() {
     throw new Error('API không trả về JSON: ' + text);
   }
 }
+
+export const getOrderDetails = async (orderId: string) => {
+  try {
+    const response = await fetch(`${apiUrl}/order/${orderId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch order details');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    throw error;
+  }
+};

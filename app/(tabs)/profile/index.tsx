@@ -13,6 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
 import { FontAwesome } from "@expo/vector-icons";
+import { getLocationFromAddress } from "@/api/products/products";
 
 import {
   MapView,
@@ -22,6 +23,7 @@ import {
   PointAnnotation,
   ShapeSource,
   LineLayer,
+  CameraRef
 } from "@maplibre/maplibre-react-native";
 
 import LoginScreen from "./login";
@@ -35,30 +37,59 @@ const MAPTILER_TILE_URL =
 export default function ProfileScreen() {
   const user = useSelector((state: any) => state.user);
   const router = useRouter();
+  const [customerLocation, setCustomerLocation] = useState<{lat: number, lon: number} | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
+  const cameraRef = useRef<CameraRef>(null);
 
-  const handleFilter = (item: string) => {
-    router.push("/(tabs)/profile/orders?status=" + item);
-  };
-
-  // Nếu chưa login, hiện LoginScreen
-  if (!user.isLoggedIn) {
-    return <LoginScreen />;
-  }
-
-  // 1. Tọa độ Shop & Khách hàng (phải geocode trước)
+  // Tọa độ Shop (cố định)
   const shopLat = 21.0177002;
   const shopLng = 105.7807554;
-  const custLat = 21.03;
-  const custLng = 105.78;
 
-  // 2. Lấy route từ OSRM public API
-  const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
-  const cameraRef = useRef<Camera>(null);
+  const handleFilter = (item: string) => {
+    router.push({ pathname: "/(tabs)/profile/orders", params: { status: item } });
+  };
 
+  // Lấy tọa độ từ địa chỉ người dùng trong Redux
   useEffect(() => {
+    const fetchLocation = async () => {
+      if (!user.shippingAddress) {
+        setCustomerLocation(null);
+        setRouteCoords([]);
+        return;
+      }
+      
+      setIsLoadingLocation(true);
+      try {
+        const location = await getLocationFromAddress(user.shippingAddress + ', Việt Nam');
+        if (location && location.length > 0) {
+          setCustomerLocation({
+            lat: parseFloat(location[0].lat),
+            lon: parseFloat(location[0].lon)
+          });
+        } else {
+          setCustomerLocation(null);
+          setRouteCoords([]);
+        }
+      } catch (error) {
+        console.error('Error fetching customer location:', error);
+        setCustomerLocation(null);
+        setRouteCoords([]);
+      } finally {
+        setIsLoadingLocation(false);
+      }
+    };
+
+    fetchLocation();
+  }, [user.shippingAddress]);
+
+  // Lấy route từ OSRM public API
+  useEffect(() => {
+    if (!customerLocation) return;
+
     const osrmUrl =
       `https://router.project-osrm.org/route/v1/driving/` +
-      `${shopLng},${shopLat};${custLng},${custLat}` +
+      `${shopLng},${shopLat};${customerLocation.lon},${customerLocation.lat}` +
       `?overview=full&geometries=geojson`;
 
     fetch(osrmUrl)
@@ -66,12 +97,17 @@ export default function ProfileScreen() {
       .then((json) => {
         if (json.routes && json.routes.length) {
           setRouteCoords(json.routes[0].geometry.coordinates);
+        } else {
+          setRouteCoords([]);
         }
       })
-      .catch((err) => console.error("OSRM fetch error:", err));
-  }, []);
+      .catch((err) => {
+        console.error("OSRM fetch error:", err);
+        setRouteCoords([]);
+      });
+  }, [customerLocation]);
 
-  // 3. Khi routeCoords thay đổi, fitBounds bằng Camera
+  // Khi routeCoords thay đổi, fitBounds bằng Camera
   useEffect(() => {
     if (routeCoords.length > 0 && cameraRef.current) {
       const lats = routeCoords.map((c) => c[1]);
@@ -82,13 +118,17 @@ export default function ProfileScreen() {
       const maxLng = Math.max(...lngs);
 
       cameraRef.current.fitBounds(
-        [minLng, minLat], // southwest [lng, lat]
-        [maxLng, maxLat], // northeast
-        50,               // padding px
-        1000              // animation duration ms
+        [minLng, minLat],
+        [maxLng, maxLat],
+        50,
+        1000
       );
     }
   }, [routeCoords]);
+
+  if (!user.isLoggedIn) {
+    return <LoginScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -111,27 +151,99 @@ export default function ProfileScreen() {
             <FontAwesome name="cog" size={24} color="black" />
           </Pressable>
         </View>
-          <View style={styles.orderSection}>
-            <Text style={styles.sectionTitle}>My Orders</Text>
-            <View style={styles.orderButtonsContainer}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
-                  (item, index) => (
-                    <Pressable
-                      key={index}
-                      style={styles.orderButton}
-                      onPress={() => handleFilter(item)}
-                    >
-                      <Text style={styles.orderButtonText}>{item}</Text>
-                    </Pressable>
-                  )
-                )}
-              </ScrollView>
-            </View>
 
-
+        <View style={styles.orderSection}>
+          <Text style={styles.sectionTitle}>My Orders</Text>
+          <View style={styles.orderButtonsContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
+                (item, index) => (
+                  <Pressable
+                    key={index}
+                    style={styles.orderButton}
+                    onPress={() => handleFilter(item)}
+                  >
+                    <Text style={styles.orderButtonText}>{item}</Text>
+                  </Pressable>
+                )
+              )}
+            </ScrollView>
           </View>
+        </View>
 
+        {/* MAP */}
+        <Text style={styles.sectionTitle}>Theo dõi giao hàng</Text>
+        <View style={styles.mapWrapper}>
+          {isLoadingLocation ? (
+            <View style={styles.loadingContainer}>
+              <Text>Đang tải thông tin địa chỉ...</Text>
+            </View>
+          ) : !user.shippingAddress ? (
+            <View style={styles.noAddressContainer}>
+              <Text style={styles.noAddressText}>Bạn chưa nhập địa chỉ giao hàng.</Text>
+              <Pressable
+                style={styles.addAddressButton}
+                onPress={() => router.push("/(tabs)/payment/checkout")}
+              >
+                <Text style={styles.addAddressButtonText}>Thêm địa chỉ</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <MapView style={styles.map}>
+              <Camera
+                ref={cameraRef}
+                centerCoordinate={[(shopLng + (customerLocation?.lon || shopLng)) / 2, (shopLat + (customerLocation?.lat || shopLat)) / 2]}
+                zoomLevel={13}
+              />
+
+              <RasterSource
+                id="maptiler-osm"
+                tileUrlTemplates={[MAPTILER_TILE_URL]}
+                tileSize={256}
+              >
+                <RasterLayer
+                  id="osmRasterLayer"
+                  sourceID="maptiler-osm"
+                  style={{ rasterOpacity: 1 }}
+                />
+              </RasterSource>
+
+              {/* Marker Shop */}
+              <PointAnnotation id="shopMarker" coordinate={[shopLng, shopLat]}>
+                <View style={styles.markerShop}>
+                  <FontAwesome name="home" size={20} color="#fff" />
+                </View>
+              </PointAnnotation>
+
+              {/* Marker Khách hàng */}
+              {customerLocation && (
+                <PointAnnotation id="custMarker" coordinate={[customerLocation.lon, customerLocation.lat]}>
+                  <View style={styles.markerCust}>
+                    <FontAwesome name="user" size={20} color="#fff" />
+                  </View>
+                </PointAnnotation>
+              )}
+
+              {/* Route polyline */}
+              {routeCoords.length > 0 && (
+                <ShapeSource
+                  id="routeSource"
+                  shape={{
+                    type: "Feature",
+                    geometry: { type: "LineString", coordinates: routeCoords },
+                    properties: {}
+                  }}
+                >
+                  <LineLayer
+                    id="routeLineLayer"
+                    sourceID="routeSource"
+                    style={{ lineColor: "#007AFF", lineWidth: 4, lineOpacity: 0.8 }}
+                  />
+                </ShapeSource>
+              )}
+            </MapView>
+          )}
+        </View>
 
         {/* SERVICES */}
         <Text style={styles.sectionTitle}>Services</Text>
@@ -143,70 +255,13 @@ export default function ProfileScreen() {
             { icon: "tags", label: "Kho Voucher", desc: "50+ voucher" },
           ].map((service, index) => (
             <View key={index} style={styles.gridBox}>
-              <FontAwesome name={service.icon} size={24} style={styles.gridIcon} />
+              <FontAwesome name={service.icon as any} size={24} style={styles.gridIcon} />
               <View>
                 <Text style={styles.gridLabel}>{service.label}</Text>
                 <Text style={styles.gridDesc}>{service.desc}</Text>
               </View>
             </View>
           ))}
-        </View>
-
-        {/* MAP */}
-        <Text style={styles.sectionTitle}>Theo dõi giao hàng</Text>
-        <View style={styles.mapWrapper}>
-          <MapView style={styles.map}>
-            {/* Camera để fitBounds */}
-            <Camera
-              ref={cameraRef}
-              centerCoordinate={[(shopLng + custLng) / 2, (shopLat + custLat) / 2]}
-              zoomLevel={13}
-            />
-
-            {/* Raster tiles từ MapTiler */}
-            <RasterSource
-              id="maptiler-osm"
-              tileUrlTemplates={[MAPTILER_TILE_URL]}
-              tileSize={256}
-            >
-              <RasterLayer
-                id="osmRasterLayer"
-                sourceID="maptiler-osm"
-                style={{ rasterOpacity: 1 }}
-              />
-            </RasterSource>
-
-            {/* Marker Shop */}
-            <PointAnnotation id="shopMarker" coordinate={[shopLng, shopLat]}>
-              <View style={styles.markerShop}>
-                <FontAwesome name="home" size={20} color="#fff" />
-              </View>
-            </PointAnnotation>
-
-            {/* Marker Khách hàng */}
-            <PointAnnotation id="custMarker" coordinate={[custLng, custLat]}>
-              <View style={styles.markerCust}>
-                <FontAwesome name="user" size={20} color="#fff" />
-              </View>
-            </PointAnnotation>
-
-            {/* Route polyline */}
-            {routeCoords.length > 0 && (
-              <ShapeSource
-                id="routeSource"
-                shape={{
-                  type: "Feature",
-                  geometry: { type: "LineString", coordinates: routeCoords },
-                }}
-              >
-                <LineLayer
-                  id="routeLineLayer"
-                  sourceID="routeSource"
-                  style={{ lineColor: "#007AFF", lineWidth: 4, lineOpacity: 0.8 }}
-                />
-              </ShapeSource>
-            )}
-          </MapView>
         </View>
 
         {/* FINANCIAL */}
@@ -217,7 +272,7 @@ export default function ProfileScreen() {
             { icon: "shield", label: "Bảo hiểm", desc: "Gói bảo hiểm mini" },
           ].map((item, idx) => (
             <View key={idx} style={styles.gridBox}>
-              <FontAwesome name={item.icon} size={24} style={styles.gridIcon} />
+              <FontAwesome name={item.icon as any} size={24} style={styles.gridIcon} />
               <View>
                 <Text style={styles.gridLabel}>{item.label}</Text>
                 <Text style={styles.gridDesc}>{item.desc}</Text>
@@ -327,5 +382,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderColor: "#fff",
     borderWidth: 2,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+  },
+  noAddressContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  noAddressText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  addAddressButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  addAddressButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
