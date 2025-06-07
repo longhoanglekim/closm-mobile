@@ -10,7 +10,6 @@ interface ShippingAddressProps {
 }
 
 const ShippingAddress = ({ currentAddress, onSave, onClose }: ShippingAddressProps) => {
-  // Helper tách địa chỉ
   const parseAddress = (fullAddress = '') => {
     const parts = fullAddress.split(', ');
     return {
