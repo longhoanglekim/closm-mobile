@@ -74,7 +74,7 @@ export default SearchModal;
 const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
-    top: 100, // Điều chỉnh nếu taskbar cao hơn
+    top: 70, // Điều chỉnh nếu taskbar cao hơn
     left: 0,
     right: 0,
     backgroundColor: "#fff",

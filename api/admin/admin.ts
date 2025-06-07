@@ -1,57 +1,102 @@
+// src/api/productApi.ts
+
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-
-
-// Lấy tất cả item (variant) theo category
-export const getAllItemsByCategory = async (category: string) => {
-  const res = await fetch(`${apiUrl}/products/items?category=${encodeURIComponent(category)}`);
-  if (!res.ok) throw new Error("Lỗi khi lấy các item theo category");
+export const getAllCategories = async (): Promise<string[]> => {
+  const res = await fetch(`${apiUrl}/products/categories`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Lỗi khi lấy danh sách category");
+  }
   return res.json();
 };
 
-// Tạo base product (ADMIN)
-export const createBaseProduct = async (baseProductInput: any, token: string) => {
+export const getAllItemsByCategory = async (category: string): Promise<any[]> => {
+  const res = await fetch(
+    `${apiUrl}/products/items?category=${encodeURIComponent(category)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Lỗi khi lấy các item theo category");
+  }
+  return res.json();
+};
+
+export const createBaseProduct = async (
+  baseProductInput: { category: string; imageUrl: string },
+  token: string
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/create-base-product`, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(baseProductInput),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Lỗi khi tạo Base Product");
+  }
+
+  const newId: number = await res.json();
+  return newId;
 };
 
-// Sửa base product (ADMIN)
-export const updateBaseProduct = async (id: number, baseProductInput: any, token: string) => {
+export const updateBaseProduct = async (
+  id: number,
+  baseProductInput: { category?: string; imageUrl?: string },
+  token: string
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/update-base-product/${id}`, {
     method: "PUT",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(baseProductInput),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `Lỗi khi cập nhật Base Product với ID = ${id}`);
+  }
+  const updatedId: number = await res.json();
+  return updatedId;
 };
 
-// Xóa base product (ADMIN)
-export const deleteBaseProduct = async (id: number, token: string) => {
+export const deleteBaseProduct = async (
+  id: number,
+  token: string
+): Promise<number> => {
   const res = await fetch(`${apiUrl}/products/delete-base-product/${id}`, {
     method: "DELETE",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `Lỗi khi xóa Base Product với ID = ${id}`);
+  }
+  const deletedId: number = await res.json();
+  return deletedId;
 };
+
+
+
 // 2. ----------- PRODUCT ITEM (VARIANT) CONTROLLER -----------
 
 
-// Lấy chi tiết một item (biến thể) theo id
 export const getVariantDetails = async (id: number) => {
   const res = await fetch(`${apiUrl}/items/${id}`);
   if (!res.ok) throw new Error("Lỗi khi lấy chi tiết biến thể");

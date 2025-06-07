@@ -39,7 +39,6 @@ export default function TabLayout() {
               style={{
                 width: size,
                 height: size,
-                // Áp dụng màu sắc nếu cần
               }}
               resizeMode="contain"
             />
@@ -76,6 +75,27 @@ export default function TabLayout() {
               resizeMode="contain"
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="Product"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="CategoryManagement"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="OrderManagement"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
 

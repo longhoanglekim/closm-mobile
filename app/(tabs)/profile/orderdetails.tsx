@@ -34,6 +34,7 @@ const OrderDetails = () => {
         }
 
         const data = await getOrderInfo(numericOrderId);
+        console.log("Order data:", data);
         setOrder(data);
       } catch (err) {
         console.error(err);
@@ -123,7 +124,7 @@ const OrderDetails = () => {
 
         <Text style={styles.subTitle}>Items:</Text>
         {order.orderItemList?.map((item: any) => (
-          <View key={item.id} style={styles.itemContainer}>
+          <View key={`${order.id}-${item.id}`} style={styles.itemContainer}>
             {item.imageUrl && (
               <Image source={{ uri: item.imageUrl }} style={styles.itemImage} />
             )}

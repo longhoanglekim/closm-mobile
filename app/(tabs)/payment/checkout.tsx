@@ -86,6 +86,7 @@ const Checkout = () => {
               </ThemedText>
             )}
           </View>
+
           {availableDiscounts.length > 0 && (
             <ScrollView
               horizontal
@@ -102,13 +103,22 @@ const Checkout = () => {
                   ]}
                   onPress={() => handleSelectDiscount(discount)}
                 >
-                  <ThemedText style={detailStyles.discountCode}>
-                    {discount.description}
+                  {discount.imageUrl ? (
+                    <Image
+                      source={{ uri: discount.imageUrl }}
+                      style={detailStyles.discountImage}
+                    />
+                  ) : null}
+
+                  <ThemedText style={detailStyles.discountName}>
+                    {discount.name}
                   </ThemedText>
+
                   <ThemedText style={detailStyles.discountDescription}>
-                    Giảm {discount.discountPercentage}% - Hết hạn:{" "}
+                    Giảm {discount.discountPercentage}% — Hết hạn:{" "}
                     {new Date(discount.endDate).toLocaleDateString()}
                   </ThemedText>
+
                   <ThemedText style={detailStyles.discountAmount}>
                     -{calculateDiscountAmount(discount).toLocaleString()}đ
                   </ThemedText>
@@ -116,6 +126,7 @@ const Checkout = () => {
               ))}
             </ScrollView>
           )}
+
         </View>
         {/* Distance and Delivery Information */}
         {userAddress ? (
@@ -395,6 +406,13 @@ const Checkout = () => {
                 Alert.alert("Lỗi khi thanh toán:", (err as Error).message);
               }
             }
+            else {
+              try {
+                handleSubmitOrder();
+              } catch (error) {
+                Alert.alert("Lỗi khi đặt hàng:", (error as Error).message);
+              }
+            }
           }}
         >
 
@@ -411,12 +429,11 @@ const Checkout = () => {
         transparent={true}
         onRequestClose={closeShippingModal}
       >
-        <View style={detailStyles.modalContainer}>
-          <View style={detailStyles.modalContent}>
+        <View style={[detailStyles.modalContainer, { flex: 1 }]}>
+          <View style={[detailStyles.modalContent, { flex: 1, marginTop: 50 }]}>
             <ShippingAddress
               key={userAddress}
               currentAddress={userAddress}
-
               onSave={(address) => {
                 console.log("Địa chỉ vừa lưu:", address);
                 setUserAddress(address);

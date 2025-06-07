@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-    View, Text, FlatList, TouchableOpacity, Image, StyleSheet,
-    ActivityIndicator, Alert, Modal, TextInput, ScrollView
+    View,
+    Text,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    StyleSheet,
+    ActivityIndicator,
+    Alert,
+    Modal,
+    TextInput,
+    ScrollView
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -116,13 +125,23 @@ const ProductListScreen = () => {
     };
 
     const handleSave = async () => {
+        // Kiểm tra bắt buộc
         if (!formData.price || !formData.size || !formData.color) {
             Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
 
+        // Tạo đối tượng cần gửi lên backend
         const itemData = {
-            category: category, 
+            // Nếu đang edit, backend chỉ cần những trường không thay đổi id
+            ...(editingProduct
+                ? {}
+                : {
+                    // Khi create mới: phải có trường id
+                    id: Date.now(), // Bạn có thể thay bằng uuid, số order auto-increment, ...
+                }
+            ),
+            category: category,
             price: parseFloat(formData.price),
             size: formData.size,
             color: formData.color,
@@ -134,14 +153,27 @@ const ProductListScreen = () => {
 
         try {
             if (editingProduct) {
+                // Nếu đang sửa, giữ nguyên id trong URL, và update trả về object mới (có thể chứa id hoặc không)
                 const updated = await updateItem(editingProduct.id, itemData, token);
+                // Nếu updateItem trả về object không kèm id, ta vẫn giữ id cũ:
+                const updatedWithId: ProductItem = updated.id
+                    ? (updated as ProductItem)
+                    : ({ ...updated, id: editingProduct.id } as ProductItem);
+
                 setProducts(products.map(p =>
-                    p.id === editingProduct.id ? { ...updated, id: editingProduct.id } : p
+                    p.id === editingProduct.id ? updatedWithId : p
                 ));
                 Alert.alert('Thành công', 'Cập nhật sản phẩm thành công');
             } else {
+                // Tạo mới: API yêu cầu body có id nên ta đã gán sẵn
                 const created = await createItem(itemData, token);
-                setProducts([...products, created]);
+                // NẾU createItem trả về object có id, push thẳng
+                if (created.id !== undefined) {
+                    setProducts([...products, created as ProductItem]);
+                } else {
+                    // Nếu backend không trả id, ta gọi lại loadProducts để đồng bộ
+                    await loadProducts();
+                }
                 Alert.alert('Thành công', 'Thêm sản phẩm thành công');
             }
             setModalVisible(false);
@@ -151,10 +183,9 @@ const ProductListScreen = () => {
         }
     };
 
-
     const renderProductItem = ({ item }: { item: ProductItem }) => (
         <View style={styles.productCard}>
-            <Image source={{ uri: item.imageUrl}} style={styles.productImage} />
+            <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
             <View style={styles.productInfo}>
                 <Text style={styles.productName}>{item.tag || item.size}</Text>
                 <Text style={styles.productDescription}>{item.description}</Text>
@@ -182,45 +213,76 @@ const ProductListScreen = () => {
                             {editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới'}
                         </Text>
                         <Text style={styles.inputLabel}>Giá *</Text>
-                        <TextInput style={styles.input} value={formData.price}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.price}
                             onChangeText={text => setFormData({ ...formData, price: text })}
-                            placeholder="Nhập giá sản phẩm" keyboardType="numeric" />
+                            placeholder="Nhập giá sản phẩm"
+                            keyboardType="numeric"
+                        />
 
                         <Text style={styles.inputLabel}>Size *</Text>
-                        <TextInput style={styles.input} value={formData.size}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.size}
                             onChangeText={text => setFormData({ ...formData, size: text })}
-                            placeholder="Nhập size sản phẩm" />
+                            placeholder="Nhập size sản phẩm"
+                        />
 
                         <Text style={styles.inputLabel}>Màu *</Text>
-                        <TextInput style={styles.input} value={formData.color}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.color}
                             onChangeText={text => setFormData({ ...formData, color: text })}
-                            placeholder="Nhập màu sản phẩm" />
+                            placeholder="Nhập màu sản phẩm"
+                        />
 
                         <Text style={styles.inputLabel}>Số lượng</Text>
-                        <TextInput style={styles.input} value={formData.quantity}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.quantity}
                             onChangeText={text => setFormData({ ...formData, quantity: text })}
-                            placeholder="Nhập số lượng" keyboardType="numeric" />
+                            placeholder="Nhập số lượng"
+                            keyboardType="numeric"
+                        />
 
                         <Text style={styles.inputLabel}>Tag</Text>
-                        <TextInput style={styles.input} value={formData.tag}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.tag}
                             onChangeText={text => setFormData({ ...formData, tag: text })}
-                            placeholder="Nhập tag (nếu có)" />
+                            placeholder="Nhập tag (nếu có)"
+                        />
 
                         <Text style={styles.inputLabel}>URL hình ảnh</Text>
-                        <TextInput style={styles.input} value={formData.imageUrl}
+                        <TextInput
+                            style={styles.input}
+                            value={formData.imageUrl}
                             onChangeText={text => setFormData({ ...formData, imageUrl: text })}
-                            placeholder="Nhập URL hình ảnh" />
+                            placeholder="Nhập URL hình ảnh"
+                        />
 
                         <Text style={styles.inputLabel}>Mô tả</Text>
-                        <TextInput style={[styles.input, styles.textArea]} value={formData.description}
+                        <TextInput
+                            style={[styles.input, styles.textArea]}
+                            value={formData.description}
                             onChangeText={text => setFormData({ ...formData, description: text })}
-                            placeholder="Nhập mô tả sản phẩm" multiline numberOfLines={3} />
+                            placeholder="Nhập mô tả sản phẩm"
+                            multiline
+                            numberOfLines={3}
+                        />
 
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setModalVisible(false)}
+                            >
                                 <Text style={styles.buttonText}>Hủy</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                            <TouchableOpacity
+                                style={styles.saveButton}
+                                onPress={handleSave}
+                            >
                                 <Text style={styles.buttonText}>Lưu</Text>
                             </TouchableOpacity>
                         </View>
@@ -237,7 +299,10 @@ const ProductListScreen = () => {
                     <Text style={styles.backButton}>← Quay lại</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>{category}</Text>
-                <TouchableOpacity style={styles.addButton} onPress={handleCreate}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleCreate}
+                >
                     <Text style={styles.addButtonText}>+ Thêm</Text>
                 </TouchableOpacity>
             </View>
@@ -246,7 +311,9 @@ const ProductListScreen = () => {
                 <ActivityIndicator size="large" style={styles.loader} />
             ) : products.length === 0 ? (
                 <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>Không có sản phẩm nào trong danh mục này</Text>
+                    <Text style={styles.emptyText}>
+                        Không có sản phẩm nào trong danh mục này
+                    </Text>
                     <TouchableOpacity style={styles.addButton} onPress={handleCreate}>
                         <Text style={styles.addButtonText}>Thêm sản phẩm đầu tiên</Text>
                     </TouchableOpacity>
@@ -255,7 +322,11 @@ const ProductListScreen = () => {
                 <FlatList
                     data={products}
                     renderItem={renderProductItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) =>
+                        item.id !== undefined && item.id !== null
+                            ? item.id.toString()
+                            : `temp-${Math.random().toString(36).substring(2)}`
+                    }
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.listContainer}
                 />
@@ -279,7 +350,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        marginTop:50,
+        marginTop: 50,
     },
     backButton: {
         fontSize: 16,
@@ -344,6 +415,10 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#888'
     },
+    productDescSmall: {
+        fontSize: 12,
+        color: '#888'
+    },
     actionButtons: {
         flexDirection: 'column'
     },
@@ -390,6 +465,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20
     },
+    emptyText: {
+        fontSize: 18,
+        color: "#64748b",
+        textAlign: "center",
+        marginBottom: 18,
+        fontWeight: "500",
+        opacity: 0.95,
+    },
     inputLabel: {
         fontSize: 14,
         fontWeight: 'bold',
@@ -424,18 +507,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 6
     },
-    productDescSmall: {
-        fontSize: 12,
-        color: '#888'
-    },
-    emptyText: {
-        fontSize: 18,
-        color: "#64748b",
-        textAlign: "center",
-        marginBottom: 18,
-        fontWeight: "500",
-        opacity: 0.95,
-      },
 });
 
 export default ProductListScreen;

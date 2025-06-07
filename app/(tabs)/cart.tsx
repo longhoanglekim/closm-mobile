@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useStateContext } from "@/context/StateContext"; // Adjust import path as needed
+import { useStateContext } from "@/context/StateContext"; 
 import styles from "@/constants/Cart";
 import { useSelector } from "react-redux";
 import LoginScreen from "@/app/(tabs)/profile/login";
@@ -52,19 +52,8 @@ export default function CartScreen() {
           {/* Shipping Address */}
           <View style={styles.addressContainer}>
             <ThemedText style={styles.sectionTitle}>
-              Shipping Address
+              Giỏ hàng của bạn
             </ThemedText>
-            <View style={styles.addressContent}>
-              <View style={styles.addressTextContainer}>
-                <ThemedText style={styles.addressText}>
-                  214 nguyen xien
-                </ThemedText>
-                <ThemedText style={styles.addressText}>HN </ThemedText>
-              </View>
-              <TouchableOpacity style={styles.editButton}>
-                <Ionicons name="pencil" size={20} color="#0066FF" />
-              </TouchableOpacity>
-            </View>
           </View>
 
           {/* Cart Items */}

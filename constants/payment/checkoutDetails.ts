@@ -149,8 +149,18 @@ const detailStyles = StyleSheet.create({
   },
 
   // Modal Styles
-  modalContainer: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.5)" },
-  modalContent: { backgroundColor: "#fff", padding: 16, borderTopLeftRadius: 12, borderTopRightRadius: 12 },
+  modalContainer: { 
+    flex: 1, 
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-start",
+  },
+  modalContent: { 
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+    height: "90%",
+  },
   //payment method
   paymentOptions: {
     marginTop: 10,
@@ -174,6 +184,20 @@ const detailStyles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  discountImage: {
+    width: "100%",
+    height: 80,
+    borderRadius: 6,
+    marginBottom: 8,
+  },
+  discountName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#333333",
+    marginBottom: 4,
+  },
+
+
 });
   
   export default detailStyles;

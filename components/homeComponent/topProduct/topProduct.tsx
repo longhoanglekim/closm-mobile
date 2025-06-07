@@ -47,7 +47,7 @@ const TopProduct = () => {
                   <Text style={styles.productName}>{item.tag}</Text>
                   <Text style={styles.productName}>
                     {/* Sold: {item.soldQuantity} */}
-                    Sold : 100+
+                    {item.soldQuantity} sold
                   </Text>
                 </View>
               ))}
@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     alignItems: "center",
     backgroundColor: "#f9f9f9",
+    marginLeft: 25,
   },
   image: {
     width: 70,
