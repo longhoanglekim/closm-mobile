@@ -111,26 +111,27 @@ export default function ProfileScreen() {
             <FontAwesome name="cog" size={24} color="black" />
           </Pressable>
         </View>
+          <View style={styles.orderSection}>
+            <Text style={styles.sectionTitle}>My Orders</Text>
+            <View style={styles.orderButtonsContainer}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
+                  (item, index) => (
+                    <Pressable
+                      key={index}
+                      style={styles.orderButton}
+                      onPress={() => handleFilter(item)}
+                    >
+                      <Text style={styles.orderButtonText}>{item}</Text>
+                    </Pressable>
+                  )
+                )}
+              </ScrollView>
+            </View>
 
-        {/* MY ORDERS */}
-        <View style={styles.orderSection}>
-          <Text style={styles.sectionTitle}>My Orders</Text>
-          <View style={styles.orderButtonsContainer}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
-                (item, index) => (
-                  <Pressable
-                    key={index}
-                    style={styles.orderButton}
-                    onPress={() => handleFilter(item)}
-                  >
-                    <Text style={styles.orderButtonText}>{item}</Text>
-                  </Pressable>
-                )
-              )}
-            </ScrollView>
+
           </View>
-        </View>
+
 
         {/* SERVICES */}
         <Text style={styles.sectionTitle}>Services</Text>

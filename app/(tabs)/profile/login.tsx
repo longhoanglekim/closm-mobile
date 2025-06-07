@@ -1,5 +1,5 @@
-import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import { Link, router, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,13 +11,21 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { login } from "../../../api/auth/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "@/redux/reducers/User";
 import { getUserInfo } from "@/api/user/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "react-native";
 const LoginScreen = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      router.replace("/(tabs)/profile");
+    }
+  }, [user.isLoggedIn]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
