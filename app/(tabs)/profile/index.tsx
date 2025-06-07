@@ -53,7 +53,6 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
 
-          
           <View style={styles.orderSection}>
             <Text style={styles.sectionTitle}>My Orders</Text>
             <View style={styles.orderButtonsContainer}>
