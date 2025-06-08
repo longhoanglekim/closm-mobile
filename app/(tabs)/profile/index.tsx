@@ -22,11 +22,11 @@ import {
   PointAnnotation,
   ShapeSource,
   LineLayer,
-  CameraRef
+  CameraRef,
 } from "@maplibre/maplibre-react-native";
 
 import LoginScreen from "./login";
-
+import DeliveryTrackingMap from "@/components/Map/DeliverTrackingMap";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const MAPTILER_TILE_URL =
@@ -35,7 +35,10 @@ const MAPTILER_TILE_URL =
 export default function ProfileScreen() {
   const user = useSelector((state: any) => state.user);
   const router = useRouter();
-  const [customerLocation, setCustomerLocation] = useState<{lat: number, lon: number} | null>(null);
+  const [customerLocation, setCustomerLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
   const cameraRef = useRef<CameraRef>(null);
@@ -44,7 +47,10 @@ export default function ProfileScreen() {
   const shopLng = 105.7807554;
 
   const handleFilter = (item: string) => {
-    router.push({ pathname: "/(tabs)/profile/orders", params: { status: item } });
+    router.push({
+      pathname: "/(tabs)/profile/orders",
+      params: { status: item },
+    });
   };
 
   useEffect(() => {
@@ -54,21 +60,23 @@ export default function ProfileScreen() {
         setRouteCoords([]);
         return;
       }
-      
+
       setIsLoadingLocation(true);
       try {
-        const location = await getLocationFromAddress(user.shippingAddress + ', Việt Nam');
+        const location = await getLocationFromAddress(
+          user.shippingAddress + ", Việt Nam"
+        );
         if (location && location.length > 0) {
           setCustomerLocation({
             lat: parseFloat(location[0].lat),
-            lon: parseFloat(location[0].lon)
+            lon: parseFloat(location[0].lon),
           });
         } else {
           setCustomerLocation(null);
           setRouteCoords([]);
         }
       } catch (error) {
-        console.error('Error fetching customer location:', error);
+        console.error("Error fetching customer location:", error);
         setCustomerLocation(null);
         setRouteCoords([]);
       } finally {
@@ -111,12 +119,7 @@ export default function ProfileScreen() {
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
 
-      cameraRef.current.fitBounds(
-        [minLng, minLat],
-        [maxLng, maxLat],
-        50,
-        1000
-      );
+      cameraRef.current.fitBounds([minLng, minLat], [maxLng, maxLat], 50, 1000);
     }
   }, [routeCoords]);
 
@@ -165,91 +168,29 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* MAP */}
-        <Text style={styles.sectionTitle}>Theo dõi giao hàng</Text>
-        <View style={styles.mapWrapper}>
-          {isLoadingLocation ? (
-            <View style={styles.loadingContainer}>
-              <Text>Đang tải thông tin địa chỉ...</Text>
-            </View>
-          ) : !user.shippingAddress ? (
-            <View style={styles.noAddressContainer}>
-              <Text style={styles.noAddressText}>Bạn chưa nhập địa chỉ giao hàng.</Text>
-              <Pressable
-                style={styles.addAddressButton}
-                onPress={() => router.push("/(tabs)/payment/checkout")}
-              >
-                <Text style={styles.addAddressButtonText}>Thêm địa chỉ</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <MapView style={styles.map}>
-              <Camera
-                ref={cameraRef}
-                centerCoordinate={[(shopLng + (customerLocation?.lon || shopLng)) / 2, (shopLat + (customerLocation?.lat || shopLat)) / 2]}
-                zoomLevel={13}
-              />
-
-              <RasterSource
-                id="maptiler-osm"
-                tileUrlTemplates={[MAPTILER_TILE_URL]}
-                tileSize={256}
-              >
-                <RasterLayer
-                  id="osmRasterLayer"
-                  sourceID="maptiler-osm"
-                  style={{ rasterOpacity: 1 }}
-                />
-              </RasterSource>
-
-              {/* Marker Shop */}
-              <PointAnnotation id="shopMarker" coordinate={[shopLng, shopLat]}>
-                <View style={styles.markerShop}>
-                  <FontAwesome name="home" size={20} color="#fff" />
-                </View>
-              </PointAnnotation>
-
-              {/* Marker Khách hàng */}
-              {customerLocation && (
-                <PointAnnotation id="custMarker" coordinate={[customerLocation.lon, customerLocation.lat]}>
-                  <View style={styles.markerCust}>
-                    <FontAwesome name="user" size={20} color="#fff" />
-                  </View>
-                </PointAnnotation>
-              )}
-
-              {/* Route polyline */}
-              {routeCoords.length > 0 && (
-                <ShapeSource
-                  id="routeSource"
-                  shape={{
-                    type: "Feature",
-                    geometry: { type: "LineString", coordinates: routeCoords },
-                    properties: {}
-                  }}
-                >
-                  <LineLayer
-                    id="routeLineLayer"
-                    sourceID="routeSource"
-                    style={{ lineColor: "#007AFF", lineWidth: 4, lineOpacity: 0.8 }}
-                  />
-                </ShapeSource>
-              )}
-            </MapView>
-          )}
-        </View>
-
         {/* SERVICES */}
         <Text style={styles.sectionTitle}>Services</Text>
         <View style={styles.gridContainer}>
           {[
-            { icon: "credit-card", label: "ShopeePay", desc: "Nhận combo 300.000đ" },
-            { icon: "shopping-cart", label: "Mua trước trả sau", desc: "SPayLater" },
+            {
+              icon: "credit-card",
+              label: "ShopeePay",
+              desc: "Nhận combo 300.000đ",
+            },
+            {
+              icon: "shopping-cart",
+              label: "Mua trước trả sau",
+              desc: "SPayLater",
+            },
             { icon: "gift", label: "Shopee Xu", desc: "Nhận xu mỗi ngày" },
             { icon: "tags", label: "Kho Voucher", desc: "50+ voucher" },
           ].map((service, index) => (
             <View key={index} style={styles.gridBox}>
-              <FontAwesome name={service.icon as any} size={24} style={styles.gridIcon} />
+              <FontAwesome
+                name={service.icon as any}
+                size={24}
+                style={styles.gridIcon}
+              />
               <View>
                 <Text style={styles.gridLabel}>{service.label}</Text>
                 <Text style={styles.gridDesc}>{service.desc}</Text>
@@ -266,7 +207,11 @@ export default function ProfileScreen() {
             { icon: "shield", label: "Bảo hiểm", desc: "Gói bảo hiểm mini" },
           ].map((item, idx) => (
             <View key={idx} style={styles.gridBox}>
-              <FontAwesome name={item.icon as any} size={24} style={styles.gridIcon} />
+              <FontAwesome
+                name={item.icon as any}
+                size={24}
+                style={styles.gridIcon}
+              />
               <View>
                 <Text style={styles.gridLabel}>{item.label}</Text>
                 <Text style={styles.gridDesc}>{item.desc}</Text>
@@ -379,31 +324,31 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f2f2f2',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f2f2f2",
   },
   noAddressContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   noAddressText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 15,
   },
   addAddressButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
   addAddressButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
