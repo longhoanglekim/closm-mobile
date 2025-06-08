@@ -12,63 +12,60 @@ import {
   Pressable,
   Dimensions,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { getOrderInfo } from "@/api/order/order";
 import { cancelOrder } from "@/api/user/user";
-import DeliveryTrackingMap from "@/components/Map/DeliverTrackingMap";
-import { FontAwesome } from "@expo/vector-icons";
-import { CameraRef } from "@maplibre/maplibre-react-native";
-import { useSelector } from "react-redux";
 import { getLocationFromAddress } from "@/api/products/products";
+import DeliveryTrackingMap from "@/components/Map/DeliverTrackingMap";
+import { CameraRef } from "@maplibre/maplibre-react-native";
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MAPTILER_TILE_URL =
   "https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.jpg?key=JuPN71U2EkJ43IuG7rM2";
+
+const shopLat = 21.0177002;
+const shopLng = 105.7807554;
+
+const formatCurrency = (amount: number) => amount.toLocaleString("vi-VN") + "₫";
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
+
 const OrderDetails = () => {
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
-  const user = useSelector((state: any) => state.user);
   const router = useRouter();
+  const cameraRef = useRef<CameraRef>(null);
+
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
-  const cameraRef = useRef<CameraRef>(null);
-  const shopLat = 21.0177002;
-  const shopLng = 105.7807554;
   const [customerLocation, setCustomerLocation] = useState<{
     lat: number;
     lon: number;
   } | null>(null);
+
   useEffect(() => {
     const loadOrder = async () => {
       try {
-        if (!orderId) {
-          setError("Order ID is missing.");
-          return;
-        }
-
+        if (!orderId) throw new Error("Order ID is missing.");
         const numericOrderId = Number(orderId);
-        if (isNaN(numericOrderId)) {
-          setError("Invalid Order ID format.");
-          return;
-        }
+        if (isNaN(numericOrderId)) throw new Error("Invalid Order ID format.");
 
         const data = await getOrderInfo(numericOrderId);
-        console.log("Order data:", data);
-
         setOrder(data);
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
-        setError("Failed to load order details.");
+        setError(err.message || "Failed to load order details.");
       } finally {
         setLoading(false);
       }
     };
-
     loadOrder();
   }, [orderId]);
+
   useEffect(() => {
     const fetchLocation = async () => {
-      if (!order.deliverAddress) {
+      if (!order?.deliverAddress) {
         setCustomerLocation(null);
         setRouteCoords([]);
         return;
@@ -77,7 +74,7 @@ const OrderDetails = () => {
       setIsLoadingLocation(true);
       try {
         const location = await getLocationFromAddress(order.deliverAddress);
-        if (location && location.length > 0) {
+        if (location?.length) {
           setCustomerLocation({
             lat: parseFloat(location[0].lat),
             lon: parseFloat(location[0].lon),
@@ -87,7 +84,7 @@ const OrderDetails = () => {
           setRouteCoords([]);
         }
       } catch (error) {
-        console.error("Error fetching customer location:", error);
+        console.error("Error fetching location:", error);
         setCustomerLocation(null);
         setRouteCoords([]);
       } finally {
@@ -95,8 +92,9 @@ const OrderDetails = () => {
       }
     };
 
-    fetchLocation();
-  }, [order.deliverAddress]);
+    if (order) fetchLocation();
+  }, [order]);
+
   useEffect(() => {
     if (!customerLocation) return;
 
@@ -108,7 +106,7 @@ const OrderDetails = () => {
     fetch(osrmUrl)
       .then((res) => res.json())
       .then((json) => {
-        if (json.routes && json.routes.length) {
+        if (json.routes?.length) {
           setRouteCoords(json.routes[0].geometry.coordinates);
         } else {
           setRouteCoords([]);
@@ -121,7 +119,7 @@ const OrderDetails = () => {
   }, [customerLocation]);
 
   useEffect(() => {
-    if (routeCoords.length > 0 && cameraRef.current) {
+    if (routeCoords.length && cameraRef.current) {
       const lats = routeCoords.map((c) => c[1]);
       const lngs = routeCoords.map((c) => c[0]);
       const minLat = Math.min(...lats);
@@ -133,15 +131,6 @@ const OrderDetails = () => {
     }
   }, [routeCoords]);
 
-  const formatCurrency = (amount: number) => {
-    return amount.toLocaleString("vi-VN") + "₫";
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString();
-  };
-
   const handleCancelOrder = () => {
     Alert.alert("Cancel Order", "Are you sure you want to cancel this order?", [
       { text: "No", style: "cancel" },
@@ -149,10 +138,13 @@ const OrderDetails = () => {
         text: "Yes",
         style: "destructive",
         onPress: async () => {
-          await cancelOrder(order.id);
-          console.log("Order canceled:", order.orderCode);
-          Alert.alert("Order canceled", "Your order has been canceled.");
-          router.back();
+          try {
+            await cancelOrder(order.id);
+            Alert.alert("Order canceled", "Your order has been canceled.");
+            router.back();
+          } catch (e) {
+            Alert.alert("Failed", "Failed to cancel order.");
+          }
         },
       },
     ]);
@@ -176,9 +168,11 @@ const OrderDetails = () => {
     );
   }
 
+  if (!order) return null;
+
   return (
     <ScrollView style={styles.container}>
-      {/* MAP */}
+      {/* MAP SECTION */}
       <Text style={styles.sectionTitle}>Watch Delivery</Text>
       <View style={styles.mapWrapper}>
         {isLoadingLocation ? (
@@ -208,6 +202,7 @@ const OrderDetails = () => {
         )}
       </View>
 
+      {/* ORDER DETAILS */}
       <View style={styles.formContainer}>
         <Text style={styles.title}>Order Code: {order.orderCode}</Text>
         <View style={styles.section}>
@@ -238,6 +233,7 @@ const OrderDetails = () => {
           </Text>
         </View>
 
+        {/* ORDER ITEMS */}
         <Text style={styles.subTitle}>Items:</Text>
         {order.orderItemList?.map((item: any) => (
           <View key={`${order.id}-${item.id}`} style={styles.itemContainer}>
@@ -259,10 +255,12 @@ const OrderDetails = () => {
             </View>
           </View>
         ))}
+
+        {/* CANCEL ORDER BUTTON */}
         {new Date(order.cancelableDate).getTime() > Date.now() &&
           order.orderStatus.toUpperCase() === "PENDING" && (
-            <View>
-              <View style={[styles.buttonContainer]}>
+            <>
+              <View style={styles.buttonContainer}>
                 <Button
                   title="Cancel Order"
                   color="#dc3545"
@@ -275,7 +273,7 @@ const OrderDetails = () => {
                   {formatDate(order.cancelableDate)}
                 </Text>
               </Text>
-            </View>
+            </>
           )}
       </View>
     </ScrollView>
@@ -283,15 +281,8 @@ const OrderDetails = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: "lightblue",
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  container: { padding: 20, backgroundColor: "lightblue" },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   formContainer: {
     backgroundColor: "#f9f9f9",
     padding: 20,
@@ -307,84 +298,49 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "#333",
     textAlign: "center",
-    textTransform: "uppercase",
   },
-  section: {
-    marginBottom: 15,
-  },
+  section: { marginBottom: 15 },
   subTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
     color: "#333",
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: "#444",
-  },
+  label: { fontSize: 16, marginBottom: 8, color: "#444" },
   itemContainer: {
-    flexDirection: "row", // added
+    flexDirection: "row",
     marginBottom: 15,
     padding: 10,
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ddd",
-    alignItems: "center", // added
+    alignItems: "center",
   },
   itemImage: {
     width: 100,
     height: 100,
     resizeMode: "cover",
     borderRadius: 5,
-    marginRight: 10, // added
+    marginRight: 10,
   },
-  itemInfo: {
-    flex: 1, // added
-  },
+  itemInfo: { flex: 1 },
   itemName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
     color: "#2d3e50",
   },
-  itemDetail: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 5,
-  },
-  priceText: {
-    fontWeight: "bold",
-    color: "#f28c28",
-  },
-  boldText: {
-    fontWeight: "bold",
-  },
-  statusText: {
-    color: "#28a745",
-  },
-  paymentStatusText: {
-    color: "#ffc107",
-  },
-  paymentMethodText: {
-    color: "#007bff",
-  },
-  dateText: {
-    color: "#6c757d",
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 18,
-    color: "#555",
-  },
-  errorText: {
-    color: "#dc3545",
-    fontSize: 18,
-  },
-  buttonContainer: {
-    marginTop: 20,
-  },
+  itemDetail: { fontSize: 16, color: "#555", marginBottom: 5 },
+  priceText: { fontWeight: "bold", color: "#f28c28" },
+  boldText: { fontWeight: "bold" },
+  statusText: { color: "#28a745" },
+  paymentStatusText: { color: "#ffc107" },
+  paymentMethodText: { color: "#007bff" },
+  dateText: { color: "#6c757d" },
+  loadingText: { marginTop: 10, fontSize: 18, color: "#555" },
+  errorText: { color: "#dc3545", fontSize: 18 },
+  buttonContainer: { marginTop: 20 },
   cancelableDateText: {
     color: "#6c757d",
     fontSize: 16,
@@ -404,29 +360,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#ccc",
     marginBottom: 20,
-  },
-  map: {
-    flex: 1,
-  },
-  markerShop: {
-    width: 32,
-    height: 32,
-    backgroundColor: "#007AFF",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#fff",
-    borderWidth: 2,
-  },
-  markerCust: {
-    width: 32,
-    height: 32,
-    backgroundColor: "#FF3B30",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#fff",
-    borderWidth: 2,
   },
   loadingContainer: {
     flex: 1,
@@ -452,11 +385,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
   },
-  addAddressButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  addAddressButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
 });
 
 export default OrderDetails;
