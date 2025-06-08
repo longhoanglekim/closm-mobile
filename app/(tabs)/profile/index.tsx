@@ -52,7 +52,8 @@ export default function ProfileScreen() {
       .then((res) => res.json())
       .then((json) => {
         if (json.routes && json.routes.length) {
-          const coords: Array<[number, number]> = json.routes[0].geometry.coordinates;
+          const coords: Array<[number, number]> =
+            json.routes[0].geometry.coordinates;
           setRouteCoords(coords);
         }
       })
@@ -72,10 +73,10 @@ export default function ProfileScreen() {
       const maxLng = Math.max(...lngs);
 
       cameraRef.current.fitBounds(
-        [minLng, minLat],  // southwest: [lng, lat]
-        [maxLng, maxLat],  // northeast
-        50,                // padding in px
-        1000               // animation duration in ms
+        [minLng, minLat], // southwest: [lng, lat]
+        [maxLng, maxLat], // northeast
+        50, // padding in px
+        1000 // animation duration in ms
       );
     }
   }, [routeCoords]);
@@ -101,24 +102,22 @@ export default function ProfileScreen() {
             <FontAwesome name="cog" size={24} color="black" />
           </Pressable>
         </View>
-          <View style={styles.orderSection}>
-            <Text style={styles.sectionTitle}>My Orders</Text>
-            <View style={styles.orderButtonsContainer}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
-                  (item, index) => (
-                    <Pressable
-                      key={index}
-                      style={styles.orderButton}
-                      onPress={() => handleFilter(item)}
-                    >
-                      <Text style={styles.orderButtonText}>{item}</Text>
-                    </Pressable>
-                  )
-                )}
-              </ScrollView>
-            </View>
-
+        <View style={styles.orderSection}>
+          <Text style={styles.sectionTitle}>My Orders</Text>
+          <View style={styles.orderButtonsContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {["ALL", "PENDING", "CONFIRMED", "DELIVERED", "CANCELLED"].map(
+                (item, index) => (
+                  <Pressable
+                    key={index}
+                    style={styles.orderButton}
+                    onPress={() => handleFilter(item)}
+                  >
+                    <Text style={styles.orderButtonText}>{item}</Text>
+                  </Pressable>
+                )
+              )}
+            </ScrollView>
           </View>
         </View>
 
@@ -126,13 +125,25 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Services</Text>
         <View style={styles.gridContainer}>
           {[
-            { icon: "credit-card", label: "ShopeePay", desc: "Nhận combo 300.000đ" },
-            { icon: "shopping-cart", label: "Mua trước trả sau", desc: "SPayLater" },
+            {
+              icon: "credit-card",
+              label: "ShopeePay",
+              desc: "Nhận combo 300.000đ",
+            },
+            {
+              icon: "shopping-cart",
+              label: "Mua trước trả sau",
+              desc: "SPayLater",
+            },
             { icon: "gift", label: "Shopee Xu", desc: "Nhận xu mỗi ngày" },
             { icon: "tags", label: "Kho Voucher", desc: "50+ voucher" },
           ].map((service, index) => (
             <View key={index} style={styles.gridBox}>
-              <FontAwesome name={service.icon} size={24} style={styles.gridIcon} />
+              <FontAwesome
+                name={service.icon}
+                size={24}
+                style={styles.gridIcon}
+              />
               <View>
                 <Text style={styles.gridLabel}>{service.label}</Text>
                 <Text style={styles.gridDesc}>{service.desc}</Text>
@@ -144,16 +155,15 @@ export default function ProfileScreen() {
         {/* ==================== THEO DÕI GIAO HÀNG (MAPLIBRE) ==================== */}
         <Text style={styles.sectionTitle}>Theo dõi giao hàng</Text>
         <View style={styles.mapWrapper}>
-          <MapLibreGL.MapView
-            ref={mapRef}
-            style={styles.map}
-            styleURL={null}
-          >
+          <MapLibreGL.MapView ref={mapRef} style={styles.map} styleURL={null}>
             {/* Camera để điều khiển fitBounds */}
             <MapLibreGL.Camera
               ref={cameraRef}
               // Trung điểm ban đầu (chỉ để render tạm)
-              centerCoordinate={[ (shopLng + custLng) / 2, (shopLat + custLat) / 2 ]}
+              centerCoordinate={[
+                (shopLng + custLng) / 2,
+                (shopLat + custLat) / 2,
+              ]}
               zoomLevel={13}
               animationDuration={0}
             />
