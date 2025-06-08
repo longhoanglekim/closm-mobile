@@ -58,7 +58,6 @@ export const useCheckoutLogic = (
     useState<boolean>(false);
   const [calculationError, setCalculationError] = useState<string | null>(null);
 
-  // Fetch available discounts when component mounts or user changes
 useEffect(() => {
   const fetchDiscounts = async () => {
     if (user?.email) {

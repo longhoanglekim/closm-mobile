@@ -141,7 +141,7 @@ const OrderDetails = () => {
           try {
             await cancelOrder(order.id);
             Alert.alert("Order canceled", "Your order has been canceled.");
-            router.back();
+            router.push("/(tabs)/profile");
           } catch (e) {
             Alert.alert("Failed", "Failed to cancel order.");
           }
