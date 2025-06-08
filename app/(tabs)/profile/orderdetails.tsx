@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,16 +9,35 @@ import {
   Button,
   Image,
   Alert,
+  Pressable,
+  Dimensions,
 } from "react-native";
 import { getOrderInfo } from "@/api/order/order";
 import { cancelOrder } from "@/api/user/user";
+import DeliveryTrackingMap from "@/components/Map/DeliverTrackingMap";
+import { FontAwesome } from "@expo/vector-icons";
+import { CameraRef } from "@maplibre/maplibre-react-native";
+import { useSelector } from "react-redux";
+import { getLocationFromAddress } from "@/api/products/products";
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const MAPTILER_TILE_URL =
+  "https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.jpg?key=JuPN71U2EkJ43IuG7rM2";
 const OrderDetails = () => {
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
+  const user = useSelector((state: any) => state.user);
   const router = useRouter();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [routeCoords, setRouteCoords] = useState<Array<[number, number]>>([]);
+  const cameraRef = useRef<CameraRef>(null);
+  const shopLat = 21.0177002;
+  const shopLng = 105.7807554;
+  const [customerLocation, setCustomerLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   useEffect(() => {
     const loadOrder = async () => {
       try {
@@ -35,6 +54,7 @@ const OrderDetails = () => {
 
         const data = await getOrderInfo(numericOrderId);
         console.log("Order data:", data);
+
         setOrder(data);
       } catch (err) {
         console.error(err);
@@ -46,6 +66,72 @@ const OrderDetails = () => {
 
     loadOrder();
   }, [orderId]);
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (!order.deliverAddress) {
+        setCustomerLocation(null);
+        setRouteCoords([]);
+        return;
+      }
+
+      setIsLoadingLocation(true);
+      try {
+        const location = await getLocationFromAddress(order.deliverAddress);
+        if (location && location.length > 0) {
+          setCustomerLocation({
+            lat: parseFloat(location[0].lat),
+            lon: parseFloat(location[0].lon),
+          });
+        } else {
+          setCustomerLocation(null);
+          setRouteCoords([]);
+        }
+      } catch (error) {
+        console.error("Error fetching customer location:", error);
+        setCustomerLocation(null);
+        setRouteCoords([]);
+      } finally {
+        setIsLoadingLocation(false);
+      }
+    };
+
+    fetchLocation();
+  }, [order.deliverAddress]);
+  useEffect(() => {
+    if (!customerLocation) return;
+
+    const osrmUrl =
+      `https://router.project-osrm.org/route/v1/driving/` +
+      `${shopLng},${shopLat};${customerLocation.lon},${customerLocation.lat}` +
+      `?overview=full&geometries=geojson`;
+
+    fetch(osrmUrl)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.routes && json.routes.length) {
+          setRouteCoords(json.routes[0].geometry.coordinates);
+        } else {
+          setRouteCoords([]);
+        }
+      })
+      .catch((err) => {
+        console.error("OSRM fetch error:", err);
+        setRouteCoords([]);
+      });
+  }, [customerLocation]);
+
+  useEffect(() => {
+    if (routeCoords.length > 0 && cameraRef.current) {
+      const lats = routeCoords.map((c) => c[1]);
+      const lngs = routeCoords.map((c) => c[0]);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+
+      cameraRef.current.fitBounds([minLng, minLat], [maxLng, maxLat], 50, 1000);
+    }
+  }, [routeCoords]);
 
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString("vi-VN") + "₫";
@@ -92,6 +178,36 @@ const OrderDetails = () => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* MAP */}
+      <Text style={styles.sectionTitle}>Watch Delivery</Text>
+      <View style={styles.mapWrapper}>
+        {isLoadingLocation ? (
+          <View style={styles.loadingContainer}>
+            <Text>Loading address information...</Text>
+          </View>
+        ) : !order.deliverAddress ? (
+          <View style={styles.noAddressContainer}>
+            <Text style={styles.noAddressText}>
+              You have not entered a delivery address.
+            </Text>
+            <Pressable
+              style={styles.addAddressButton}
+              onPress={() => router.push("/(tabs)/payment/checkout")}
+            >
+              <Text style={styles.addAddressButtonText}>Add Address</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <DeliveryTrackingMap
+            shopLat={shopLat}
+            shopLng={shopLng}
+            customerLocation={customerLocation}
+            routeCoords={routeCoords}
+            MAPTILER_TILE_URL={MAPTILER_TILE_URL}
+          />
+        )}
+      </View>
+
       <View style={styles.formContainer}>
         <Text style={styles.title}>Order Code: {order.orderCode}</Text>
         <View style={styles.section}>
@@ -274,6 +390,72 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     textAlign: "right",
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginLeft: 10,
+    marginVertical: 20,
+  },
+  mapWrapper: {
+    height: SCREEN_HEIGHT * 0.5,
+    marginHorizontal: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: "#ccc",
+    marginBottom: 20,
+  },
+  map: {
+    flex: 1,
+  },
+  markerShop: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#007AFF",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#fff",
+    borderWidth: 2,
+  },
+  markerCust: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#FF3B30",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#fff",
+    borderWidth: 2,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f2f2f2",
+  },
+  noAddressContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  noAddressText: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 15,
+  },
+  addAddressButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  addAddressButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
