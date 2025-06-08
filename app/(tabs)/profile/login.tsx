@@ -48,7 +48,7 @@ const LoginScreen = () => {
         if (userInfo) {
           dispatch(loginSuccess({ token: response.token, userInfo }));
           await AsyncStorage.setItem("email", email);
-          router.replace("/(tabs)/cart");
+          router.replace("/");
         }
       } else {
         setError(response.message || "Đăng nhập thất bại");
