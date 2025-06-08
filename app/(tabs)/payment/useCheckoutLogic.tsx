@@ -75,7 +75,6 @@ useEffect(() => {
 }, [user?.email]);
 
 
-  // Calculate delivery fee based on distance
   const calculateDeliveryFee = async (shopAddress: any, userAddress: any) => {
     if (!shopAddress || !userAddress) {
       console.log("Missing address information");
@@ -87,11 +86,9 @@ useEffect(() => {
     setCalculationError(null);
 
     try {
-      // Get coordinates for shop address
       const shopLocationArr = await getLocationFromAddress(shopAddress);
       console.log("Shop Location:", shopLocationArr);
 
-      // Get coordinates for user address
       const userLocationArr = await getLocationFromAddress(userAddress);
       console.log("User Location:", userLocationArr);
 
@@ -109,10 +106,8 @@ useEffect(() => {
         throw new Error("Thiếu thông tin tọa độ lat/lon.");
       }
 
-      // Ép kiểu về số và truyền đúng thứ tự [lon, lat]
       const shopCoords = [parseFloat(shopLocation.lon), parseFloat(shopLocation.lat)];
       const userCoords = [parseFloat(userLocation.lon), parseFloat(userLocation.lat)];
-      // Calculate distance between coordinates
       const distanceInMeters = await calculateDistance(
         shopCoords,
         userCoords
@@ -121,7 +116,6 @@ useEffect(() => {
       const distanceInKm = distanceInMeters / 1000;
       setDistance(distanceInKm);
 
-      // Calculate delivery fee based on distance
       const baseFee = 15000;
       const perKmFee = 5000;
       const calculatedFee = Math.round(baseFee + distanceInKm * perKmFee);
@@ -142,7 +136,6 @@ useEffect(() => {
     }
   };
 
-  // Calculate subtotal (sum of all items)
   const calculateSubtotal = () => {
     return cartItems.reduce(
       (sum: any, item: any) => sum + item.price * item.quantity,
@@ -153,12 +146,10 @@ useEffect(() => {
     const subtotal = calculateSubtotal();
     return Math.round((subtotal * discount.discountPercentage) / 100);
   };
-  // Calculate total with shipping cost (for the older calculation)
   const calculateTotal = () => {
     return calculateSubtotal() + shippingCost;
   };
 
-  // Calculate final price including discounts and delivery fee
   const calculateFinalPrice = () => {
     const subtotal = calculateSubtotal();
     const discountAmount = selectedDiscounts.reduce(
@@ -168,7 +159,6 @@ useEffect(() => {
     return subtotal + deliveryFee + shippingCost - discountAmount || 0;
   };
 
-  // Handle discount selection/deselection
   const handleSelectDiscount = (discount: Discount) => {
     if (selectedDiscounts.some((d) => d.id === discount.id)) {
       setSelectedDiscounts(
@@ -178,7 +168,6 @@ useEffect(() => {
       setSelectedDiscounts([...selectedDiscounts, discount]);
     }
   };
-  // Handle order submission
   const handleSubmitOrder = async () => {
     if (!userAddress) {
       alert("Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.");

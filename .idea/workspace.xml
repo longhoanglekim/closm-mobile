@@ -6,14 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9c7a3401-3ba3-46b3-85f5-85d46dc393aa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/products/products.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/products/products.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/payment/ShippingAddress.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/payment/ShippingAddress.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile/login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/redux/reducers/User.js" beforeDir="false" afterPath="$PROJECT_DIR$/redux/reducers/User.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/payment/useCheckoutLogic.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/payment/useCheckoutLogic.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
